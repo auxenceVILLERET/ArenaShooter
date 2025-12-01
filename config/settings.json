@@ -1,0 +1,222 @@
+{
+    "projects": {
+        "Audio": {
+            "additionalDependencies": [
+                "mfplat.lib",
+                "mf.lib",
+                "mfreadwrite.lib",
+                "mfuuid.lib",
+                "xapobase.lib"
+            ],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Core"
+            ],
+            "dependents": [
+                "AudioApp",
+                "Testing"
+            ],
+            "guid": "350F391D-4BFF-5BAA-2368-38E07F916E9D",
+            "lib": true,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": false
+        },
+        "AudioApp": {
+            "additionalDependencies": [],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Audio",
+                "Core"
+            ],
+            "dependents": [],
+            "guid": "35CD3C4D-1B59-2782-444D-328740BB5768",
+            "lib": false,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": false
+        },
+        "Core": {
+            "additionalDependencies": [],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [],
+            "dependents": [
+                "Engine",
+                "EngineApp",
+                "RenderApp",
+                "Render",
+                "Testing",
+                "Tool",
+                "Audio",
+                "AudioApp",
+                "Inputs",
+                "InputsApp"
+            ],
+            "guid": "3DB4233D-2C57-5DD7-351C-357205B03623",
+            "lib": true,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": false
+        },
+        "Engine": {
+            "additionalDependencies": [],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Render",
+                "Core"
+            ],
+            "dependents": [
+                "EngineApp",
+                "Gameplay",
+                "Testing"
+            ],
+            "guid": "2CAB3050-4A42-7B7C-618A-1D594E734246",
+            "lib": true,
+            "pch": true,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": false
+        },
+        "EngineApp": {
+            "additionalDependencies": [
+                "winmm.lib"
+            ],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Engine",
+                "Core",
+                "Render"
+            ],
+            "dependents": [],
+            "guid": "2CE94E0C-781D-756F-5F13-40C935736904",
+            "lib": false,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": true
+        },
+        "Inputs": {
+            "additionalDependencies": [],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Core"
+            ],
+            "dependents": [
+                "InputsApp"
+            ],
+            "guid": "36B5614D-75DD-3951-70FC-73951FF32B8B",
+            "lib": true,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": false
+        },
+        "InputsApp": {
+            "additionalDependencies": [],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Inputs",
+                "Core"
+            ],
+            "dependents": [],
+            "guid": "375140A1-0B65-5931-7EF7-53D8678906AE",
+            "lib": false,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": false
+        },
+        "Render": {
+            "additionalDependencies": [],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Core"
+            ],
+            "dependents": [
+                "Engine",
+                "RenderApp",
+                "EngineApp",
+                "Testing"
+            ],
+            "guid": "606C2531-5AD3-1D47-1E4E-2AC35CB96F06",
+            "lib": true,
+            "pch": true,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": false
+        },
+        "RenderApp": {
+            "additionalDependencies": [],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Render",
+                "Core"
+            ],
+            "dependents": [],
+            "guid": "2D0747EB-6C27-4369-49B3-4AD622DF021A",
+            "lib": false,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": true
+        },
+        "Testing": {
+            "additionalDependencies": [
+                "winmm.lib",
+                "mfplat.lib",
+                "mfreadwrite.lib",
+                "mf.lib",
+                "mfuuid.lib"
+            ],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Engine",
+                "Render",
+                "Core",
+		        "Tool",
+                "Audio"
+            ],
+            "dependents": [],
+            "guid": "10511904-4DE1-0D58-13FA-537173A22D42",
+            "lib": false,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": true
+        },
+        "Tool": {
+            "additionalDependencies": [],
+            "additionalIncludeDirectories": [],
+            "additionalLibraryDirectories": [],
+            "dependencies": [
+                "Core"
+            ],
+            "dependents": [
+		"Testing"
+],
+            "guid": "4B39119C-59CA-33AD-416D-6DE12F9A7CA3",
+            "lib": true,
+            "pch": false,
+            "preprocessorDefinitions": [],
+            "vcpkg": false,
+            "window": false
+        }
+    },
+    "solution_guid": "2C2F74D8-6E8C-0796-6679-5679007174CA",
+    "solution_name": "GCEngine",
+    "startup_project": "RenderApp",
+    "version": "1.17.4"
+}

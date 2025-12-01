@@ -1,0 +1,14 @@
+{
+    "../../res/Tool/pink.jpg": {
+        "height": 64,
+        "width": 64,
+        "x": 0,
+        "y": 0
+    },
+    "../../res/Tool/purple.jpg": {
+        "height": 64,
+        "width": 64,
+        "x": 64,
+        "y": 0
+    }
+}
