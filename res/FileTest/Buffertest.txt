@@ -1,4 +1,0 @@
-This is the begining
-2nd line :: ./%§
-This .txt Is here to test whether the buffer is able to work correctly.
-This is the endbuffer
