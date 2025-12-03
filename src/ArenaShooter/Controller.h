@@ -3,6 +3,7 @@
 
 #include "define.h"
 #include "InputsMethods.h"
+#include "Player.hpp"
 
 namespace gce {
 
@@ -10,7 +11,7 @@ namespace gce {
 	class Controller
 	{
 	public:
-		void Init();
+		void Init(GameObject* player);
 		void Update(float32 deltaTime);
 		void HandleInput(float32 deltaTime);
 
@@ -24,14 +25,11 @@ namespace gce {
 		void SetLeft(bool left) { m_left = left; }
 		void SetRight(bool right) { m_right = right; }
 
-		void MoveForward(float32 deltaTime) { }
-		void MoveBackward(float32 deltaTime) { }
-		void MoveLeft(float32 deltaTime) { }
-		void MoveRight(float32 deltaTime) { }
-
-	protected:
+		void Move(float32 deltaTime, Vector3f32 direction);
 
 	private:
+		GameObject* mp_player;
+
 		Keyboard::Key m_keyUp = Keyboard::Z;
 		Keyboard::Key m_keyDown = Keyboard::S;
 		Keyboard::Key m_keyLeft = Keyboard::Q;

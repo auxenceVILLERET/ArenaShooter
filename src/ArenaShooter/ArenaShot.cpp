@@ -1,5 +1,6 @@
 #include "ArenaShot.h"
 #include "Player.hpp"
+#include "PlayerController.hpp"
 
 Game* Game::Create()
 {
@@ -33,6 +34,7 @@ void Game::Init()
 
     GameObject& player = GameObject::Create(*m_Scene);
     player.AddScript<PlayerMovement>();
+	player.AddScript<PlayerController>();
 
     MeshRenderer& meshPlayer = *player.AddComponent<MeshRenderer>();
     meshPlayer.pGeometry = SHAPES.CUBE;

@@ -2,8 +2,10 @@
 
 namespace gce
 {
-	void Controller::Init()
+	void Controller::Init(GameObject* player)
 	{
+		mp_player = player;
+
 		m_up = m_down = m_left = m_right = false;
 	}
 
@@ -15,13 +17,18 @@ namespace gce
 	void Controller::HandleInput(float32 deltaTime)
 	{
 		if(GetKeyDown(m_keyUp))
-			MoveForward(deltaTime);
+			Move(deltaTime, { 0, 0, 1 });
 		if (GetKeyDown(m_keyDown))
-			MoveBackward(deltaTime);
+			Move(deltaTime, { 0, 0, -1 });
 		if (GetKeyDown(m_keyLeft))
-			MoveLeft(deltaTime);
+			Move(deltaTime, { -1, 0, 0 });
 		if (GetKeyDown(m_keyRight))
-			MoveRight(deltaTime);
+			Move(deltaTime, { 1, 0, 0 });
 
+	}
+
+	void Controller::Move(float32 deltaTime, Vector3f32 direction)
+	{
+		mp_player->GetScript<PlayerMovement>()->Move(direction);
 	}
 }

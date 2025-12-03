@@ -3,6 +3,10 @@
 
 #include <Engine.h>
 #include <Render.h>
+
+
+#include "PlayerController.hpp"
+
 using namespace gce;
 
 struct Game

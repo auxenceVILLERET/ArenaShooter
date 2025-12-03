@@ -12,7 +12,8 @@ using namespace gce;
 DECLARE_SCRIPT(PlayerMovement, ScriptFlag::Start | ScriptFlag::Update)
 
 
-float32 m_speed = 10;
+float32 m_speed = 5;
+float32 m_jumpForce = 100;
 float32 m_deltaTime;
 
 void Start() override
@@ -32,7 +33,6 @@ void Update() override
 
 void Jump()
 {
-
 }
 
 void Move(Vector3f32 direction)
