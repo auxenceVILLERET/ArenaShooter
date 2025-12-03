@@ -29,25 +29,18 @@ void Start() override
 void Update() override
 {
   
-    if (m_isReloading == true)
+    // Fin de reload
+    if (m_isReloading && m_reloadTimer.GetElapsedTime() >= m_reloadCooldown)
     {
-        if (m_reloadTimer.GetElapsedTime() >= m_reloadCooldown)
-        {
-            m_ammo = m_maxAmmo;
-            m_isReloading = false;
-            m_reloadTimer.Pause();
-            m_reloadTimer.Reset();
-        }
-        return;
+        m_isReloading = false;
+        m_ammo = m_maxAmmo;
     }
 
-    
-    if (m_shotTimer.GetElapsedTime() < m_shotCooldown)
-        return;
-
-
-    if (m_isShooting)
-        Shoot();
+    // Cooldown tir
+    if (m_shotTimer.GetElapsedTime() >= m_shotCooldown)
+    {
+        m_isShooting = false;
+    }
 
 }
 
@@ -85,6 +78,18 @@ void Reload()
     std::cout << "Reload" << std::endl;
 
 }
+
+virtual void TryShoot()
+{
+    if (!m_isShooting) return;     // on n’a pas demandé à tirer
+    if (m_isReloading) return;     // en reload
+    if (m_ammo <= 0) return;       // pas de munitions
+    if (m_shotTimer.GetElapsedTime() < m_shotCooldown)
+        return;                    // cooldown pas fini
+
+    Shoot();                       // tir réel (appel override Rifle)
+}
+
 
 END_SCRIPT
 
