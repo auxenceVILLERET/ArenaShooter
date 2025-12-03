@@ -28,11 +28,7 @@ void Start() override
 
 void Update() override
 {
-    if (m_ammo <= 0)
-    {
-        m_isReloading = true;
-    }
-
+  
     if (m_isReloading == true)
     {
         if (m_reloadTimer.GetElapsedTime() >= m_reloadCooldown)
@@ -52,7 +48,6 @@ void Update() override
 
     if (m_isShooting)
         Shoot();
-
 
 }
 
@@ -80,9 +75,15 @@ virtual void EndShot()
 void Reload()
 {
     if (m_isReloading) return;
-
+    if (m_ammo == m_maxAmmo)
+    {
+        std::cout << "Chargeur plein" << std::endl;
+        return;
+    }
     m_isReloading = true;
     m_reloadTimer.Start();
+    std::cout << "Reload" << std::endl;
+
 }
 
 END_SCRIPT

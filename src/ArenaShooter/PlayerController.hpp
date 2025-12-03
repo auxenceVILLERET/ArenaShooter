@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "Core/Maths/Vector3.h"
 #include "GameManager.h"
+#include "Rifle.hpp"
 
 #include "Player.hpp"
 #include "InputsMethods.h"
@@ -25,7 +26,9 @@ Keyboard::Key m_keyLeft = Keyboard::Q;
 Keyboard::Key m_keyRight = Keyboard::D;
 
 Keyboard::Key m_keyJump = Keyboard::SPACE;
+Keyboard::Key m_keyReload = Keyboard::R;
 
+Mouse::Button m_buttonLeft = Mouse::LEFT;
 
 void Start() override
 {
@@ -51,6 +54,13 @@ void HandleInput(float32 deltaTime)
 
 	if (GetKeyDown(m_keyJump))
 		m_pPlayer->GetScript<PlayerMovement>()->Jump();
+	
+	if (GetKeyDown(m_keyReload))
+		m_pPlayer->GetScript<Rifle>()->Reload();
+
+	if (GetButton(m_buttonLeft))
+		m_pPlayer->GetScript<Rifle>()->BeginShot();
+
 }
 
 void Move(Vector3f32 direction)

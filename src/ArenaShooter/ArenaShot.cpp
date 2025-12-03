@@ -1,6 +1,7 @@
 #include "ArenaShot.h"
 #include "Player.hpp"
 #include "PlayerController.hpp"
+#include "Rifle.hpp"
 
 Game* Game::Create()
 {
@@ -35,6 +36,7 @@ void Game::Init()
     GameObject& player = GameObject::Create(*m_Scene);
     player.AddScript<PlayerMovement>();
 	player.AddScript<PlayerController>();
+    player.AddScript<Rifle>();
 
     MeshRenderer& meshPlayer = *player.AddComponent<MeshRenderer>();
     meshPlayer.pGeometry = SHAPES.CUBE;
@@ -48,9 +50,10 @@ void Game::Init()
     meshGround.pPso = p_Pso;
     ground.AddComponent<BoxCollider>();
 
+
+
     GameObject& cam = GameObject::Create(*m_Scene);
     cam.transform.SetWorldPosition({ 0,2,-8 });
-
     Camera& camera = *cam.AddComponent<Camera>();
     camera.SetMainCamera();
     camera.SetType(PERSPECTIVE);

@@ -20,9 +20,10 @@ void Start() override
 
 void Shoot() override
 {
-    m_ammo--;
+    m_ammo -= 1;
     m_shotTimer.Start();
-    std::cout << m_ammo << std::endl;
+    std::cout << "test" << std::endl;
+    EndShot();
 }
 
 END_SCRIPT
