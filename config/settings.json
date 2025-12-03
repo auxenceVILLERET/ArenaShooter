@@ -2,6 +2,7 @@
     "projects": {
         "ArenaShooter": {
             "additionalDependencies": [
+                "winmm.lib",
                 "mfplat.lib",
                 "mf.lib",
                 "mfreadwrite.lib",
@@ -12,6 +13,7 @@
             "additionalLibraryDirectories": [],
             "dependencies": [
                 "Engine",
+                "Core",
                 "Render",
                 "Audio"
             ],
