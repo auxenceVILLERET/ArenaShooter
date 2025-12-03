@@ -9,26 +9,17 @@
 using json = nlohmann::json;
 using namespace gce;
 
-D12PipelineObject* pso = new D12PipelineObject(
-    SHADERS.VERTEX,
-    SHADERS.PIXEL,
-    SHADERS.HULL,
-    SHADERS.DOMAIN_,
-    SHADERS.ROOT_SIGNATURE
-    );
-
 struct MapLoader
 {
-    Map<GameObject*, String> objects;
-    
-    void LoadMap(String const& path, Scene* pScene)
+    static void LoadMap(String const& path, Scene* pScene, D12PipelineObject* pso)
     {
-        if (pScene)
+        if (pScene == nullptr) return;
+
+        Map<GameObject*, String> objects;
         
         std::ifstream file(path);
         if (!file.is_open()) {
             std::cerr << "Impossible d'ouvrir le fichier JSON\n";
-            return geometries;
         }
         json j;
         try {
@@ -36,25 +27,29 @@ struct MapLoader
         }
         catch (json::parse_error& e) {
             std::cerr << "Erreur de parsing: " << e.what() << "\n";
-            return geometries;
         }
 
         json jObjects = j["objects"];
         for (int i = 0; i < jObjects.size(); ++i)
         {
             json currObject = jObjects[i];
-            GameObject& gameObject = GameObject::Create(pScene);
-            MeshRenderer& mesh = gameObject.AddComponent<MeshRenderer>();
+            GameObject& gameObject = GameObject::Create(*pScene);
+            MeshRenderer& mesh = *gameObject.AddComponent<MeshRenderer>();
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
-
-            String texturePath = RES_PATH;
-            texturePath.append("res/Textures/");
-            texturePath.append(currObject["texture"]);
-            Texture texture(texturePath);
-            mesh.pMaterial->useTextureAlbedo = 1;
-            mesh.pMaterial->albedoTextureID = texture.GetTextureID();
-            mesh.pMaterial->subsurface = 0.2f;
+            gameObject.AddComponent<BoxCollider>();
+            gameObject.SetName(currObject["name"].get<String>().c_str());
+            
+            if (currObject.contains("texture") && currObject["texture"].is_string())
+            {
+                std::string texturePath = RES_PATH;
+                texturePath.append("res/Textures/");
+                texturePath.append(currObject["texture"].get<std::string>());
+                Texture* texture = new Texture(texturePath);
+                mesh.pMaterial->albedoTextureID = texture->GetTextureID();
+                mesh.pMaterial->useTextureAlbedo = 1;
+                mesh.pMaterial->subsurface = 0.2f;
+            }
             
             // Pos / Scale / Rot
             {
@@ -75,11 +70,27 @@ struct MapLoader
                 float32 rotZ = currObject["rotation"][1].get<float>();
                 float32 rotW = currObject["rotation"][3].get<float>();
                 Quaternion rotation(rotX, rotY, rotZ, rotW);
-                gameObject.transform.SetLocalRotation()(rotation);
+                Quaternion convert = Quaternion::RotationEuler(Vector3f32(90.0f, 0.0f, -90.0f));
+                gameObject.transform.SetWorldRotation(rotation * convert);
             }
 
-            gameObject.AddComponent<BoxCollider>();
-            gameObject.SetName(currObject["name"]);
+            if (currObject.contains("parent") && currObject["parent"].is_string())
+            {
+                std::pair<GameObject*, String> el;
+                el.first = &gameObject;
+                el.second = currObject["parent"].get<std::string>();
+                objects.insert(el);
+            }
+        }
+
+        for (std::pair<GameObject*, String> el : objects)
+        {
+            for (std::pair<GameObject*, String> el2 : objects)
+            {
+                if (el.first == el2.first) continue;
+                if (el.second == el2.first->GetName())
+                    el.first->SetParent(*el2.first);
+            }
         }
     }
 };

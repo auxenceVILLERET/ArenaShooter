@@ -128,32 +128,36 @@ namespace gce {
 		json mesh = object["mesh"];
 		json vVertices = mesh["vertices"];
 		json indices = mesh["indices"];
-		json textureCoordinates = mesh["uvs"];
+		json uvs = mesh["uvs"];
 
 		int nVertices = (int)vVertices.size() / 3;
 
-		for (int i = 0; i < nVertices; i++)
+		for (int i = 0; i < indices.size(); i++)
 		{
+			int vIndex = indices[i].get<int>();
+
+			// Position from vertex index
 			Vector3f32 pos;
-			pos.x = vVertices[i * 3].get<float>();
-			pos.y = vVertices[i * 3 + 1].get<float>();
-			pos.z = vVertices[i * 3 + 2].get<float>();
+			pos.x = vVertices[vIndex * 3 + 0].get<float>();
+			pos.y = vVertices[vIndex * 3 + 1].get<float>();
+			pos.z = vVertices[vIndex * 3 + 2].get<float>();
 
-			Vector3f32 normal;
-			
+			// UV from loop index
 			Vector2f32 texCoord;
-			texCoord.x = textureCoordinates[i * 2].get<float>();
-			texCoord.y = textureCoordinates[i * 2 + 1].get<float>();
+			texCoord.x = uvs[i * 2 + 0].get<float>();
+			texCoord.y = uvs[i * 2 + 1].get<float>();
 
-			obj::Vertex vertex(pos, normal, texCoord);
-			vertices.PushBack(vertex);
+			// Normals not exported yet
+			Vector3f32 normal = {0,0,0};
+
+			vertices.PushBack(obj::Vertex(pos, normal, texCoord));
 		}
 
 		Mesh m;
 		
-		for (int i = 0; i < indices.size(); i += 3)
+		for (int i = 0; i < indices.size(); i++)
 		{
-			m.indices.PushBack(indices[i]);
+			m.indices.PushBack(i);
 		}
 
 		meshs.PushBack(m);

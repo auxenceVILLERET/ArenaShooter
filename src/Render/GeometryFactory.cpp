@@ -343,7 +343,7 @@ Vertex v[24]{
 				Vertex ve;
 				ve.pos = { v.position.x, v.position.y, v.position.z };
 				ve.normal = { v.normal.x, v.normal.y, v.normal.z };
-				ve.uv = { v.textureCoordinate.x, v.textureCoordinate.y };
+				ve.uv = { v.textureCoordinate.x, 1.f - v.textureCoordinate.y };
 				vertices.PushBack(ve);
 			}
 			for (uint32 index : obj.meshs[i].indices)
@@ -370,8 +370,8 @@ Vertex v[24]{
 			{
 				Vertex ve;
 				ve.pos = { v.position.x, v.position.y, v.position.z };
-				ve.normal = { v.normal.x, v.normal.y, v.normal.z };
-				ve.uv = { v.textureCoordinate.x, v.textureCoordinate.y };
+				ve.normal = { 0, 0, 0 };
+				ve.uv = { v.textureCoordinate.x, 1.f - v.textureCoordinate.y };
 				vertices.PushBack(ve);
 			}
 			for (uint32 index : obj.meshs[i].indices)
