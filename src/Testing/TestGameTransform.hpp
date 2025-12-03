@@ -60,6 +60,7 @@ BEGIN_TEST( GameTransform )
     camera.perspective.nearPlane = 0.001f;
     camera.perspective.farPlane = 500.0f;
     camera.perspective.up = { 0.0f, 1.0f, 0.0f };
+
     cameraObject.AddComponent<BoxCollider>();
     cameraObject.AddComponent<PhysicComponent>()->SetGravityScale( 0.0f );
     cameraObject.AddComponent<SkyBoxComponent>()->Create("res/Textures/GrassCube.dds",{100.0f,100.0f,100.0f});
