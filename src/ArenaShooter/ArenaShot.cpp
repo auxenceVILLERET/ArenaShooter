@@ -2,6 +2,7 @@
 #include "Player.hpp"
 #include "PlayerController.hpp"
 #include "Rifle.hpp"
+#include "BulletRifle.hpp"
 
 Game* Game::Create()
 {
@@ -49,6 +50,7 @@ void Game::Init()
     meshGround.pGeometry = SHAPES.CUBE;
     meshGround.pPso = p_Pso;
     ground.AddComponent<BoxCollider>();
+
 }
 
 int Game::RUN()

@@ -5,6 +5,7 @@
 #include "Script.h"
 #include "GameObject.h"
 #include "Chrono.h"
+using namespace gce;
 
 DECLARE_SCRIPT(Weapon, ScriptFlag::Start | ScriptFlag::Update)
 
@@ -20,6 +21,7 @@ gce::Chrono m_shotTimer;
 bool m_isShooting = false;
 bool m_isReloading = false;
 
+D12PipelineObject* m_PSO = nullptr;
 
 void Start() override
 {
@@ -44,7 +46,7 @@ void Update() override
 }
 
 
-virtual void BeginShot()
+void BeginShot()
 {
     if (m_isShooting) return;
     if (m_isReloading) return;
@@ -60,7 +62,12 @@ virtual void Shoot()
     
 }
 
-virtual void EndShot()
+virtual void Init(D12PipelineObject* pso)
+{
+
+}
+
+void EndShot()
 {
     m_isShooting = false;
     m_shotTimer.Pause();
