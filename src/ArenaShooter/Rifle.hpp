@@ -23,7 +23,6 @@ void Shoot() override
     m_ammo -= 1;
     m_shotTimer.Start();
     std::cout << "test" << std::endl;
-    EndShot();
 }
 
 END_SCRIPT

@@ -60,7 +60,6 @@ void HandleInput(float32 deltaTime)
 
 	if (GetButton(m_buttonLeft))
 		m_pPlayer->GetScript<Rifle>()->BeginShot();
-		m_pPlayer->GetScript<Rifle>()->TryShoot();
 
 }
 
