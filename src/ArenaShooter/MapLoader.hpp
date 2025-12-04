@@ -53,16 +53,16 @@ struct MapLoader
                 }
             }
             
-            if (currObject.contains("texture") && currObject["texture"].is_string())
-            {
-                std::string texturePath = RES_PATH;
-                texturePath.append("res/Textures/");
-                texturePath.append(currObject["texture"].get<std::string>());
-                Texture* texture = new Texture(texturePath);
-                mesh.pMaterial->albedoTextureID = texture->GetTextureID();
-                mesh.pMaterial->useTextureAlbedo = 1;
-                mesh.pMaterial->subsurface = 0.2f;
-            }
+            // if (currObject.contains("texture") && currObject["texture"].is_string())
+            // {
+            //     std::string texturePath = RES_PATH;
+            //     texturePath.append("res/Textures/");
+            //     texturePath.append(currObject["texture"].get<std::string>());
+            //     Texture* texture = new Texture(texturePath);
+            //     mesh.pMaterial->albedoTextureID = texture->GetTextureID();
+            //     mesh.pMaterial->useTextureAlbedo = 1;
+            //     mesh.pMaterial->subsurface = 0.2f;
+            // }
             
             // Pos / Scale / Rot
             {
@@ -83,10 +83,19 @@ struct MapLoader
                 float32 rotZ = currObject["rotation"][2].get<float>();
                 float32 rotW = currObject["rotation"][3].get<float>();
                 Quaternion rotation(rotX, rotY, rotZ, rotW);
-                Quaternion euler = Quaternion::RotationEuler({90.f * PI / 180.f, 0.0f, 0.0f});
-                Quaternion euler2 = Quaternion::RotationEuler({0.0f, -90.f * PI / 180.f, 0.0f});
-                Quaternion final = euler2 * (euler * rotation);
-                gameObject.transform.SetLocalRotation(final);
+
+                Matrix m_engineRot = Matrix::Rotation(rotation);
+                Matrix B;
+                B.SetValue(0, 0, 1.0f);
+                B.SetValue(1, 2, 1.0f);
+                B.SetValue(2, 1, 1.0f);
+                B.SetValue(1, 1, 0.0f);
+                B.SetValue(2, 2, 0.0f);
+
+                Matrix m_blenderRot = B * m_engineRot * B;
+                Quaternion final = Quaternion::RotationMatrix(m_blenderRot);
+                
+                gameObject.transform.SetWorldRotation(final);
             }
 
             if (currObject.contains("parent") && currObject["parent"].is_string())
