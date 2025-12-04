@@ -28,7 +28,7 @@ void Init(D12PipelineObject* pPso)
 	meshPlayer.pPso = pPso;
 	
 	m_pOwner->transform.SetWorldPosition({ 0,2,0 });
-	m_pOwner->transform.SetWorldScale({ 0.8f,1.7f,0.8f });
+	m_pOwner->transform.SetWorldScale({ 1.f, 1.f, 1.f });
 	m_pOwner->AddComponent<BoxCollider>();
 	m_pOwner->AddComponent<PhysicComponent>();
 	m_pOwner->GetComponent<PhysicComponent>()->SetBounciness(0.0f);
@@ -48,9 +48,9 @@ void Init(D12PipelineObject* pPso)
 	GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
 	m_rifle = rifle.AddScript<Rifle>();
 	m_rifle->Init(pPso);
+	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	rifle.SetParent(cam);
 	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
-	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 
 }
 
