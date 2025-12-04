@@ -15,8 +15,8 @@ int8 m_maxAmmo = 0;
 float32 m_reloadCooldown = 0.f;
 float32 m_shotCooldown = 0.f;
 
-gce::Chrono m_reloadTimer;
-gce::Chrono m_shotTimer;
+Chrono m_reloadTimer;
+Chrono m_shotTimer;
 
 bool m_isShooting = false;
 bool m_isReloading = false;
