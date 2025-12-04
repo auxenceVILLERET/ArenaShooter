@@ -23,7 +23,7 @@ private:
 
     Scene* m_Scene;
     WindowParam windowParam;
-    D12PipelineObject* p_Pso;
+    D12PipelineObject* pPso;
 
 };
 

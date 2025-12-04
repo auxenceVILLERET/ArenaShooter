@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "Core/Maths/Vector3.h"
 #include "GameManager.h"
+#include "Shapes.h"
 
 using namespace gce;
 
@@ -16,10 +17,14 @@ DECLARE_SCRIPT(PlayerMovement, ScriptFlag::Start | ScriptFlag::Update)
 
 float32 m_speed = 5;
 float32 m_jumpForce = 15000;
-float32 m_deltaTime;
+Camera* m_camera = nullptr;
 
-void Start() override
+void Init(D12PipelineObject* pPso)
 {
+	MeshRenderer& meshPlayer = *m_pOwner->AddComponent<MeshRenderer>();
+	meshPlayer.pGeometry = SHAPES.CUBE;
+	meshPlayer.pPso = pPso;
+	
 	m_pOwner->transform.SetWorldPosition({ 0,2,0 });
 	m_pOwner->transform.SetWorldScale({ 0.8f,1.7f,0.8f });
 	m_pOwner->AddComponent<BoxCollider>();
@@ -27,16 +32,21 @@ void Start() override
 	m_pOwner->GetComponent<PhysicComponent>()->SetBounciness(0.0f);
 	
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
-	Camera& camera = *cam.AddComponent<Camera>();
-	camera.SetMainCamera();
-	camera.SetType(PERSPECTIVE);
-	camera.perspective.fov = XM_PIDIV4;
-	camera.perspective.nearPlane = 0.001f;
-	camera.perspective.farPlane = 500.0f;
-	camera.perspective.aspectRatio = 600.0f / 400.0f;
-	camera.perspective.up = { 0.0f, 1.0f, 0.0f };
+	m_camera = cam.AddComponent<Camera>();
+	m_camera->SetMainCamera();
+	m_camera->SetType(PERSPECTIVE);
+	m_camera->perspective.fov = XM_PIDIV4;
+	m_camera->perspective.nearPlane = 0.001f;
+	m_camera->perspective.farPlane = 500.0f;
+	m_camera->perspective.aspectRatio = 600.0f / 400.0f;
+	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
 	cam.SetParent(*m_pOwner);
 	cam.transform.SetLocalPosition({0.f, 0.8f, 0.f});
+}
+
+void Start() override
+{
+	
 }
 
 
@@ -55,7 +65,7 @@ bool IsRising()
 
 bool IsAirborne()
 {
-	if (m_pOwner->transform.GetWorldPosition().y <= 0.f)
+	if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
 		return false;
 	else
 		return true;
@@ -75,7 +85,9 @@ void Jump()
 
 void Move(Vector3f32 direction)
 {
-	Vector3f32 offset = direction * m_speed;
+	
+
+	Vector3f32 offset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x) * m_speed;
 	offset *= m_deltaTime;
 
 	if (IsAirborne())
@@ -84,10 +96,20 @@ void Move(Vector3f32 direction)
 	m_pOwner->transform.LocalTranslate(offset);
 }
 
+void Rotate(Vector3f32 rotation)
+{
+	Vector3f32 tilt = rotation * m_deltaTime;
+
+	m_pOwner->transform.LocalRotate(tilt);
+}
+
 void Die()
 {
 
 }
+
+private:
+	float32 m_deltaTime;
 
 
 END_SCRIPT

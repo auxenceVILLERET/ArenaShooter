@@ -20,7 +20,7 @@ void Game::Init()
     GameManager::Create();
     m_Scene = &Scene::Create();
 
-    p_Pso = new D12PipelineObject(
+    pPso = new D12PipelineObject(
         SHADERS.VERTEX,
         SHADERS.PIXEL,
         SHADERS.HULL,
@@ -35,20 +35,16 @@ void Game::Init()
     windowParam.isFullScreen = true;
 
     GameObject& player = GameObject::Create(*m_Scene);
-    player.AddScript<PlayerMovement>();
+    player.AddScript<PlayerMovement>()->Init(pPso);
 	player.AddScript<PlayerController>();
     player.AddScript<Rifle>();
-
-    MeshRenderer& meshPlayer = *player.AddComponent<MeshRenderer>();
-    meshPlayer.pGeometry = SHAPES.CUBE;
-    meshPlayer.pPso = p_Pso;
 
     GameObject& ground = GameObject::Create(*m_Scene);
     ground.transform.SetWorldPosition({ 0,-3,0 });
     ground.transform.SetWorldScale({ 20.f,5.f,20.f });
     MeshRenderer& meshGround = *ground.AddComponent<MeshRenderer>();
     meshGround.pGeometry = SHAPES.CUBE;
-    meshGround.pPso = p_Pso;
+    meshGround.pPso = pPso;
     ground.AddComponent<BoxCollider>();
 
 }

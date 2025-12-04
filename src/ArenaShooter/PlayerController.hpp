@@ -29,19 +29,34 @@ Keyboard::Key m_keyJump = Keyboard::SPACE;
 Keyboard::Key m_keyReload = Keyboard::R;
 
 Mouse::Button m_buttonLeft = Mouse::LEFT;
+Keyboard::Key m_keyEscape = Keyboard::ESCAPE;
+
+Keyboard::Key m_keyRotLeft = Keyboard::A;
+Keyboard::Key m_keyRotRight = Keyboard::E;
+
+Vector3f32 m_previousMousePos;
+float32 m_mouseSensitivity = 0.2f;
+
+private:
+	PlayerMovement* m_pMovement = nullptr;
+	bool m_mouseLock = false;
+
+public:
 
 void Start() override
 {
 	m_pPlayer = m_pOwner;
+	m_pMovement = m_pPlayer->GetScript<PlayerMovement>();
 }
 
 void Update() override
 {
 	m_deltaTime = GameManager::DeltaTime();
-	HandleInput(GameManager::DeltaTime());
+	HandleInput();
+	HandleMousePos();
 }
 
-void HandleInput(float32 deltaTime)
+void HandleInput()
 {
 	if (GetKey(m_keyForward))
 		Move({ 0, 0, 1 });
@@ -61,11 +76,42 @@ void HandleInput(float32 deltaTime)
 	if (GetButton(m_buttonLeft))
 		m_pPlayer->GetScript<Rifle>()->BeginShot();
 
+	if (GetKeyDown(m_keyEscape))
+	{
+		m_mouseLock = !m_mouseLock;
+		if (m_mouseLock)
+			HideMouseCursor();
+		else
+			ShowMouseCursor();
+		Vector2i32 center( GameManager::GetWindow()->GetWidth() / 2, GameManager::GetWindow()->GetHeight() / 2 );
+		SetMousePosition( { center.x, center.y } );
+	}
+}
+
+void HandleMousePos()
+{
+	if (m_mouseLock == false)
+		return;
+	
+	Vector2i32 center( GameManager::GetWindow()->GetWidth() / 2, GameManager::GetWindow()->GetHeight() / 2 );
+	Vector2i32 mousePos = GetMousePosition();
+	Vector2f32 delta = (mousePos - center);
+	delta *= m_mouseSensitivity;
+
+	m_pPlayer->transform.WorldRotate({0.0f, delta.x * m_deltaTime, 0.0f});
+	m_pMovement->m_camera->GetOwner().transform.LocalRotate({delta.y * m_deltaTime, 0.0f, 0.0f});
+	
+	SetMousePosition( { center.x, center.y } );
 }
 
 void Move(Vector3f32 direction)
 {
 	m_pPlayer->GetScript<PlayerMovement>()->Move(direction);
+}
+
+void Rotate(Vector3f32 rotation)
+{
+	m_pPlayer->GetScript<PlayerMovement>()->Rotate(rotation);
 }
 
 END_SCRIPT
