@@ -82,8 +82,11 @@ struct MapLoader
                 float32 rotY = currObject["rotation"][1].get<float>();
                 float32 rotZ = currObject["rotation"][2].get<float>();
                 float32 rotW = currObject["rotation"][3].get<float>();
-                Quaternion rotation(-rotX, rotY, rotZ, rotW);
-                gameObject.transform.SetLocalRotation(rotation);
+                Quaternion rotation(rotX, rotY, rotZ, rotW);
+                Quaternion euler = Quaternion::RotationEuler({90.f * PI / 180.f, 0.0f, 0.0f});
+                Quaternion euler2 = Quaternion::RotationEuler({0.0f, -90.f * PI / 180.f, 0.0f});
+                Quaternion final = euler2 * (euler * rotation);
+                gameObject.transform.SetLocalRotation(final);
             }
 
             if (currObject.contains("parent") && currObject["parent"].is_string())

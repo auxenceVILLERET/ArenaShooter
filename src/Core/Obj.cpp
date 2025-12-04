@@ -142,10 +142,13 @@ namespace gce {
 			pos.y = vVertices[vIndex * 3 + 2].get<float>();
 			pos.z = vVertices[vIndex * 3 + 1].get<float>();
 
-			// UV from loop index
-			Vector2f32 texCoord;
-			texCoord.x = uvs[i * 2 + 0].get<float>();
-			texCoord.y = uvs[i * 2 + 1].get<float>();
+			Vector2f32 texCoord = {0.f, 0.f};
+			if (uvs.empty() == false)
+			{
+				// UV from loop index
+				texCoord.x = uvs[i * 2 + 0].get<float>();
+				texCoord.y = uvs[i * 2 + 1].get<float>();
+			}
 
 			// Normals not exported yet
 			Vector3f32 normal = {0,0,0};
