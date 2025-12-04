@@ -19,6 +19,8 @@ float32 m_speed = 5;
 float32 m_jumpForce = 15000;
 Camera* m_camera = nullptr;
 
+Vector3f32 m_moveOffset = {0,0,0};
+
 void Init(D12PipelineObject* pPso)
 {
 	MeshRenderer& meshPlayer = *m_pOwner->AddComponent<MeshRenderer>();
@@ -78,22 +80,30 @@ void Jump()
 		Force jumpForce;
 		jumpForce.direction = { 0, 1, 0 };
 		jumpForce.norm = m_jumpForce;
+		
+		Vector3f32 jumpDirection = (m_moveOffset * m_speed).Normalize();
+		jumpForce.direction += jumpDirection;
 
 		m_pOwner->GetComponent<PhysicComponent>()->AddForce(jumpForce);
+
+		
 	}
 }
 
 void Move(Vector3f32 direction)
 {
+
+	Vector3f32 offset;
+
+	if (IsAirborne() == false)
+	{
+		offset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x) * m_speed;
+		offset *= m_deltaTime;
+
+		m_pOwner->transform.LocalTranslate(offset);
+	}
+
 	
-
-	Vector3f32 offset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x) * m_speed;
-	offset *= m_deltaTime;
-
-	if (IsAirborne())
-		offset *= 0.25f;
-
-	m_pOwner->transform.LocalTranslate(offset);
 }
 
 void Rotate(Vector3f32 rotation)
@@ -107,6 +117,24 @@ void Die()
 {
 
 }
+
+void MovingForward(float32 direction)
+{
+	m_moveOffset.z = direction;
+}
+void MovingBackward(float32 direction)
+{
+	m_moveOffset.z = direction;
+}
+void MovingLeft(float32 direction)
+{
+	m_moveOffset.x = direction;
+}
+void MovingRight(float32 direction)
+{
+	m_moveOffset.x = direction;
+}
+
 
 private:
 	float32 m_deltaTime;
