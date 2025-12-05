@@ -15,8 +15,6 @@ using namespace gce;
 
 DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update)
 
-
-float32 m_deltaTime;
 float32 m_speed = 5;
 float32 m_jumpForce = 15000;
 Camera* m_camera = nullptr;
@@ -24,7 +22,7 @@ Rifle* m_rifle = nullptr;
 
 void Init(D12PipelineObject* pPso)
 {
-	m_pOwner->transform.SetWorldPosition({ 0,2,0 });
+	m_pOwner->transform.SetWorldPosition({ 0,3,0 });
 	m_pOwner->transform.SetWorldScale({ 1.f, 1.f, 1.f });
 	m_pOwner->AddComponent<BoxCollider>();
 	m_pOwner->AddComponent<PhysicComponent>();
@@ -61,7 +59,6 @@ void Start() override
 void Update() override
 {
 	m_deltaTime = GameManager::DeltaTime();
-	Move(Vector3f32(0.f, 0.f, 1.f));
 }
 
 bool IsRising()
@@ -99,8 +96,8 @@ void Move(Vector3f32 direction)
 	Vector3f32 offset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x) * m_speed;
 	offset *= m_deltaTime;
 
-	if (IsAirborne())
-		offset *= 0.25f;
+	// if (IsAirborne())
+	// 	offset *= 0.25f;
 
 	m_pOwner->transform.LocalTranslate(offset);
 }

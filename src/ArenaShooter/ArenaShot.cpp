@@ -60,34 +60,11 @@ void Game::Init()
     windowParam.height = 720;
     windowParam.isFullScreen = true;
 
-    // GameObject& player = GameObject::Create(*m_Scene);
-    // player.AddScript<PlayerMovement>();
-    //
-    // MeshRenderer& meshPlayer = *player.AddComponent<MeshRenderer>();
-    // meshPlayer.pGeometry = SHAPES.CUBE;
-    // meshPlayer.pPso = p_Pso;
-    //
-    // GameObject& ground = GameObject::Create(*m_Scene);
-    // ground.transform.SetWorldPosition({ 0,-3,0 });
-    // ground.transform.SetWorldScale({ 5,5,5 });
-    // MeshRenderer& meshGround = *ground.AddComponent<MeshRenderer>();
-    // meshGround.pGeometry = SHAPES.CUBE;
-    // meshGround.pPso = p_Pso;
-    // ground.AddComponent<BoxCollider>();
-
-    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", m_Scene, p_Pso);
+    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", m_Scene, pPso);
 
     GameObject& player = GameObject::Create(*m_Scene);
     player.AddScript<Player>()->Init(pPso);
 	player.AddScript<PlayerController>();
-
-    GameObject& ground = GameObject::Create(*m_Scene);
-    ground.transform.SetWorldPosition({ 0,-3,0 });
-    ground.transform.SetWorldScale({ 20.f,5.f,20.f });
-    MeshRenderer& meshGround = *ground.AddComponent<MeshRenderer>();
-    meshGround.pGeometry = SHAPES.CUBE;
-    meshGround.pPso = pPso;
-    ground.AddComponent<BoxCollider>();
 
 }
 
