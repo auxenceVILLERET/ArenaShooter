@@ -14,7 +14,7 @@ DECLARE_CHILD_SCRIPT(Rifle, Weapon, ScriptFlag::Start | ScriptFlag::Update)
 
 void Start() override
 {
-    m_shotCooldown = 0.1f;
+    m_shotCooldown = 0.3f;
     m_reloadCooldown = 1.5f;
 }
 
@@ -25,7 +25,7 @@ void Shoot() override
 
     GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
     bullet.AddScript<BulletRifle>()->Init(m_pOwner->transform.GetWorldForward(),m_pOwner->transform.GetWorldPosition(), 20.f, m_PSO);
-    std::cout << m_heat << std::endl;
+
 }
 
 void Init(D12PipelineObject* pso) override

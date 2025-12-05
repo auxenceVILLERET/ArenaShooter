@@ -39,10 +39,28 @@ void Update() override
 {
     float32 dt = GameManager::DeltaTime();
 
-    if (m_isShooting == false)
+    std::cout << m_heat << std::endl;
+    
+    if (m_heat >= m_maxHeat)
+    {
+        m_isOverheated = true;
+    }
+
+    if (m_isShooting == false && m_isOverheated == false)
+    {
+        m_heat -= m_coolRate * dt + 2.f;
+    }
+
+    if (m_isOverheated == true)
     {
         m_heat -= m_coolRate * dt;
+        if (m_heat <= 30.f)
+        {
+            m_isOverheated = false;
+            return;
+        }
     }
+
     // Fin de reload
     if (m_isReloading && m_reloadTimer.GetElapsedTime() >= m_reloadCooldown)
     {
@@ -53,9 +71,14 @@ void Update() override
     }
 
     // Cooldown tir
-    if (m_isShooting && m_shotTimer.GetElapsedTime() >= m_shotCooldown && m_heat < m_maxHeat)
+    if (m_isShooting && m_shotTimer.GetElapsedTime() >= m_shotCooldown && m_heat <= m_maxHeat && m_isOverheated == false)
     {
         EndShot();
+    }
+
+    if (m_heat <= 0.f)
+    {
+        m_heat = 0.f;
     }
 
 }
