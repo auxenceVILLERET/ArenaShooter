@@ -72,7 +72,7 @@ void Game::Init()
     // meshGround.pPso = p_Pso;
     // ground.AddComponent<BoxCollider>();
 
-    MapLoader::LoadMap(RES_PATH"res/Maps/map_test2.json", m_Scene, p_Pso);
+    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", m_Scene, p_Pso);
     
     GameObject& cam = GameObject::Create(*m_Scene);
     cam.transform.SetWorldPosition({ 0,2,-8 });

@@ -53,16 +53,16 @@ struct MapLoader
                 }
             }
             
-            // if (currObject.contains("texture") && currObject["texture"].is_string())
-            // {
-            //     std::string texturePath = RES_PATH;
-            //     texturePath.append("res/Textures/");
-            //     texturePath.append(currObject["texture"].get<std::string>());
-            //     Texture* texture = new Texture(texturePath);
-            //     mesh.pMaterial->albedoTextureID = texture->GetTextureID();
-            //     mesh.pMaterial->useTextureAlbedo = 1;
-            //     mesh.pMaterial->subsurface = 0.2f;
-            // }
+            if (currObject.contains("texture") && currObject["texture"].is_string())
+            {
+                std::string texturePath = RES_PATH;
+                texturePath.append("res/Textures/");
+                texturePath.append(currObject["texture"].get<std::string>());
+                Texture* texture = new Texture(texturePath);
+                mesh.pMaterial->albedoTextureID = texture->GetTextureID();
+                mesh.pMaterial->useTextureAlbedo = 1;
+                mesh.pMaterial->subsurface = 0.2f;
+            }
             
             // Pos / Scale / Rot
             {
