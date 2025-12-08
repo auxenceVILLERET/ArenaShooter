@@ -44,4 +44,4 @@ void CollisionEnter(GameObject* pOther) override
 }
 
 END_SCRIPT
-#endif // !1
+#endif

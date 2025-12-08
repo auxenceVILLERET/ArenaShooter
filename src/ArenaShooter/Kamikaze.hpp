@@ -8,7 +8,7 @@
 
 using namespace gce;
 
-DECLARE_CHILD_SCRIPT(Kamikaze, Enemy, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_CHILD_SCRIPT(Kamikaze, Enemy, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
 void Start() override
 {
@@ -32,7 +32,10 @@ void Init(D12PipelineObject* pso) override
     mesh.pPso = pso;
     m_pOwner->transform.SetWorldPosition({ 5.f,0.5f,0.f });
     m_pOwner->transform.SetWorldScale({ 1.f,1.f,1.f });
+}
 
+void CollisionEnter(GameObject* other) override
+{
     
 }
 
