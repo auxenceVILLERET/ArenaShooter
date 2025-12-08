@@ -12,12 +12,12 @@ DECLARE_CHILD_SCRIPT(Kamikaze, Enemy, ScriptFlag::Start | ScriptFlag::Update | S
 
 void Start() override
 {
-    m_HealthMax = new Health<float>(100.f);
+    m_Hp = new Health<float>(100.f);
 }
 
 void Update() override
 {
-
+    Enemy::Update();
 }
 
 void Shoot() override
@@ -34,10 +34,6 @@ void Init(D12PipelineObject* pso) override
     m_pOwner->transform.SetWorldScale({ 1.f,1.f,1.f });
 }
 
-void CollisionEnter(GameObject* other) override
-{
-    
-}
 
 
 END_SCRIPT

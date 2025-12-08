@@ -11,7 +11,7 @@ using namespace gce;
 
 DECLARE_SCRIPT(Enemy, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
-Health<float>* m_HealthMax;
+Health<float>* m_Hp;
 
 void Start() override
 {
@@ -20,6 +20,14 @@ void Start() override
 
 void Update() override
 {
+	if (m_Hp->GetHealth() <= 0.f)
+	{
+		m_Hp->SetIsAlive(false);
+	}
+
+	if (m_Hp->GetIsAlive() == true) return;
+
+	m_pOwner->Destroy();
 
 }
 
@@ -36,10 +44,10 @@ virtual void Init(D12PipelineObject* pso)
 
 void CollisionEnter(GameObject* pOther) override
 {
-	if(pOther->GetScript<Projectile>())
+	if(pOther->GetScript<BulletRifle>())
 	{
-		m_HealthMax->TakeDamage(pOther->GetScript<Projectile>()->GetDmgBullet());
-		std::cout << m_HealthMax << std::endl;
+		m_Hp->TakeDamage(pOther->GetScript<BulletRifle>()->GetDmgBullet());
+		std::cout << m_Hp->GetHealth() << std::endl;
 	}
 }
 

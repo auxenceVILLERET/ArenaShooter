@@ -14,7 +14,7 @@ DECLARE_CHILD_SCRIPT(BulletRifle, Projectile, ScriptFlag::Start | ScriptFlag::Up
 
 void Start() override
 {
-    m_dmgBullet = 10.f;
+  
 }
 
 void Update() override
@@ -28,7 +28,7 @@ void Init(Vector3f32 dir,Vector3f32 pos, float32 speed, D12PipelineObject* pso) 
     m_Position = pos;
     m_Speed = speed;
     m_MaxDistance = 30.f;
-
+    m_dmgBullet = 10.f;
 
     m_pOwner->AddComponent<SphereCollider>();
     m_pOwner->AddComponent<PhysicComponent>()->SetGravityScale(0.0f);

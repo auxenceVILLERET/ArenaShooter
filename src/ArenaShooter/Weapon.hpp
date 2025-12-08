@@ -39,8 +39,6 @@ void Update() override
 {
     float32 dt = GameManager::DeltaTime();
 
-    std::cout << m_heat << std::endl;
-    
     if (m_heat >= m_maxHeat)
     {
         m_isOverheated = true;
