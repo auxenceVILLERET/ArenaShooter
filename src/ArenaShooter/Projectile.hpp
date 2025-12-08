@@ -36,7 +36,6 @@ void Update() override
 void CollisionEnter(GameObject* other) override
 {
     m_pOwner->Destroy();
-    std::cout << "test" << std::endl;
 }
 
 virtual void Init(Vector3f32 dir,Vector3f32 pos, float32 speed, D12PipelineObject* pso)

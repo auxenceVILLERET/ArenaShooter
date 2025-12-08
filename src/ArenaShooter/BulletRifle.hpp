@@ -27,7 +27,7 @@ void Init(Vector3f32 dir,Vector3f32 pos, float32 speed, D12PipelineObject* pso) 
     m_Direction = dir;
     m_Position = pos;
     m_Speed = speed;
-    m_MaxDistance = 10.f;
+    m_MaxDistance = 30.f;
 
     MeshRenderer& meshProjectile = *m_pOwner->AddComponent<MeshRenderer>();
     meshProjectile.pGeometry = SHAPES.SPHERE;

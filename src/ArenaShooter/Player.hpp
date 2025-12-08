@@ -10,6 +10,7 @@
 #include "GameManager.h"
 #include "Shapes.h"
 #include "Rifle.hpp"
+#include "Shotgun.hpp"
 
 using namespace gce;
 
@@ -20,6 +21,7 @@ float32 m_speed = 5;
 float32 m_jumpForce = 15000;
 Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
+Shotgun* m_shotgun = nullptr;
 
 void Init(D12PipelineObject* pPso)
 {
@@ -42,12 +44,19 @@ void Init(D12PipelineObject* pPso)
 	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
 	
 
-	GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
+	/*GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
 	m_rifle = rifle.AddScript<Rifle>();
 	m_rifle->Init(pPso);
 	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	rifle.SetParent(cam);
-	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });*/
+
+	GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
+	m_shotgun = shotgun.AddScript<Shotgun>();
+	m_shotgun->Init(pPso);
+	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+	shotgun.SetParent(cam);
+	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 
 }
 
