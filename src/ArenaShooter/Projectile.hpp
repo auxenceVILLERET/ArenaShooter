@@ -16,6 +16,7 @@ float32 m_Speed;
 float32 m_MaxDistance;
 float32 m_CurrentDistance = 0.f;
 float32 m_DeltaTime;
+float32 m_dmgBullet;
 
 
 void Start() override
@@ -55,6 +56,11 @@ void UpdateDistance()
 
     if (m_CurrentDistance >= m_MaxDistance)
         m_pOwner->Destroy();
+}
+
+float32 GetDmgBullet()
+{
+    return m_dmgBullet;
 }
 
 END_SCRIPT

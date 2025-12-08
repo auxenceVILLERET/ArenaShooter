@@ -71,10 +71,10 @@ void HandleInput()
 		m_pPlayer->GetScript<Player>()->Jump();
 	
 	if (GetKeyDown(m_keyReload))
-		m_pPlayer->GetScript<Player>()->m_shotgun->Reload();
+		m_pPlayer->GetScript<Player>()->m_rifle->Reload();
 
 	if (GetButton(m_buttonLeft))
-		m_pPlayer->GetScript<Player>()->m_shotgun->BeginShot();
+		m_pPlayer->GetScript<Player>()->m_rifle->BeginShot();
 
 	if (GetKeyDown(m_keyEscape))
 	{

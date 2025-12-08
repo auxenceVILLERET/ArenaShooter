@@ -44,19 +44,19 @@ void Init(D12PipelineObject* pPso)
 	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
 	
 
-	/*GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
+	GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
 	m_rifle = rifle.AddScript<Rifle>();
 	m_rifle->Init(pPso);
 	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	rifle.SetParent(cam);
-	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });*/
+	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 
-	GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
+	/*GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
 	m_shotgun = shotgun.AddScript<Shotgun>();
 	m_shotgun->Init(pPso);
 	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	shotgun.SetParent(cam);
-	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });*/
 
 }
 

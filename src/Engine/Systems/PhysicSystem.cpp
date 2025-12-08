@@ -29,8 +29,10 @@ void PhysicSystem::HandlePhysicCollision3D()
 			if (sphere2.m_created == false || sphere2.IsActive() == false) continue;
 
 			bool flag = 0; //0 => sphere1 / 1 => sphere2
-			if (!sphere1.GetOwner().HasComponent<PhysicComponent>())flag = 1;
-			if (!sphere2.GetOwner().HasComponent<PhysicComponent>() && flag == 1)continue;
+			if (!sphere1.GetOwner().HasComponent<PhysicComponent>())
+				flag = 1;
+			if (!sphere2.GetOwner().HasComponent<PhysicComponent>() && flag == 1)
+				continue;
 
 			CollideResult intersects = Physics::IntersectSphereSphere(sphere1.m_worldSphere, sphere2.m_worldSphere);
 
@@ -930,7 +932,7 @@ void PhysicSystem::Collide3DSphereSphere(SphereCollider& firstSphere, SphereColl
 	PhysicComponent*  pPhysComp1 = firstSphere.GetOwner().GetComponent<PhysicComponent>();
 	PhysicComponent* pPhysComp2 = secondSphere.GetOwner().GetComponent<PhysicComponent>();
 	
-	if (pPhysComp2)
+	if (pPhysComp2 && pPhysComp1)
 	{
 		float32 restitution = (pPhysComp1->m_bounciness + pPhysComp2->m_bounciness) * 0.5f;
 
@@ -967,7 +969,7 @@ void PhysicSystem::Collide3DSphereSphere(SphereCollider& firstSphere, SphereColl
 			-collisionDir, 0.5f);
 
 	}
-	else
+	else if (pPhysComp1)
 	{
 		Vector3f32 previousVelocity = pPhysComp1->m_velocity; 
 
@@ -1072,7 +1074,7 @@ void PhysicSystem::Collide3DSphereBox(bool flag, SphereCollider& sphereC, BoxCol
 		flagModifier = -1;
 	}
 
-	if (pPhysComp2)
+	if (pPhysComp2 && pPhysComp1)
 	{
 		float32 restitution = (pPhysComp1->m_bounciness + pPhysComp2->m_bounciness) * 0.5f;
 
@@ -1111,7 +1113,7 @@ void PhysicSystem::Collide3DSphereBox(bool flag, SphereCollider& sphereC, BoxCol
 		if ((newAngVel2 - pPhysComp2->m_angularVelocity).Norm() > 0.1) pPhysComp2->m_angularVelocity = newAngVel2;*/
 
 	}
-	else
+	else if (pPhysComp1)
 	{
 		Vector3f32 previousVelocity = pPhysComp1->m_velocity;
 
@@ -1244,7 +1246,7 @@ void PhysicSystem::Collide3DBoxBox(bool flag, BoxCollider& box1, BoxCollider& bo
 	PhysicComponent* pPhysComp1 = box1.GetOwner().GetComponent<PhysicComponent>();
 	PhysicComponent* pPhysComp2 = box2.GetOwner().GetComponent<PhysicComponent>();
 
-	if (pPhysComp2)
+	if (pPhysComp2 && pPhysComp1)
 	{
 		float32 restitution = (pPhysComp1->m_bounciness + pPhysComp2->m_bounciness) * 0.5f;
 
@@ -1261,7 +1263,7 @@ void PhysicSystem::Collide3DBoxBox(bool flag, BoxCollider& box1, BoxCollider& bo
 		pPhysComp1->m_velocity = newVel1;
 		pPhysComp2->m_velocity = newVel2;
 	}
-	else
+	else if (pPhysComp1)
 	{
 		if (flag)
 		{

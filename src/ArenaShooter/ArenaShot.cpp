@@ -3,6 +3,7 @@
 #include "PlayerController.hpp"
 #include "Rifle.hpp"
 #include "BulletRifle.hpp"
+#include "Kamikaze.hpp"
 
 Game* Game::Create()
 {
@@ -37,6 +38,11 @@ void Game::Init()
     GameObject& player = GameObject::Create(*m_Scene);
     player.AddScript<Player>()->Init(pPso);
 	player.AddScript<PlayerController>();
+
+    GameObject& kamikaze = GameObject::Create(*m_Scene);
+    kamikaze.AddScript<Kamikaze>()->Init(pPso);
+    kamikaze.AddComponent<BoxCollider>();
+
 
     GameObject& ground = GameObject::Create(*m_Scene);
     ground.transform.SetWorldPosition({ 0,-3,0 });

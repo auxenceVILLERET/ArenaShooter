@@ -21,5 +21,6 @@ private:
 	bool m_IsAlive = true;
 };
 
+#include "Health.inl"
 #endif // !HEALTH_H_INCLUDED
 
