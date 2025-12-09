@@ -16,7 +16,6 @@ using namespace gce;
 
 DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update)
 
-
 float32 m_speed = 5;
 float32 m_jumpForce = 15000;
 Camera* m_camera = nullptr;
@@ -27,10 +26,10 @@ Vector3f32 m_moveOffset = {0,0,0};
 
 void Init(D12PipelineObject* pPso)
 {
-	m_pOwner->transform.SetWorldPosition({ 0,2,0 });
+	m_pOwner->transform.SetWorldPosition({ 0,3,0 });
 	m_pOwner->transform.SetWorldScale({ 1.f, 1.f, 1.f });
 	m_pOwner->AddComponent<BoxCollider>();
-	m_pOwner->AddComponent<PhysicComponent>();
+	m_pOwner->AddComponent<PhysicComponent>()->SetMass(80.0f);
 	m_pOwner->GetComponent<PhysicComponent>()->SetBounciness(0.0f);
 	
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
@@ -117,18 +116,16 @@ void Jump()
 
 void Move(Vector3f32 direction)
 {
-
-	Vector3f32 offset;
-
-	if (IsAirborne() == false)
-	{
-		offset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x) * m_speed;
-		offset *= m_deltaTime;
-
-		m_pOwner->transform.LocalTranslate(offset);
-	}
-
+	Vector3f32 offset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x) * m_speed;
 	
+	PhysicComponent& phys = *m_pOwner->GetComponent<PhysicComponent>();
+	Vector3f32 vel = phys.GetVelocity();
+	phys.SetVelocity({offset.x, vel.y, offset.z} );
+
+	// if (IsAirborne())
+	// 	offset *= 0.25f;
+
+	// m_pOwner->transform.LocalTranslate(offset);
 }
 
 void Rotate(Vector3f32 rotation)

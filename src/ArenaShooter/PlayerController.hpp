@@ -94,6 +94,18 @@ void HandleInput()
 		LateralMovement(0);
 	}
 
+	Vector3f32 direction = {0, 0, 0};
+	
+	// if (GetKey(m_keyForward))
+	// 	direction += { 0, 0, 1 };
+	// if (GetKey(m_keyBackward))
+	// 	direction += { 0, 0, -1 };
+	// if (GetKey(m_keyLeft))
+	// 	direction += { -1, 0, 0 };
+	// if (GetKey(m_keyRight))
+	// 	direction += { 1, 0, 0 };
+
+	Move(direction);
 
 	if (GetKeyDown(m_keyJump))
 		m_pPlayer->GetScript<Player>()->Jump();
