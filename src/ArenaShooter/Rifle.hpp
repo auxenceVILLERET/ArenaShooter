@@ -18,6 +18,12 @@ void Start() override
     m_reloadCooldown = 1.5f;
     MeshRenderer& meshProjectileRifle = *m_pOwner->AddComponent<MeshRenderer>();
     meshProjectileRifle.pGeometry = SHAPES.SPHERE;
+
+    for (int i = 0; i < 50; i++)
+    {
+        GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
+        m_pProjectiles.PushBack(bullet.AddScript<BulletRifle>());
+    }
 }
 
 void Shoot() override
@@ -25,9 +31,12 @@ void Shoot() override
     m_shotTimer.Reset();
     m_shotTimer.Start();
     m_heat += m_heatPerShot;
-    
-    GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
-    bullet.AddScript<BulletRifle>()->Init(m_pOwner->transform.GetWorldForward(),m_pOwner->transform.GetWorldPosition(), 20.f);
+
+    Projectile* proj = GetFirstAvailableProjectile();
+    BulletRifle* bulletRifle = dynamic_cast<BulletRifle*>(proj);
+
+    if (bulletRifle)
+        bulletRifle->Init(m_pOwner->transform.GetWorldForward(),m_pOwner->transform.GetWorldPosition(), 20.f);
 
 }
 

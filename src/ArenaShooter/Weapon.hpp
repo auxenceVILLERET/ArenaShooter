@@ -5,6 +5,7 @@
 #include "Script.h"
 #include "GameObject.h"
 #include "Chrono.h"
+#include "Projectile.hpp"
 using namespace gce;
 
 DECLARE_SCRIPT(Weapon, ScriptFlag::Start | ScriptFlag::Update)
@@ -21,14 +22,14 @@ bool m_isReloading = false;
 
 D12PipelineObject* m_PSO = nullptr;
 
-
-
 float32 m_heat = 0.f;          
 float32 m_maxHeat = 100.f;     
 float32 m_heatPerShot = 10.f;  
 float32 m_coolRate = 8.f;     
 
 bool m_isOverheated = false;
+
+Vector<Projectile*> m_pProjectiles;
 
 void Start() override
 {
@@ -81,7 +82,6 @@ void Update() override
 
 }
 
-
 void BeginShot()
 {
     if (m_isShooting) return;
@@ -107,6 +107,17 @@ void EndShot()
     m_isShooting = false;
     m_shotTimer.Pause();
     m_shotTimer.Reset();
+}
+
+virtual Projectile* GetFirstAvailableProjectile()
+{
+    for (Projectile* projectile : m_pProjectiles)
+    {
+        if (!projectile->IsActive())
+            return projectile;
+    }
+
+    return nullptr;
 }
 
 void Reload()

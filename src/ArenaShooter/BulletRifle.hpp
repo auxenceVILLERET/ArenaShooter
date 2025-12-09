@@ -14,7 +14,19 @@ DECLARE_CHILD_SCRIPT(BulletRifle, Projectile, ScriptFlag::Start | ScriptFlag::Up
 
 void Start() override
 {
-  
+    MeshRenderer& meshProjectile = *m_pOwner->AddComponent<MeshRenderer>();
+    meshProjectile.pGeometry = SHAPES.SPHERE;
+    m_pOwner->transform.SetWorldPosition({0.0f, 0.0f, 0.0f});
+    m_pOwner->transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+    m_pOwner->SetName("Riffle bullet");
+
+    m_pOwner->AddComponent<SphereCollider>();
+    m_pOwner->AddComponent<PhysicComponent>()->SetGravityScale(0.0f);
+
+    m_MaxDistance = 30.f;
+    m_dmgBullet = 10.f;
+
+    m_pOwner->SetActive(false);
 }
 
 void Update() override
@@ -24,21 +36,7 @@ void Update() override
 
 void Init(Vector3f32 dir,Vector3f32 pos, float32 speed) override
 {
-    m_Direction = dir;
-    m_Position = pos;
-    m_Speed = speed;
-    m_MaxDistance = 30.f;
-    m_dmgBullet = 10.f;
-
-    m_pOwner->AddComponent<SphereCollider>();
-    m_pOwner->AddComponent<PhysicComponent>()->SetGravityScale(0.0f);
-
-    MeshRenderer& meshProjectile = *m_pOwner->AddComponent<MeshRenderer>();
-    meshProjectile.pGeometry = SHAPES.SPHERE;
-    m_pOwner->transform.SetWorldPosition(m_Position);
-    m_pOwner->transform.SetWorldScale({ 0.3f,0.3f,0.3f });
-    m_pOwner->SetName("Riffle bullet");
-
+    Projectile::Init(dir,pos,speed);
 }
 
 END_SCRIPT

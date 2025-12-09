@@ -14,7 +14,14 @@ DECLARE_CHILD_SCRIPT(BulletShotgun, Projectile, ScriptFlag::Start | ScriptFlag::
 
 void Start() override
 {
+    MeshRenderer& meshProjectile = *m_pOwner->AddComponent<MeshRenderer>();
+    meshProjectile.pGeometry = SHAPES.SPHERE;
+    m_pOwner->transform.SetWorldPosition({0.0f, 0.0f, 0.0f});
+    m_pOwner->transform.SetWorldScale({ 0.2f, 0.2f, 0.2f });
 
+    m_MaxDistance = 15.f;
+
+    m_pOwner->SetActive(false);
 }
 
 void Update() override
@@ -24,15 +31,7 @@ void Update() override
 
 void Init(Vector3f32 dir, Vector3f32 pos, float32 speed) override
 {
-    m_Direction = dir;
-    m_Position = pos;
-    m_Speed = speed;
-    m_MaxDistance = 15.f; // Les projectiles de shotgun ont une port�e plus courte
-
-    MeshRenderer& meshProjectile = *m_pOwner->AddComponent<MeshRenderer>();
-    meshProjectile.pGeometry = SHAPES.SPHERE; // On peut choisir une autre forme pour les projectiles
-    m_pOwner->transform.SetWorldPosition(m_Position);
-    m_pOwner->transform.SetWorldScale({ 0.2f, 0.2f, 0.2f }); // Taille des projectiles
+    Projectile::Init(dir, pos, speed);
 }
 
 END_SCRIPT

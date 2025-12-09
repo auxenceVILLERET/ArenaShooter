@@ -43,17 +43,17 @@ void Start() override
 	m_camera->perspective.aspectRatio = 600.0f / 400.0f;
 	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
 
-	GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
-	m_rifle = rifle.AddScript<Rifle>();
-	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
-	rifle.SetParent(cam);
-	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	// GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
+	// m_rifle = rifle.AddScript<Rifle>();
+	// rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+	// rifle.SetParent(cam);
+	// rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 
-	/*GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
+	GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
 	m_shotgun = shotgun.AddScript<Shotgun>();
 	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	shotgun.SetParent(cam);
-	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });*/
+	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 
 }
 

@@ -22,7 +22,13 @@ void Start() override
     m_reloadCooldown = 2.0f;   
 
     MeshRenderer& meshProjectileShotgun = *m_pOwner->AddComponent<MeshRenderer>();
-    meshProjectileShotgun.pGeometry = SHAPES.CYLINDER; 
+    meshProjectileShotgun.pGeometry = SHAPES.CYLINDER;
+
+    for (int i = 0; i < 50; i++)
+    {
+        GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
+        m_pProjectiles.PushBack(bullet.AddScript<BulletShotgun>());
+    }
 }
 
 void Shoot() override
@@ -48,9 +54,11 @@ void Shoot() override
             + up * spreadDirection.y
             + forward * spreadDirection.z;
 
-        // Cr�ation du projectile
-        GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
-        bullet.AddScript<BulletShotgun>()->Init(worldDirection, m_pOwner->transform.GetWorldPosition(), 25.f, m_PSO);
+        Projectile* proj = GetFirstAvailableProjectile();
+        BulletShotgun* bulletShotgun = dynamic_cast<BulletShotgun*>(proj);
+
+        if (bulletShotgun)
+            bulletShotgun->Init(worldDirection,m_pOwner->transform.GetWorldPosition(), 20.f);
     }
 }
 
