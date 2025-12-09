@@ -14,10 +14,10 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionStay)
 
 float32 m_speed = 5;
-float32 m_jumpForce = 15000;
+float32 m_jumpForce = 50000;
 Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
@@ -82,7 +82,7 @@ bool IsRising()
 
 bool IsAirborne()
 {
-	if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
+	//if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
 	{
 		Force land;
 		land.direction = (m_moveOffset * m_speed).Normalize();
@@ -91,7 +91,7 @@ bool IsAirborne()
 		return false;
 		m_pOwner->GetComponent<PhysicComponent>()->AddForce(land);
 	}
-	else
+	/*else*/
 	{
 		return true;
 	}
@@ -99,7 +99,7 @@ bool IsAirborne()
 
 void Jump()
 {
-	if (IsAirborne() == false && IsRising() == false)
+	/*if (IsAirborne() == false && IsRising() == false)*/
 	{
 		Force jumpForce;
 		jumpForce.direction = { 0, 1, 0 };
@@ -149,6 +149,13 @@ void MovingLaterally(float32 direction)
 	m_moveOffset.x = direction;
 }
 
+void CollisionStay(GameObject* other) override
+{
+	if(other->GetName() == "Ground")
+	{
+		   Console::Log("On Ground");
+	}
+}
 
 private:
 	float32 m_deltaTime;

@@ -8,8 +8,6 @@
 #include "Core/nlohmann.hpp"
 #include "Core/Maths/Quaternion.h"
 
-#include "Health.hpp"
-
 using json = nlohmann::json;
 using namespace gce;
 
@@ -42,15 +40,17 @@ struct MapLoader
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
             gameObject.SetName(currObject["name"].get<String>().c_str());
+            gameObject.SetName("Ground");
+			std::cout << "Loaded Object: " << gameObject.GetName() << "\n";
 
             if (currObject["has_collider"].get<bool>() == true)
             {
                 gameObject.AddComponent<BoxCollider>();
-                if (currObject["destructible"].get<bool>() == true)
+                /*if (currObject["destructible"].get<bool>() == true)
                 {
                     Health* h = gameObject.AddScript<Health>();
                     h->maxHealth = 1.0f;
-                }
+                }*/
             }
             
             if (currObject.contains("texture") && currObject["texture"].is_string())
