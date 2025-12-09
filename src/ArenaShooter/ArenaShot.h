@@ -21,6 +21,7 @@ private:
 
     inline static Game* game_Instance = nullptr;
 
+    SceneManager* m_SceneManager;
     Scene* m_Scene;
     WindowParam windowParam;
     D12PipelineObject* pPso;

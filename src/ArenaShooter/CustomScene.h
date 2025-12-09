@@ -3,15 +3,21 @@
 
 #include "define.h"
 
+using namespace gce;
+
+class gce::GameObject;
+
 class CustomScene
 {
 public:
-	virtual void Init();
+	GameObject& AddObject();
+	void SetActive();
+	void SetInactive();
 
 protected:
-	String m_name;
+	
 private:
-
+	std::vector<GameObject> m_vObject;
 };
 
 
