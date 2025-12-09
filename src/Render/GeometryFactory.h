@@ -5,6 +5,10 @@
 #include "define.h"
 #include "Geometry.h"
 
+#include "nlohmann.hpp"
+
+using json = nlohmann::json;
+
 namespace gce
 {
 	class Geometry;
@@ -24,6 +28,7 @@ namespace gce
 		static Geometry* Create2DPlane();
 
 		static Geometry* LoadGeometry(StringView path);
+		static Geometry* LoadJsonGeometry(json const& object);
 	private:
 		static Vertex MidPoint(Vertex const& v0, Vertex const& v1);
 		static void Subdivide(Vector<uint32>& indices, Vector<Vertex>& vertices);

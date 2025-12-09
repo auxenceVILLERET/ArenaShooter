@@ -6,6 +6,10 @@
 #include "Maths/Vector2.hpp" 
 #include "Maths/Vector3.h" 
 
+#include "nlohmann.hpp"
+
+using json = nlohmann::json;
+
 namespace gce
 {
 	class File;
@@ -38,6 +42,7 @@ namespace gce
 		~Obj();
 
 		void LoadObj();
+		void LoadJsonObj(json const& object);
 
 		Vector<Mesh> meshs;
 		Vector<obj::Vertex> vertices;
@@ -46,6 +51,7 @@ namespace gce
 
 	private:
 		void FreeVectors();
+		
 		File* pFile;
 		String m_path;
 		Vector<Vector3f32> m_tempPosVect;

@@ -343,7 +343,35 @@ Vertex v[24]{
 				Vertex ve;
 				ve.pos = { v.position.x, v.position.y, v.position.z };
 				ve.normal = { v.normal.x, v.normal.y, v.normal.z };
-				ve.uv = { v.textureCoordinate.x, v.textureCoordinate.y };
+				ve.uv = { v.textureCoordinate.x, 1.f - v.textureCoordinate.y };
+				vertices.PushBack(ve);
+			}
+			for (uint32 index : obj.meshs[i].indices)
+				indices.PushBack(index);
+		}
+
+		customGeo = new Geometry(vertices.Data(), vertices.Size(), indices.Data(), indices.Size());
+		return customGeo;
+	}
+
+	Geometry* GeometryFactory::LoadJsonGeometry(json const& object)
+	{
+		Geometry* customGeo = nullptr;
+
+		Vector<Vertex> vertices;
+		Vector<uint32> indices;
+
+		Obj obj(" ");
+		obj.LoadJsonObj(object);
+
+		for (int i = 0; i < obj.meshs.Size(); i++)
+		{
+			for (obj::Vertex& v : obj.vertices)
+			{
+				Vertex ve;
+				ve.pos = { v.position.x, v.position.y, v.position.z };
+				ve.normal = { 0, 0, 0 };
+				ve.uv = { v.textureCoordinate.x, 1.f - v.textureCoordinate.y };
 				vertices.PushBack(ve);
 			}
 			for (uint32 index : obj.meshs[i].indices)

@@ -58,14 +58,18 @@ void Update() override
 
 void HandleInput()
 {
+	Vector3f32 direction = {0, 0, 0};
+	
 	if (GetKey(m_keyForward))
-		Move({ 0, 0, 1 });
+		direction += { 0, 0, 1 };
 	if (GetKey(m_keyBackward))
-		Move({ 0, 0, -1 });
+		direction += { 0, 0, -1 };
 	if (GetKey(m_keyLeft))
-		Move({ -1, 0, 0 });
+		direction += { -1, 0, 0 };
 	if (GetKey(m_keyRight))
-		Move({ 1, 0, 0 });
+		direction += { 1, 0, 0 };
+
+	Move(direction);
 
 	if (GetKeyDown(m_keyJump))
 		m_pPlayer->GetScript<Player>()->Jump();
