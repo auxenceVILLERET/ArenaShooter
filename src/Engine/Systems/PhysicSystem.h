@@ -35,7 +35,8 @@ private :
     Vector<CollisionPair> CollisionList;
 	Vector<CollisionPair2D> CollisionList2D;
 
-    friend class GameManager;
+    friend class EngineRuntime;
+	friend class GameManager;
 };
 
 

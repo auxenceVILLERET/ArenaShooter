@@ -18,16 +18,18 @@ int m_numPellets = 8;         // Nombre de projectiles tir�s
 
 void Start() override
 {
-    m_shotCooldown = 1.0f;     // Cooldown entre chaque tir (plus long pour le shotgun)
-    m_reloadCooldown = 2.0f;   // Temps de rechargement
+    m_shotCooldown = 1.0f;     
+    m_reloadCooldown = 2.0f;   
+
+    MeshRenderer& meshProjectileShotgun = *m_pOwner->AddComponent<MeshRenderer>();
+    meshProjectileShotgun.pGeometry = SHAPES.CYLINDER; 
 }
 
 void Shoot() override
 {
     m_shotTimer.Start();
     m_heat += m_heatPerShot;
-
-    // On tire plusieurs projectiles
+    
     for (int i = 0; i < m_numPellets; ++i)
     {
         // Calcul d'un angle al�atoire horizontal et vertical
@@ -54,35 +56,21 @@ void Shoot() override
 
 Vector3f32 GetSpreadDirection(float32 horizontalAngle, float32 verticalAngle)
 {
-    // Conversion des angles en radians
-    float32 horizontalRad = horizontalAngle * (PI / 180.f); // Angle horizontal en radians
-    float32 verticalRad = verticalAngle * (PI / 180.f);   // Angle vertical en radians
-
-    // Direction dans le plan horizontal (XY)
+    float32 horizontalRad = horizontalAngle * (PI / 180.f);
+    float32 verticalRad = verticalAngle * (PI / 180.f);
+    
     float32 cosHorizontal = cos(horizontalRad);
     float32 sinHorizontal = sin(horizontalRad);
-
-    // Direction dans le plan vertical (XZ)
+    
     float32 cosVertical = cos(verticalRad);
     float32 sinVertical = sin(verticalRad);
-
-    // Calcul de la direction finale
+    
     Vector3f32 direction;
-    direction.x = cosVertical * sinHorizontal; // Projection sur X
-    direction.y = sinVertical;                 // Projection sur Y (�l�vation)
-    direction.z = cosVertical * cosHorizontal; // Projection sur Z
-
-    // Retourne la direction normalis�e
+    direction.x = cosVertical * sinHorizontal;
+    direction.y = sinVertical;
+    direction.z = cosVertical * cosHorizontal;
+    
     return direction.Normalize();
-}
-
-void Init(D12PipelineObject* pso) override
-{
-    m_PSO = pso;
-
-    MeshRenderer& meshProjectileShotgun = *m_pOwner->AddComponent<MeshRenderer>();
-    meshProjectileShotgun.pGeometry = SHAPES.CYLINDER; // On pourrait avoir un mod�le de cartouche ou autre forme
-    meshProjectileShotgun.pPso = pso;
 }
 
 END_SCRIPT

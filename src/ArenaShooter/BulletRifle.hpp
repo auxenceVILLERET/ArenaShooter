@@ -22,7 +22,7 @@ void Update() override
     Projectile::Update();
 }
 
-void Init(Vector3f32 dir,Vector3f32 pos, float32 speed, D12PipelineObject* pso) override
+void Init(Vector3f32 dir,Vector3f32 pos, float32 speed) override
 {
     m_Direction = dir;
     m_Position = pos;
@@ -35,12 +35,11 @@ void Init(Vector3f32 dir,Vector3f32 pos, float32 speed, D12PipelineObject* pso) 
 
     MeshRenderer& meshProjectile = *m_pOwner->AddComponent<MeshRenderer>();
     meshProjectile.pGeometry = SHAPES.SPHERE;
-    meshProjectile.pPso = pso;
     m_pOwner->transform.SetWorldPosition(m_Position);
     m_pOwner->transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+    m_pOwner->SetName("Riffle bullet");
 
 }
-
 
 END_SCRIPT
 

@@ -45,6 +45,8 @@ public:
 	[[nodiscard]] static UiSystem& GetUiSystem();
     [[nodiscard]] static Vector<Camera*>& GetMainCameras();
 
+	static D12PipelineObject const* GetDefaultPso();
+	
     GameManager();
     ~GameManager();
 
@@ -77,6 +79,8 @@ public: // Temporary (should be named and used as private)
     Vector<Scene*> m_scenes;
     Vector<Camera*> m_mainCameras;
 
+	D12PipelineObject const* defaultPso;
+	
     friend class Scene;
 };
 

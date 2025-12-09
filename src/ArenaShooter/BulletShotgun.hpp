@@ -22,16 +22,15 @@ void Update() override
     Projectile::Update();
 }
 
-void Init(Vector3f32 dir, Vector3f32 pos, float32 speed, D12PipelineObject* pso) override
+void Init(Vector3f32 dir, Vector3f32 pos, float32 speed) override
 {
     m_Direction = dir;
     m_Position = pos;
     m_Speed = speed;
-    m_MaxDistance = 15.f; // Les projectiles de shotgun ont une portée plus courte
+    m_MaxDistance = 15.f; // Les projectiles de shotgun ont une portï¿½e plus courte
 
     MeshRenderer& meshProjectile = *m_pOwner->AddComponent<MeshRenderer>();
     meshProjectile.pGeometry = SHAPES.SPHERE; // On peut choisir une autre forme pour les projectiles
-    meshProjectile.pPso = pso;
     m_pOwner->transform.SetWorldPosition(m_Position);
     m_pOwner->transform.SetWorldScale({ 0.2f, 0.2f, 0.2f }); // Taille des projectiles
 }

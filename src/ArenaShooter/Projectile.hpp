@@ -36,10 +36,13 @@ void Update() override
 
 void CollisionEnter(GameObject* other) override
 {
+    if (m_pOwner->GetName() == other->GetName())
+        return;
+    
     m_pOwner->Destroy();
 }
 
-virtual void Init(Vector3f32 dir,Vector3f32 pos, float32 speed, D12PipelineObject* pso)
+virtual void Init(Vector3f32 dir,Vector3f32 pos, float32 speed)
 {
    
 }
