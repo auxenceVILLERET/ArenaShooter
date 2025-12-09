@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "Core/Maths/Vector3.h"
 #include "GameManager.h"
+#include "Rifle.hpp"
 
 #include "Player.hpp"
 #include "InputsMethods.h"
@@ -25,6 +26,9 @@ Keyboard::Key m_keyLeft = Keyboard::Q;
 Keyboard::Key m_keyRight = Keyboard::D;
 
 Keyboard::Key m_keyJump = Keyboard::SPACE;
+Keyboard::Key m_keyReload = Keyboard::R;
+
+Mouse::Button m_buttonLeft = Mouse::LEFT;
 Keyboard::Key m_keyEscape = Keyboard::ESCAPE;
 
 Keyboard::Key m_keyRotLeft = Keyboard::A;
@@ -34,7 +38,7 @@ Vector3f32 m_previousMousePos;
 float32 m_mouseSensitivity = 0.2f;
 
 private:
-	PlayerMovement* m_pMovement = nullptr;
+	Player* m_pMovement = nullptr;
 	bool m_mouseLock = false;
 
 public:
@@ -42,7 +46,7 @@ public:
 void Start() override
 {
 	m_pPlayer = m_pOwner;
-	m_pMovement = m_pPlayer->GetScript<PlayerMovement>();
+	m_pMovement = m_pPlayer->GetScript<Player>();
 }
 
 void Update() override
@@ -92,7 +96,14 @@ void HandleInput()
 
 
 	if (GetKeyDown(m_keyJump))
-		m_pPlayer->GetScript<PlayerMovement>()->Jump();
+		m_pPlayer->GetScript<Player>()->Jump();
+	
+	if (GetKeyDown(m_keyReload))
+		m_pPlayer->GetScript<Player>()->m_rifle->Reload();
+
+	if (GetButton(m_buttonLeft))
+		m_pPlayer->GetScript<Player>()->m_rifle->BeginShot();
+
 	if (GetKeyDown(m_keyEscape))
 	{
 		m_mouseLock = !m_mouseLock;
@@ -123,12 +134,12 @@ void HandleMousePos()
 
 void Move(Vector3f32 direction)
 {
-	m_pPlayer->GetScript<PlayerMovement>()->Move(direction);
+	m_pPlayer->GetScript<Player>()->Move(direction);
 }
 
 void Rotate(Vector3f32 rotation)
 {
-	m_pPlayer->GetScript<PlayerMovement>()->Rotate(rotation);
+	m_pPlayer->GetScript<Player>()->Rotate(rotation);
 }
 
 

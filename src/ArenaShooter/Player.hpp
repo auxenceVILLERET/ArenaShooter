@@ -9,31 +9,33 @@
 #include "Core/Maths/Vector3.h"
 #include "GameManager.h"
 #include "Shapes.h"
+#include "Rifle.hpp"
+#include "Shotgun.hpp"
 
 using namespace gce;
 
-DECLARE_SCRIPT(PlayerMovement, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update)
 
 
 float32 m_speed = 5;
 float32 m_jumpForce = 15000;
 Camera* m_camera = nullptr;
+Rifle* m_rifle = nullptr;
+Shotgun* m_shotgun = nullptr;
 
 Vector3f32 m_moveOffset = {0,0,0};
 
 void Init(D12PipelineObject* pPso)
 {
-	MeshRenderer& meshPlayer = *m_pOwner->AddComponent<MeshRenderer>();
-	meshPlayer.pGeometry = SHAPES.CUBE;
-	meshPlayer.pPso = pPso;
-	
 	m_pOwner->transform.SetWorldPosition({ 0,2,0 });
-	m_pOwner->transform.SetWorldScale({ 0.8f,1.7f,0.8f });
+	m_pOwner->transform.SetWorldScale({ 1.f, 1.f, 1.f });
 	m_pOwner->AddComponent<BoxCollider>();
 	m_pOwner->AddComponent<PhysicComponent>();
 	m_pOwner->GetComponent<PhysicComponent>()->SetBounciness(0.0f);
 	
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
+	cam.SetParent(*m_pOwner);
+	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
 	m_camera = cam.AddComponent<Camera>();
 	m_camera->SetMainCamera();
 	m_camera->SetType(PERSPECTIVE);
@@ -42,8 +44,22 @@ void Init(D12PipelineObject* pPso)
 	m_camera->perspective.farPlane = 500.0f;
 	m_camera->perspective.aspectRatio = 600.0f / 400.0f;
 	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
-	cam.SetParent(*m_pOwner);
-	cam.transform.SetLocalPosition({0.f, 0.8f, 0.f});
+	
+
+	GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
+	m_rifle = rifle.AddScript<Rifle>();
+	m_rifle->Init(pPso);
+	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+	rifle.SetParent(cam);
+	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+
+	/*GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
+	m_shotgun = shotgun.AddScript<Shotgun>();
+	m_shotgun->Init(pPso);
+	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+	shotgun.SetParent(cam);
+	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });*/
+
 }
 
 void Start() override
