@@ -52,18 +52,17 @@ void Game::Init()
     uiImage.SetActive(true);
 
 
-   
 
-    GameObject& player = GameObject::Create(*m_Scene);
+    GameObject& player = game->AddObject();
     player.AddScript<Player>()->Init(pPso);
 	player.AddScript<PlayerController>();
 
-    GameObject& kamikaze = GameObject::Create(*m_Scene);
+    GameObject& kamikaze = game->AddObject();
     kamikaze.AddScript<Kamikaze>()->Init(pPso);
     kamikaze.AddComponent<BoxCollider>();
 
 
-    GameObject& ground = GameObject::Create(*m_Scene);
+    GameObject& ground = game->AddObject();
     ground.transform.SetWorldPosition({ 0,-3,0 });
     ground.transform.SetWorldScale({ 20.f,5.f,20.f });
     MeshRenderer& meshGround = *ground.AddComponent<MeshRenderer>();

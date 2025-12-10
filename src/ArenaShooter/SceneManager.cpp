@@ -21,7 +21,7 @@ void SceneManager::Init()
 
 	for (int i = 0; i < 5; i++)
 	{
-		m_vScene.push_back(new CustomScene());
+		m_vScene.push_back(new CustomScene(m_pScene));
 	}
 }
 

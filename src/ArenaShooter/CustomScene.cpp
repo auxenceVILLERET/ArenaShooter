@@ -2,9 +2,14 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 
+CustomScene::CustomScene(Scene* pScene)
+{
+	m_pScene = pScene;
+}
+
 GameObject& CustomScene::AddObject()
 {
-	GameObject& object = GameObject::Create(*SceneManager::GetInstance()->GetScene());
+	GameObject& object = GameObject::Create(*m_pScene);
 	m_vObject.push_back(object);
 }
 
