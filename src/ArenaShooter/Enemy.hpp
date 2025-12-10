@@ -9,11 +9,11 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(Enemy, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
+DECLARE_SCRIPT(Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
 Health<float>* m_Hp;
 
-void Start() override
+void Awake() override
 {
 
 }

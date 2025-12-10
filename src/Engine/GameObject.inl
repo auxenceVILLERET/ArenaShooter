@@ -102,6 +102,7 @@ ScriptClass* GameObject::AddScript()
     Script::s_list[id] = new ScriptClass();
     Script::s_list[id]->m_id = id;
     Script::s_list[id]->m_pOwner = this;
+    Script::s_list[id]->OnAwake();
     Script::s_creationList.Push(id);
     m_scripts[ScriptClass::s_TYPE_ID] = id;
     return reinterpret_cast<ScriptClass*>(Script::s_list[id]);

@@ -14,7 +14,7 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update)
 
 float32 m_speed = 5;
 float32 m_jumpForce = 15000;
@@ -22,15 +22,9 @@ Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
 
-void Start() override
+void Awake() override
 {
-	m_pOwner->transform.SetWorldPosition({ 0,10,0 });
-	m_pOwner->transform.SetWorldScale({ 1.f, 1.f, 1.f });
-	m_pOwner->AddComponent<BoxCollider>();
-	m_pOwner->AddComponent<PhysicComponent>()->SetMass(80.0f);
-	m_pOwner->GetComponent<PhysicComponent>()->SetBounciness(0.0f);
-	m_pOwner->SetName("Player");
-	
+
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
 	cam.SetParent(*m_pOwner);
 	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
@@ -42,6 +36,7 @@ void Start() override
 	m_camera->perspective.farPlane = 500.0f;
 	m_camera->perspective.aspectRatio = 600.0f / 400.0f;
 	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
+
 
 	// GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
 	// m_rifle = rifle.AddScript<Rifle>();
@@ -124,6 +119,8 @@ void Die()
 {
 
 }
+
+
 
 private:
 	float32 m_deltaTime;

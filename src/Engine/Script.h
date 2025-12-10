@@ -8,18 +8,19 @@
 
 enum ScriptFlag
 {
-	Start            = 1 << 0,
-	Update           = 1 << 1,
-	FixedUpdate      = 1 << 2,
-	Destroy          = 1 << 3,
+	Awake = 1 << 0,
+	Start = 1 << 1,
+	Update = 1 << 2,
+	FixedUpdate = 1 << 3,
+	Destroy = 1 << 4,
 
-	CollisionEnter   = 1 << 4,
-	CollisionStay    = 1 << 5,
-	CollisionExit    = 1 << 6,
+	CollisionEnter = 1 << 5,
+	CollisionStay = 1 << 6,
+	CollisionExit = 1 << 7,
 
-	Collision2DEnter = 1 << 7,
+	Collision2DEnter = 1 << 8,
 	Collision2DStay  = 1 << 8,
-	Collision2DExit  = 1 << 9,
+	Collision2DExit  = 1 << 10,
 };
 
 #define DECLARE_SCRIPT( name, flags)                  \
@@ -58,6 +59,7 @@ namespace gce
 		inline static Queue<uint16> s_creationList;
 		inline static Queue<uint16> s_deletionList;
 
+		virtual void Awake() {}
 		virtual void Start() {}
 		virtual void Update() {}
 		virtual void FixedUpdate() {}
@@ -85,6 +87,7 @@ namespace gce
 		void Init();
 		void UnInit();
 
+		void OnAwake() { if (m_flags & ScriptFlag::Awake) Awake(); }
 		void OnStart() { if ( IsActive() ) Start(); }
 		void OnUpdate() { if ( IsActive() ) Update(); }
 		void OnFixedUpdate() { if ( IsActive() ) FixedUpdate(); }

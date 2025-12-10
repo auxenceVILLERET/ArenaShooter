@@ -13,7 +13,7 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(PlayerController, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(PlayerController, ScriptFlag::Awake | ScriptFlag::Update)
 
 float32 m_deltaTime;
 
@@ -42,7 +42,7 @@ private:
 
 public:
 
-void Start() override
+void Awake() override
 {
 	m_pPlayer = m_pOwner;
 	m_pMovement = m_pPlayer->GetScript<Player>();
