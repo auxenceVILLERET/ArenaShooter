@@ -6,6 +6,7 @@
 
 
 #include "PlayerController.hpp"
+#include "SceneManager.h"
 
 using namespace gce;
 
@@ -21,7 +22,7 @@ private:
 
     inline static Game* game_Instance = nullptr;
 
-    SceneManager* m_SceneManager;
+    SceneManager* m_SceneManager = nullptr;
     Scene* m_Scene;
     WindowParam windowParam;
     D12PipelineObject* pPso;

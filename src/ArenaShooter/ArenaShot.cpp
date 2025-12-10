@@ -5,8 +5,8 @@
 #include "Rifle.hpp"
 #include "BulletRifle.hpp"
 #include "Kamikaze.hpp"
-#include "SceneManager.h"
 #include "CustomScene.h"
+#include "MenuController.hpp"
 
 Game* Game::Create()
 {
@@ -19,38 +19,14 @@ Game* Game::Create()
 
 Game::Game() {}
 
-DECLARE_SCRIPT(CamScript, ScriptFlag::Update)
-
-void Update() override
-{
-    GameTransform* t = &m_pOwner->transform;
-    float32 dt = GameManager::DeltaTime();
-    float32 speed = 5.f;
-    
-    if (GetKey(Keyboard::D))
-        t->WorldTranslate(Vector3f32(1.0f, 0.0f, 0.0f) * dt * speed);
-    if (GetKey(Keyboard::Q))
-        t->WorldTranslate(Vector3f32(-1.0f, 0.0f, 0.0f) * dt * speed);
-    if (GetKey(Keyboard::Z))
-        t->WorldTranslate(Vector3f32(0.0f, 0.0f, 1.0f) * dt * speed);
-    if (GetKey(Keyboard::S))
-        t->WorldTranslate(Vector3f32(0.0f, 0.0f, -1.0f) * dt * speed);
-
-    if (GetKey(Keyboard::NUMPAD6))
-        t->WorldRotate(Vector3f32(0.0f, 1.0f, 0.0f) * dt * speed);
-    if (GetKey(Keyboard::NUMPAD4))
-        t->WorldRotate(Vector3f32(0.0f, -1.0f, 0.0f) * dt * speed);
-}
-
-END_SCRIPT
-
 void Game::Init()
 {
     m_SceneManager = SceneManager::GetInstance();
     
     m_SceneManager->Init();
+
     CustomScene* main_menu = m_SceneManager->GetScene(MAIN_MENU);
-    CustomScene* game = m_SceneManager->GetScene(GAME);
+    CustomScene* game_menu = m_SceneManager->GetScene(GAME);
     
     pPso = new D12PipelineObject(
         SHADERS.VERTEX,
@@ -77,13 +53,16 @@ void Game::Init()
     uiImage.btmBrush->SetTransformMatrix({ posUi.x, posUi.y, 0 }, { 1.f / 16.f, 1.f / 16.f, 1.f / 16.f }, 0);
     uiImage.SetActive(true);
 
-    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", m_Scene, pPso);
+    GameObject& menu_controller = main_menu->AddObject();
+    menu_controller.AddScript<MenuController>();
 
-    GameObject& player = game->AddObject();
+    //MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", game_menu, pPso);
+
+    GameObject& player = game_menu->AddObject();
     player.AddScript<Player>();
 	player.AddScript<PlayerController>();
 
-    GameObject& kamikaze = game->AddObject();
+    GameObject& kamikaze = game_menu->AddObject();
     kamikaze.AddScript<Kamikaze>();
     kamikaze.AddComponent<BoxCollider>();
 

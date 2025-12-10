@@ -8,14 +8,17 @@
 #include "Core/nlohmann.hpp"
 #include "Core/Maths/Quaternion.h"
 
+#include "SceneManager.h"
+#include "CustomScene.h"
+
 using json = nlohmann::json;
 using namespace gce;
 
 struct MapLoader
 {
-    static void LoadMap(String const& path, Scene* pScene, D12PipelineObject* pso)
+    static void LoadMap(String const& path, CustomScene* game, D12PipelineObject* pso)
     {
-        if (pScene == nullptr) return;
+        if (game == nullptr) return;
 
         Map<GameObject*, String> objects;
         
@@ -35,7 +38,7 @@ struct MapLoader
         for (int i = 0; i < jObjects.size(); ++i)
         {
             json currObject = jObjects[i];
-            GameObject& gameObject = GameObject::Create(*pScene);
+            GameObject& gameObject = game->AddObject();
             MeshRenderer& mesh = *gameObject.AddComponent<MeshRenderer>();
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
