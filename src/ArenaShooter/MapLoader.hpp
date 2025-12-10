@@ -15,10 +15,12 @@ using namespace gce;
 
 struct MapLoader
 {
-    static void LoadMap(String const& path, Scene* pScene, D12PipelineObject* pso)
+    static std::pair<Vector3f32, Vector3f32> LoadMap(String const& path, Scene* pScene, D12PipelineObject* pso)
     {
-        if (pScene == nullptr) return;
+        if (pScene == nullptr) return {};
 
+        std::pair<Vector3f32, Vector3f32> mapProperties;
+        
         Map<GameObject*, String> objects;
         
         std::ifstream file(path);
@@ -37,13 +39,31 @@ struct MapLoader
         for (int i = 0; i < jObjects.size(); ++i)
         {
             json currObject = jObjects[i];
+            std::string name = currObject["name"].get<std::string>();
+
+            if (name == "Container")
+            {
+                Vector3f32 position;
+                position.x = currObject["position"][0].get<float>();
+                position.y = currObject["position"][2].get<float>();
+                position.z = currObject["position"][1].get<float>();
+                
+                Vector3f32 scale;
+                scale.x = currObject["scale"][0].get<float>();
+                scale.y = currObject["scale"][2].get<float>();
+                scale.z = currObject["scale"][1].get<float>();
+
+                mapProperties.first = position;
+                mapProperties.second = scale;
+                continue;
+            }
+            
             GameObject& gameObject = GameObject::Create(*pScene);
             MeshRenderer& mesh = *gameObject.AddComponent<MeshRenderer>();
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
-            std::string name = currObject["name"].get<std::string>();
             gameObject.SetName(name.c_str());
-
+            
             if (currObject["has_collider"].get<bool>() == true)
             {
                 gameObject.AddComponent<BoxCollider>();
@@ -117,6 +137,8 @@ struct MapLoader
                     el.first->SetParent(*el2.first);
             }
         }
+
+        return mapProperties;
     }
 };
 
