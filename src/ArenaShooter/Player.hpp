@@ -22,7 +22,7 @@ Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
 
-Vector3f32 m_moveOffset = {0,0,0};
+Vector3f32 m_currentOffset = {0,0,0};
 
 void Init(D12PipelineObject* pPso)
 {
@@ -85,7 +85,7 @@ bool IsAirborne()
 	//if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
 	{
 		Force land;
-		land.direction = (m_moveOffset * m_speed).Normalize();
+		land.direction = (m_currentOffset * m_speed).Normalize();
 		land.norm = m_jumpForce;
 
 		return false;
@@ -97,16 +97,25 @@ bool IsAirborne()
 	}
 }
 
+bool IsGrounded()
+{
+	if (m_isGrounded)
+		return true;
+	else
+		return false;
+}
+
 void Jump()
 {
 	/*if (IsAirborne() == false && IsRising() == false)*/
 	{
 		Force jumpForce;
-		jumpForce.direction = { 0, 1, 0 };
+		jumpForce.direction = { 0, 1, 0};
 		jumpForce.norm = m_jumpForce;
 		
-		Vector3f32 jumpDirection = (m_pOwner->transform.GetLocalForward().Normalize() * m_moveOffset.z + m_pOwner->transform.GetLocalRight().Normalize() * m_moveOffset.x).Normalize();
-		jumpForce.direction += jumpDirection;
+		Vector3f32 jumpDirection;
+		jumpDirection = {0, 0, 0} /*{m_pOwner->transform.GetLocalForward().Normalize() * m_currentOffset.z, 0, m_pOwner->transform.GetLocalRight().Normalize() * m_currentOffset.x }*/;
+		//jumpForce.direction += jumpDirection;
 
 		m_pOwner->GetComponent<PhysicComponent>()->AddForce(jumpForce);
 
@@ -118,6 +127,8 @@ void Move(Vector3f32 direction)
 {
 	Vector3f32 offset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x) * m_speed;
 	
+	m_currentOffset = offset;
+
 	PhysicComponent& phys = *m_pOwner->GetComponent<PhysicComponent>();
 	Vector3f32 vel = phys.GetVelocity();
 	phys.SetVelocity({offset.x, vel.y, offset.z} );
@@ -142,23 +153,44 @@ void Die()
 
 void MovingForward(float32 direction)
 {
-	m_moveOffset.z = direction;
+	m_currentOffset.z = direction;
 }
 void MovingLaterally(float32 direction)
 {
-	m_moveOffset.x = direction;
+	m_currentOffset.x = direction;
 }
 
 void CollisionStay(GameObject* other) override
 {
+	//Console::Log("-COLLISION STAY- | " + String(other->GetName()));
 	if(other->GetName() == "Ground")
 	{
-		   Console::Log("On Ground");
+		m_isGrounded = true;
+	}
+}
+
+void CollisionEnter(GameObject* other) override
+{
+	Console::Log("-----COLLISION ENTER----- | " + String(other->GetName()));
+
+	if (other->GetName() == "Ground")
+	{
+		Console::Log("Touch");
+	}
+}
+
+void CollisionExit(GameObject* other) override
+{
+	if (other->GetName() == "Ground")
+	{
+		Console::Log("Touch");
 	}
 }
 
 private:
 	float32 m_deltaTime;
+
+	bool m_isGrounded;
 
 
 END_SCRIPT
