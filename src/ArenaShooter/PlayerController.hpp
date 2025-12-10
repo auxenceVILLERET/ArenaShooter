@@ -58,41 +58,6 @@ void Update() override
 
 void HandleInput()
 {
-	/*if (GetKey(m_keyForward) || GetKey(m_keyBackward))
-	{
-		if (GetKey(m_keyForward))
-		{
-			Move({ 0, 0, 1 });
-			ForwardMovement(1);
-		}
-		else if (GetKey(m_keyBackward))
-		{
-			Move({ 0, 0, -1 });
-			ForwardMovement(-1);
-		}
-	}
-	else
-	{
-		ForwardMovement(0);
-	}
-	if (GetKey(m_keyLeft) || GetKey(m_keyRight))
-	{
-		if (GetKey(m_keyLeft))
-		{
-			Move({ -1, 0, 0 });
-			LateralMovement(-1);
-		}
-		
-		if (GetKey(m_keyRight))
-		{
-			Move({ 1, 0, 0 });
-			LateralMovement(1);
-		}
-	}
-	else
-	{
-		LateralMovement(0);
-	}*/
 
 	Vector3f32 direction = {0, 0, 0};
 	
@@ -152,16 +117,6 @@ void Move(Vector3f32 direction)
 void Rotate(Vector3f32 rotation)
 {
 	m_pPlayer->GetScript<Player>()->Rotate(rotation);
-}
-
-
-void ForwardMovement(float32 direction)
-{
-	m_pPlayer->GetScript<Player>()->MovingForward(direction);
-}
-void LateralMovement(float32 direction)
-{
-	m_pPlayer->GetScript<Player>()->MovingLaterally(direction);
 }
 
 END_SCRIPT

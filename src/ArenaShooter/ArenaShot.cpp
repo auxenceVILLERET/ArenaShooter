@@ -61,11 +61,11 @@ void Game::Init()
     windowParam.height = 720;
     windowParam.isFullScreen = true;
 
-    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", m_Scene, pPso);
-
     GameObject& player = GameObject::Create(*m_Scene);
     player.AddScript<Player>()->Init(pPso);
-	player.AddScript<PlayerController>();
+    player.AddScript<PlayerController>();
+
+    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", m_Scene, pPso);
 
     GameObject& kamikaze = GameObject::Create(*m_Scene);
     kamikaze.AddScript<Kamikaze>()->Init(pPso);
