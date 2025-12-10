@@ -20,10 +20,10 @@ public:
     //bool m_dirty_offset;
     //bool m_dirty_scale; //#TODO dirty mask
 
+    Sphere m_worldSphere;
 protected:
     void UpdateColliderComponent( uint8 dirty ) override;
 private:
-    Sphere m_worldSphere;
 
     friend class PhysicSystem;
 };
