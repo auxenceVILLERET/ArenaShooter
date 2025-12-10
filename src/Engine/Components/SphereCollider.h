@@ -12,11 +12,12 @@ DECLARE_COMPONENT_FAMILY( SphereCollider, ColliderBase3D, CollidersMask )
 public:
     void Init() override;
 
+    // Check if the ray intersects with SphereColliders
+    bool RaycastCollider(Ray const& ray, RaycastHit & hitInfo, float32 maxDistance) override;
+    
     float32 localScale = 1.f;
     float32 localRay = .5f;
-
-
-
+    
     //bool m_dirty_offset;
     //bool m_dirty_scale; //#TODO dirty mask
 

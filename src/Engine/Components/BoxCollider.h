@@ -13,6 +13,9 @@ DECLARE_COMPONENT_FAMILY( BoxCollider, ColliderBase3D, CollidersMask )
 public:
     void Init() override;
 
+    // Check if the ray intersects with BoxColliders
+    bool RaycastCollider(Ray const& ray, RaycastHit & hitInfo, float32 maxDistance) override;
+    
     Vector3f32 localScale{ 1.f,1.f,1.f };
 
     Vector<Vector3f32> localOBBPoints; //without Rot n Scale

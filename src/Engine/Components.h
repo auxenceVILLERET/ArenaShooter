@@ -23,6 +23,9 @@
 #include "Engine/Components/Animator2D.h"
 #include "Engine/Components/TextRenderer.h"
 
+// Raycasting
+#include "Engine/Raycast.h"
+
 // Colliders
 #include "Engine/Components/ColliderBase2D.h"
 #include "Engine/Components/BoxCollider2D.h"

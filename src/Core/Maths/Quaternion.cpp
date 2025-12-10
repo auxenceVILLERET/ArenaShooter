@@ -274,7 +274,7 @@ constexpr float32 GCE_PIDIV4 = 0.785398163f;
 	/// @param o the quaternion to assign from
 	/// @return a reference to the current Quaternion object
 	////////////////////////////////////////////////////////////
-Quaternion* Quaternion::operator*=(Quaternion const& o)
+	Quaternion* Quaternion::operator*=(Quaternion const& o)
 	 {
 	 	__m128 Q1 = _mm_load_ps(pdata);
 	 	__m128 Q2 = _mm_load_ps(o.pdata);
@@ -317,6 +317,12 @@ Quaternion* Quaternion::operator*=(Quaternion const& o)
 
 	 	return this;
 	 }
+
+	Quaternion& Quaternion::operator/=(float scalar)
+	 {
+	 	_mm_store_ps(pdata, _mm_div_ps(_mm_load_ps(pdata), _mm_set_ps1(scalar)));
+	 	return *this;
+	 }	
 
 	//////////////////////////////////////////////////////////////////
 	/// @brief Equality operator for Quaternion
@@ -1005,6 +1011,16 @@ Quaternion* Quaternion::operator*=(Quaternion const& o)
 		_mm_store_ps(pdata, result);
 		return true;
 	}
+
+	Quaternion Quaternion::MultiplyMatrixWithQuaternion(const Matrix& m, const Quaternion& q)
+	 {
+	 	float x = m.m_matrix[0][0] * q.GetX() + m.m_matrix[0][1] * q.GetY() + m.m_matrix[0][2] * q.GetZ() + m.m_matrix[0][3] * q.GetW();
+	 	float y = m.m_matrix[1][0] * q.GetX() + m.m_matrix[1][1] * q.GetY() + m.m_matrix[1][2] * q.GetZ() + m.m_matrix[1][3] * q.GetW();
+	 	float z = m.m_matrix[2][0] * q.GetX() + m.m_matrix[2][1] * q.GetY() + m.m_matrix[2][2] * q.GetZ() + m.m_matrix[2][3] * q.GetW();
+	 	float w = m.m_matrix[3][0] * q.GetX() + m.m_matrix[3][1] * q.GetY() + m.m_matrix[3][2] * q.GetZ() + m.m_matrix[3][3] * q.GetW();
+
+	 	return Quaternion(x, y, z, w);
+	 }
 
 	//////////////////////////////////////////////////////////////////////////////
 	/// @brief Normalize the quaternion.
