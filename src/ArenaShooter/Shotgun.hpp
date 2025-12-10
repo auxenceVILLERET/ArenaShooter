@@ -31,7 +31,8 @@ void Awake() override
         meshProjectile.pGeometry = SHAPES.SPHERE;
         bullet.transform.SetWorldPosition({0.0f, 0.0f, 0.0f});
         bullet.transform.SetWorldScale({ 0.2f, 0.2f, 0.2f });
-    
+        bullet.SetName("Shotgun bullet");
+
         bullet.AddComponent<SphereCollider>();
         bullet.AddComponent<PhysicComponent>()->SetGravityScale(0.0f);
         
@@ -41,8 +42,7 @@ void Awake() override
 
 void Shoot() override
 {
-    m_shotTimer.Start();
-    m_heat += m_heatPerShot;
+    Weapon::Shoot();
     
     for (int i = 0; i < m_numPellets; ++i)
     {

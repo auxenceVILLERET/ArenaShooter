@@ -15,6 +15,7 @@ DECLARE_CHILD_SCRIPT(BulletShotgun, Projectile, ScriptFlag::Start | ScriptFlag::
 void Start()
 {
     m_MaxDistance = 15.f;
+    m_dmgBullet = 10.f;
 
     m_pOwner->SetActive(false);
 }
@@ -24,10 +25,6 @@ void Update()
     Projectile::Update();
 }
 
-void CollisionEnter(GameObject* other)
-{
-    Projectile::CollisionEnter(other);
-}
 
 void Init(Vector3f32 dir, Vector3f32 pos, float32 speed)
 {

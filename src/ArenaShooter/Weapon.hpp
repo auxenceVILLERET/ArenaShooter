@@ -86,6 +86,7 @@ void Update() override
 
 void BeginShot()
 {
+    
     if (m_isShooting) return;
     if (m_isReloading) return;
 
@@ -96,7 +97,10 @@ void BeginShot()
 
 virtual void Shoot()
 {
-    
+    m_shotTimer.Reset();
+    m_shotTimer.Start();
+    m_heat += m_heatPerShot;
+
 }
 
 virtual void Init(D12PipelineObject* pso)

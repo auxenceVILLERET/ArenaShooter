@@ -6,9 +6,7 @@
 #include "Maths/Vector3.h"
 #include "Maths/Physics.h"
 #include <Event.hpp>
-
-
-
+#include "Raycast.h"
 
 namespace gce {
 
@@ -41,6 +39,7 @@ struct CollisionPair2D
 
 DECLARE_COMPONENT_BASE( ColliderBase3D, ComponentBase )
 {
+	virtual bool RaycastCollider(Ray const& ray, RaycastHit & hitInfo, float32 maxDistance) = 0;
 	Event<GameObject*> collisionEnterEvent;
 	Event<GameObject*> collisionStayEvent;
 	Event<GameObject*> collisionExitEvent;

@@ -31,7 +31,7 @@ void InitMenuGame(CustomScene* menu, WindowParam* windowParam, D12PipelineObject
     GameObject& kamikaze = menu->AddObject();
     MeshRenderer& mesh = *kamikaze.AddComponent<MeshRenderer>();
     mesh.pGeometry = SHAPES.CUBE;
-    kamikaze.transform.SetWorldPosition({ 5.f,0.5f,0.f });
+    kamikaze.transform.SetWorldPosition({ 5.f,8.f,0.f });
     kamikaze.transform.SetWorldScale({ 1.f,1.f,1.f });
     kamikaze.AddScript<Kamikaze>();
     kamikaze.AddComponent<BoxCollider>();

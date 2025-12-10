@@ -8,9 +8,9 @@ namespace gce {
 
 
 inline uint32 GameObject::GetID() const { return m_id; }
-inline cstr GameObject::GetName() const { return m_name; }
+inline String GameObject::GetName() const { return m_name; }
 inline Scene& GameObject::GetScene(){ return *m_pScene; }
-inline void GameObject::SetName(cstr name) { m_name = name; }
+inline void GameObject::SetName(String name) { m_name = name; }
 
 inline void GameObject::SetActive( bool const active ) { m_active = active; }
 
@@ -36,8 +36,7 @@ template <class ComponentClass>
 ComponentClass* GameObject::GetComponent() { return HasComponent<ComponentClass>() ? ComponentClass::s_list[m_components[ComponentClass::TypeId]] : nullptr; }
 
 template <class ComponentClass>
-ComponentClass const* GameObject::GetComponent() const { return HasComponent<ComponentClass>() ? ComponentClass::s_list[m_components[ComponentClass::TypeId]] : nullptr; }
-
+    ComponentClass const* GameObject::GetComponent() const { return HasComponent<ComponentClass>() ? ComponentClass::s_list.At(m_components.at(ComponentClass::TypeId)) : nullptr; }
 template <class ComponentClass>
 ComponentClass* GameObject::AddComponent()
 {

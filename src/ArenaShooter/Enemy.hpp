@@ -43,6 +43,11 @@ void CollisionEnter(GameObject* pOther) override
 		m_Hp->TakeDamage(pOther->GetScript<BulletRifle>()->GetDmgBullet());
 		std::cout << m_Hp->GetHealth() << std::endl;
 	}
+	if (pOther->GetScript<BulletShotgun>())
+	{
+		m_Hp->TakeDamage(pOther->GetScript<BulletShotgun>()->GetDmgBullet());
+		std::cout << m_Hp->GetHealth() << std::endl;
+	}
 }
 
 END_SCRIPT

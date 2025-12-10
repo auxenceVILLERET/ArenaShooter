@@ -21,16 +21,21 @@ void Awake() override
     for (int i = 0; i < 50; i++)
     {
         GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
+        MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
+        meshProjectile.pGeometry = SHAPES.SPHERE;
+        bullet.transform.SetWorldPosition({ 0.0f, 0.0f, 0.0f });
+        bullet.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+        bullet.SetName("Riffle bullet");
+
+        bullet.AddComponent<SphereCollider>();
+        bullet.AddComponent<PhysicComponent>()->SetGravityScale(0.0f);
         m_pProjectiles.PushBack(bullet.AddScript<BulletRifle>());
     }
 }
 
 void Shoot() override
 {
-    m_shotTimer.Reset();
-    m_shotTimer.Start();
-    m_heat += m_heatPerShot;
-
+    Weapon::Shoot();
     Projectile* proj = GetFirstAvailableProjectile();
     BulletRifle* bulletRifle = dynamic_cast<BulletRifle*>(proj);
 
