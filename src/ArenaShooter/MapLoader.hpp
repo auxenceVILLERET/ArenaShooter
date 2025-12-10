@@ -16,9 +16,9 @@ using namespace gce;
 
 struct MapLoader
 {
-    static std::pair<Vector3f32, Vector3f32> LoadMap(String const& path, Scene* pScene, D12PipelineObject* pso)
+    static std::pair<Vector3f32, Vector3f32> LoadMap(String const& path, CustomScene* menu, D12PipelineObject* pso)
     {
-        if (pScene == nullptr) return {};
+        if (menu == nullptr) return {};
 
         std::pair<Vector3f32, Vector3f32> mapProperties;
         
@@ -59,7 +59,7 @@ struct MapLoader
                 continue;
             }
             
-            GameObject& gameObject = GameObject::Create(*pScene);
+            GameObject& gameObject = menu->AddObject();
             MeshRenderer& mesh = *gameObject.AddComponent<MeshRenderer>();
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
