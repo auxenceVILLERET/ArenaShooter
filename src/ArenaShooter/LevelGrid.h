@@ -39,22 +39,25 @@ struct Node
     }
 };
 
-class LevelGrid 
+namespace gce
 {
-public:
-    void Init(SceneName scene, std::pair<Vector3f32, Vector3f32>const& mapProperties, Vector3f32 tileSize);
-    void Reset();
-    Node* AStar(Node* pStart, Node* pEnd);
+    class LevelGrid 
+    {
+    public:
+        void Init(SceneName scene, std::pair<Vector3f32, Vector3f32>const& mapProperties, Vector3f32 tileSize);
+        void Reset();
+        Node* AStar(Node* pStart, Node* pEnd);
 
-private:
-    std::pair<Vector3f32, Vector3f32> m_mapProperties;
-    Vector3f32 m_tileSize;
+    private:
+        std::pair<Vector3f32, Vector3f32> m_mapProperties;
+        Vector3f32 m_tileSize;
     
-    Vector<Node> m_vNode;
-    Vector<Vector<Vector<Data>>> m_vData;
+        Vector<Node> m_vNode;
+        Vector<Vector<Vector<Data>>> m_vData;
     
-    bool CalculateAvailability(Vector3f32 position, Vector<GameObject*>& objs);
+        bool CalculateAvailability(Vector3f32 position, Vector<GameObject*>& objs);
 
-};
+    };   
+}
 
 #endif

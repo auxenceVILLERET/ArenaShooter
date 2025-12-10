@@ -56,7 +56,7 @@ struct MapLoader
                 scale.z = currObject["scale"][1].get<float>();
 
                 mapProperties.first = position;
-                mapProperties.second = scale;
+                mapProperties.second = scale * 2.0f;
                 continue;
             }
             

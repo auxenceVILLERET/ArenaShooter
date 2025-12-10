@@ -92,6 +92,10 @@ private:
     friend class Scene;
     friend class LifespanSystem;
     friend class PhysicSystem;
+
+    // Temp
+    // TODO : REMOVE
+    friend class LevelGrid;
 };
 
 
