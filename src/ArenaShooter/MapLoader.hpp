@@ -42,7 +42,8 @@ struct MapLoader
             MeshRenderer& mesh = *gameObject.AddComponent<MeshRenderer>();
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
-            gameObject.SetName(currObject["name"].get<String>().c_str());
+            std::string name = currObject["name"].get<std::string>();
+            gameObject.SetName(name.c_str());
 
             if (currObject["has_collider"].get<bool>() == true)
             {
