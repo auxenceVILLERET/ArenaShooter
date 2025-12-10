@@ -18,12 +18,10 @@ float32 m_CurrentDistance = 0.f;
 float32 m_DeltaTime;
 float32 m_dmgBullet;
 
-
 void Start() override
 {
 
 }
-
 
 void Update() override
 {
@@ -36,13 +34,25 @@ void Update() override
 
 void CollisionEnter(GameObject* other) override
 {
-    m_pOwner->Destroy();
+    if (m_pOwner->GetName() == other->GetName())
+        return;
+    
+    m_pOwner->SetActive(false);
 }
 
-virtual void Init(Vector3f32 dir,Vector3f32 pos, float32 speed, D12PipelineObject* pso)
+virtual void Init(Vector3f32 dir,Vector3f32 pos, float32 speed)
 {
-   
+    m_pOwner->SetActive(true);
+    
+    m_Direction = dir;
+    m_Position = pos;
+    m_Speed = speed;
+    m_CurrentDistance = 0.f;
+
+    m_pOwner->transform.SetWorldPosition(m_Position);
 }
+
+bool IsActive() { return m_pOwner->IsActive(); }
 
 void Move()
 {
@@ -55,7 +65,7 @@ void UpdateDistance()
     m_CurrentDistance += m_Speed * m_DeltaTime;
 
     if (m_CurrentDistance >= m_MaxDistance)
-        m_pOwner->Destroy();
+        m_pOwner->SetActive(false);
 }
 
 float32 GetDmgBullet()

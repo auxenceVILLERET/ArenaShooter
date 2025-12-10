@@ -33,6 +33,8 @@ namespace gce {
         // GLOBAL STRUCTS Init
         SHAPES.Init();
         SHADERS.Init();
+
+        defaultPso = new D12PipelineObject(SHADERS.VERTEX, SHADERS.PIXEL, SHADERS.HULL, SHADERS.DOMAIN_, SHADERS.ROOT_SIGNATURE);
     }
 
     GameManager::~GameManager()
@@ -45,7 +47,11 @@ namespace gce {
         Console::UnInit();
     }
 
-
+    D12PipelineObject const* GameManager::GetDefaultPso()
+    {
+        return s_pInstance->defaultPso;
+    }
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // @brief Starts the game loop with the specified window parameters.
     // @param param The parameters for the game window, including title, dimensions, and screen disposition.

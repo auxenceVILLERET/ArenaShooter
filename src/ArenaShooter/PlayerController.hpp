@@ -15,7 +15,6 @@ using namespace gce;
 
 DECLARE_SCRIPT(PlayerController, ScriptFlag::Start | ScriptFlag::Update)
 
-
 float32 m_deltaTime;
 
 GameObject* m_pPlayer;
@@ -58,23 +57,30 @@ void Update() override
 
 void HandleInput()
 {
+	Vector3f32 direction = {0, 0, 0};
+	
 	if (GetKey(m_keyForward))
-		Move({ 0, 0, 1 });
+		direction += { 0, 0, 1 };
 	if (GetKey(m_keyBackward))
-		Move({ 0, 0, -1 });
+		direction += { 0, 0, -1 };
 	if (GetKey(m_keyLeft))
-		Move({ -1, 0, 0 });
+		direction += { -1, 0, 0 };
 	if (GetKey(m_keyRight))
-		Move({ 1, 0, 0 });
+		direction += { 1, 0, 0 };
 
+	Move(direction);
+
+	if (GetKeyDown(Keyboard::P))
+		m_pMovement->Test();
+	
 	if (GetKeyDown(m_keyJump))
 		m_pPlayer->GetScript<Player>()->Jump();
 	
 	if (GetKeyDown(m_keyReload))
-		m_pPlayer->GetScript<Player>()->m_rifle->Reload();
+		m_pPlayer->GetScript<Player>()->m_shotgun->Reload();
 
 	if (GetButton(m_buttonLeft))
-		m_pPlayer->GetScript<Player>()->m_rifle->BeginShot();
+		m_pPlayer->GetScript<Player>()->m_shotgun->BeginShot();
 
 	if (GetKeyDown(m_keyEscape))
 	{

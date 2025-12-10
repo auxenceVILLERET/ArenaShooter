@@ -120,7 +120,7 @@ public :
 	/// <param name="gravityScale"> -- Gravity scale applied to the object</param>
 	/// <param name="dragCoefficient"> -- Drag coefficient applied to the object</param>
 	/// <param name="deltaTime"> -- Elapsed time between two frames</param>
-	static void NewtonForceLaw(Vector3f32& position, Vector3f32& velocity, Vector3f32& angularVelocity, Vector3f32& forceSom, float32 mass, float32 gravityScale, float32 dragCoefficient, Vector3f32 staticForce, Vector3f32 reactionForce, float32 deltaTime);
+	static void NewtonForceLaw(Vector3f32& position, Vector3f32& velocity, Vector3f32& angularVelocity, Vector3f32& forceSom, float32 mass, float32 gravityScale, float32 dragCoefficient, Vector3f32 staticForce, float32 deltaTime);
 
 	static Vector3f32 CalculateTorque(Force const& myForce, Vector3f32 const& centerOfMass);
 

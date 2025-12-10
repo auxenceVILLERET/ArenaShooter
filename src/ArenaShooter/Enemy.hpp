@@ -36,12 +36,6 @@ virtual void Shoot()
 
 }
 
-
-virtual void Init(D12PipelineObject* pso)
-{
-
-}
-
 void CollisionEnter(GameObject* pOther) override
 {
 	if(pOther->GetScript<BulletRifle>())
