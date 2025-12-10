@@ -9,13 +9,17 @@
 #include "Player.hpp"
 #include "PlayerController.hpp"
 #include "Kamikaze.hpp"
+#include "LevelGrid.h"
 
 using namespace gce;
 
 void InitMenuGame(CustomScene* menu, WindowParam* windowParam, D12PipelineObject* pso)
 {
-    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", menu, pso);
+    std::pair<Vector3f32, Vector3f32> mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", menu, pso);
 
+    LevelGrid grid;
+    grid.Init(SceneName::GAME, mapProperties, {4.0f, 4.0f, 4.0f});
+    
     GameObject& player = menu->AddObject();
     player.transform.SetWorldPosition({ 0,10,0 });
     player.transform.SetWorldScale({ 1.f, 1.f, 1.f });

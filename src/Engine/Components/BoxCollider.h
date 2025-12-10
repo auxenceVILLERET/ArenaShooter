@@ -21,7 +21,6 @@ public:
     //bool m_dirty_scale; //#TODO dirty mask
 
     Box m_worldBox;
-protected:
     void UpdateColliderComponent( uint8 dirty ) override;
 private:
 

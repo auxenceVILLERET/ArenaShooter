@@ -11,18 +11,18 @@ void LevelGrid::Init(SceneName scene, std::pair<Vector3f32, Vector3f32> const& m
     m_tileSize = tileSize;
     Vector<GameObject*>& vObjs = SceneManager::GetInstance()->GetScene(scene)->GetObjects();
     
-    int tileCountX = mapProperties.first.x / tileSize.x + 1.0f;
-    int tileCountY = mapProperties.first.y / tileSize.y + 1.0f;
-    int tileCountZ = mapProperties.first.z / tileSize.z + 1.0f;
+    int tileCountX = mapProperties.second.x / tileSize.x + 1.0f;
+    int tileCountY = mapProperties.second.y / tileSize.y + 1.0f;
+    int tileCountZ = mapProperties.second.z / tileSize.z + 1.0f;
 
     Vector3f32 startTile = {mapProperties.first.x - mapProperties.second.x * 0.5f + tileSize.x / 2.0f,
                             mapProperties.first.y - mapProperties.second.y * 0.5f + tileSize.y / 2.0f,
                             mapProperties.first.z - mapProperties.second.z * 0.5f + tileSize.z / 2.0f};
     
-    for (int z = 0; z < tileCountZ; z++)
+    for (int y = 0; y < tileCountY; y++)
     {
-        Vector<Vector<Data>> tempY;
-        for (int y = 0; y < tileCountY; y++)
+        Vector<Vector<Data>> tempZ;
+        for (int z = 0; z < tileCountZ; z++)
         {
             Vector<Data> tempX;
             for (int x = 0; x < tileCountX; x++)
@@ -34,9 +34,9 @@ void LevelGrid::Init(SceneName scene, std::pair<Vector3f32, Vector3f32> const& m
                 newTile.isAvailable = CalculateAvailability(newTile.position, vObjs);
                 tempX.PushBack(newTile);
             }
-            tempY.PushBack(tempX);
+            tempZ.PushBack(tempX);
         }
-        m_vData.PushBack(tempY);
+        m_vData.PushBack(tempZ);
     }
 }
 
@@ -44,7 +44,8 @@ bool LevelGrid::CalculateAvailability(Vector3f32 position, Vector<GameObject*>& 
 {
     GameObject& temp = SceneManager::GetInstance()->GetCurrentScene()->AddObject();
     BoxCollider* b = temp.AddComponent<BoxCollider>();
-
+    b->UpdateColliderComponent(1);
+        
     for (GameObject* obj : objs)
     {
         BoxCollider* oB = obj->GetComponent<BoxCollider>();
@@ -55,6 +56,7 @@ bool LevelGrid::CalculateAvailability(Vector3f32 position, Vector<GameObject*>& 
 
         if (oB != nullptr)
         {
+            oB->UpdateColliderComponent(1);
             CollideResult intersects = Physics::IntersectBoxBox(b->m_worldBox, oB->m_worldBox);
             if (intersects.isColliding)
                 return false;
@@ -62,6 +64,7 @@ bool LevelGrid::CalculateAvailability(Vector3f32 position, Vector<GameObject*>& 
 
         if (oS != nullptr)
         {
+            oS->UpdateColliderComponent(1);
             CollideResult intersects = Physics::IntersectSphereBox(oS->m_worldSphere, b->m_worldBox);
             if (intersects.isColliding)
                 return false;
@@ -78,6 +81,7 @@ void LevelGrid::Reset()
 
 Node* LevelGrid::AStar(Node* pStart, Node* pEnd)
 {
+    return nullptr;
 }
 
 
