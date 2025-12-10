@@ -28,6 +28,8 @@ void Game::Init()
     CustomScene* main_menu = m_SceneManager->GetScene(MAIN_MENU);
     CustomScene* game_menu = m_SceneManager->GetScene(GAME);
     
+    SceneManager::GetInstance()->ChangeScene(MAIN_MENU);
+
     pPso = new D12PipelineObject(
         SHADERS.VERTEX,
         SHADERS.PIXEL,
@@ -49,14 +51,15 @@ void Game::Init()
     Vector2f32 posUi = center - size * 0.5f;
     uiImage.InitializeImage(posUi, size, 1.f);
 
-    uiImage.btmBrush = new BitMapBrush(RES_PATH"res/ArenaShooter");
+    uiImage.btmBrush = new BitMapBrush("res/ArenaShooter/VilleretAuxence.jpg");
     uiImage.btmBrush->SetTransformMatrix({ posUi.x, posUi.y, 0 }, { 1.f / 16.f, 1.f / 16.f, 1.f / 16.f }, 0);
     uiImage.SetActive(true);
 
     GameObject& menu_controller = main_menu->AddObject();
     menu_controller.AddScript<MenuController>();
 
-    //MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", game_menu, pPso);
+
+    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", game_menu, pPso);
 
     GameObject& player = game_menu->AddObject();
     player.AddScript<Player>();

@@ -19,9 +19,10 @@ public:
 protected:
 	
 private:
-	std::vector<GameObject> m_vObject;
+	std::vector<GameObject*> m_vObject;
 	Scene* m_pScene;
-
+	bool IsActive = false;
+	friend class SceneManager;
 };
 
 
