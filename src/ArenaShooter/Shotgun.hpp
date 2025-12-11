@@ -40,9 +40,10 @@ void Awake() override
     }
 }
 
-void Shoot() override
+bool Shoot() override
 {
-    Weapon::Shoot();
+    if (!Weapon::Shoot())
+        return false;
     
     for (int i = 0; i < m_numPellets; ++i)
     {

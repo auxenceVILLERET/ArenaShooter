@@ -12,6 +12,8 @@ using namespace gce;
 
 DECLARE_CHILD_SCRIPT(Rifle, Weapon, ScriptFlag::Awake | ScriptFlag::Update)
 
+
+
 void Awake() override
 {
     Weapon::Awake();
@@ -33,9 +35,10 @@ void Awake() override
     }
 }
 
-void Shoot() override
+bool Shoot() override
 {
-    Weapon::Shoot();
+    if (!Weapon::Shoot())
+        return false;
     Projectile* proj = GetFirstAvailableProjectile();
     BulletRifle* bulletRifle = dynamic_cast<BulletRifle*>(proj);
 

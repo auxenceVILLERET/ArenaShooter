@@ -74,7 +74,9 @@ void Update() override
     // Cooldown tir
     if (m_isShooting && m_shotTimer.GetElapsedTime() >= m_shotCooldown && m_heat <= m_maxHeat && m_isOverheated == false)
     {
-        EndShot();
+        m_isShooting = false;
+        m_shotTimer.Pause();
+        m_shotTimer.Reset();
     }
 
     if (m_heat <= 0.f)
@@ -84,35 +86,27 @@ void Update() override
 
 }
 
-void BeginShot()
+virtual void BeginShot()
 {
-    
-    if (m_isShooting) return;
-    if (m_isReloading) return;
+      
+}
+
+virtual bool Shoot()
+{
+    if (m_isShooting) return false;
+    if (m_isReloading) return false;
 
     m_isShooting = true;
 
-    Shoot();  
-}
-
-virtual void Shoot()
-{
     m_shotTimer.Reset();
     m_shotTimer.Start();
     m_heat += m_heatPerShot;
 
 }
 
-virtual void Init(D12PipelineObject* pso)
+virtual void EndShot()
 {
-
-}
-
-void EndShot()
-{
-    m_isShooting = false;
-    m_shotTimer.Pause();
-    m_shotTimer.Reset();
+    
 }
 
 virtual Projectile* GetFirstAvailableProjectile()

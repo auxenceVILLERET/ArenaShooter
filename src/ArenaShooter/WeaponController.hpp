@@ -63,7 +63,22 @@ public:
     {
         Weapon* w = GetCurrentWeapon();
         if (!w) return;
+        w->Shoot();
+    }
+
+
+    void BeginShot()
+    {
+        Weapon* w = GetCurrentWeapon();
+        if (!w) return;
         w->BeginShot();
+    }
+
+    void EndShot()
+    {
+        Weapon* w = GetCurrentWeapon();
+        if (!w) return;
+        w->EndShot();
     }
 
     void Reload()

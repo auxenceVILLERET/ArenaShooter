@@ -14,7 +14,10 @@ DECLARE_CHILD_SCRIPT(BulletHandgun, Projectile, ScriptFlag::Start | ScriptFlag::
 
 void Start() override
 {
+    m_MaxDistance = 10.f;
+    m_dmgBullet = 10.f;
 
+    m_pOwner->SetActive(false);
 }
 
 void Update() override
@@ -24,17 +27,32 @@ void Update() override
 
 void Init(Vector3f32 dir, Vector3f32 pos, float32 speed) override
 {
-    m_Direction = dir;
-    m_Position = pos;
-    m_Speed = speed;
-    m_MaxDistance = 15.f; // Les projectiles de shotgun ont une port�e plus courte
+    Projectile::Init(dir, pos, speed);
+    m_pOwner->GetComponent<SphereCollider>()->SetActive(true);
 
-    MeshRenderer& meshProjectile = *m_pOwner->AddComponent<MeshRenderer>();
-    meshProjectile.pGeometry = SHAPES.SPHERE; // On peut choisir une autre forme pour les projectiles
-    m_pOwner->transform.SetWorldPosition(m_Position);
-    m_pOwner->transform.SetWorldScale({ 0.2f, 0.2f, 0.2f }); // Taille des projectiles
 }
 
+void Activate(Vector3f32 pos)
+{
+    m_pOwner->SetActive(true);
+    m_pOwner->transform.SetWorldPosition(pos);
+    m_CurrentDistance = 0.f;
+}
+
+void SetScale(float s)
+{
+    m_pOwner->transform.SetWorldScale({ s, s, s });
+}
+
+void SetPosition(Vector3f32 pos)
+{
+    m_pOwner->transform.SetWorldPosition(pos);
+}
+
+void SetInactiveColider()
+{
+    m_pOwner->GetComponent<SphereCollider>()->SetActive(false);
+}
 END_SCRIPT
 
 #endif

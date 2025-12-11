@@ -73,6 +73,20 @@ float32 GetDmgBullet()
     return m_dmgBullet;
 }
 
+void SetDmgBullet(float32 newDmg)
+{
+    m_dmgBullet = newDmg;
+}
+
+float32 GetSpeedBullet()
+{
+    return m_Speed;
+}
+
+void SetSpeedBullet(float32 newSpeed)
+{
+    m_Speed = newSpeed;
+}
 END_SCRIPT
 
 #endif

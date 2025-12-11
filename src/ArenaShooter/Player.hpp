@@ -11,6 +11,7 @@
 #include "Shapes.h"
 #include "Rifle.hpp"
 #include "Shotgun.hpp"
+#include "Handgun.hpp"
 #include "WeaponController.hpp"
 
 using namespace gce;
@@ -24,6 +25,7 @@ Vector3f32 m_currentOffset = { 0,0,0 };
 Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
+Handgun* m_handgun = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
@@ -62,6 +64,15 @@ void Awake() override
 	shotgun.SetParent(cam);
 	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_shotgun);
+
+	GameObject& handgun = GameObject::Create(m_pOwner->GetScene());
+	MeshRenderer& meshProjectileHandgun = *handgun.AddComponent<MeshRenderer>();
+	meshProjectileHandgun.pGeometry = SHAPES.CUBE;
+	m_handgun = handgun.AddScript<Handgun>();
+	handgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+	handgun.SetParent(cam);
+	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	m_weaponController->AddWeapon(m_handgun);
 
 }
 

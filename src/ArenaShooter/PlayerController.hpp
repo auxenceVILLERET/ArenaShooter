@@ -40,7 +40,7 @@ float32 m_mouseSensitivity = 0.05f;
 private:
 	Player* m_pMovement = nullptr;
 	bool m_mouseLock = false;
-
+	bool m_wasShooting = false;
 public:
 
 void Awake() override
@@ -78,8 +78,19 @@ void HandleInput()
 	if (GetKeyDown(m_keyJump))
 		m_pPlayer->GetScript<Player>()->Jump();
 	
-	if (GetButton(m_buttonLeft))
+	if (GetButtonDown(m_buttonLeft))
+	{
+		m_pPlayer->GetScript<Player>()->GetWeaponController()->BeginShot();
+		m_wasShooting = true;
+	}
+		
+	else if (GetButton(m_buttonLeft))
 		m_pPlayer->GetScript<Player>()->GetWeaponController()->Shoot();
+	else if (m_wasShooting == true)
+	{
+		m_pPlayer->GetScript<Player>()->GetWeaponController()->EndShot();
+		m_wasShooting = false;
+	}
 
 	if (GetKeyDown(m_keyReload))
 		m_pPlayer->GetScript<Player>()->GetWeaponController()->Reload();
@@ -89,6 +100,9 @@ void HandleInput()
 
 	if (GetKeyDown(Keyboard::NUMPAD2))
 		m_pPlayer->GetScript<Player>()->GetWeaponController()->EquipWeapon(1);
+
+	if (GetKeyDown(Keyboard::NUMPAD3))
+		m_pPlayer->GetScript<Player>()->GetWeaponController()->EquipWeapon(2);
 
 	if (GetKeyDown(m_keyEscape))
 	{
