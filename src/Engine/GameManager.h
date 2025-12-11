@@ -9,6 +9,7 @@
 #include "Systems.h"
 #include "Components/Camera.h"
 
+
 namespace gce {
 
 struct WindowParam
@@ -42,10 +43,12 @@ public:
     [[nodiscard]] static LifespanSystem& GetLifespanSystem();
     [[nodiscard]] static ScriptSystem& GetScriptSystem();
 	[[nodiscard]] static PhysicSystem& GetPhysicSystem();
+    [[nodiscard]] static StatesSystem& GetStateSystem();
 	[[nodiscard]] static UiSystem& GetUiSystem();
     [[nodiscard]] static Vector<Camera*>& GetMainCameras();
 
 	static D12PipelineObject const* GetDefaultPso();
+
 	
     GameManager();
     ~GameManager();

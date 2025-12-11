@@ -1,3 +1,4 @@
+#include "GameManager.h"
 #ifndef ENGINE_GAME_MANAGER_INL_INCLUDED
 #define ENGINE_GAME_MANAGER_INL_INCLUDED
 
@@ -17,6 +18,8 @@ inline RenderSystem& GameManager::GetRenderSystem() { return s_pInstance->m_rend
 inline LifespanSystem& GameManager::GetLifespanSystem() { return s_pInstance->m_lifespanSystem; }
 inline ScriptSystem& GameManager::GetScriptSystem() { return s_pInstance->m_scriptSystem; }
 inline PhysicSystem& GameManager::GetPhysicSystem() { return s_pInstance->m_physicSystem; }
+inline StatesSystem& GameManager::GetStateSystem() { return s_pInstance->m_statesSystem;  }
+
 inline UiSystem& GameManager::GetUiSystem() { return s_pInstance->m_uiSystem; }
 inline Vector<Camera*>& GameManager::GetMainCameras() { return s_pInstance->m_mainCameras; }
 
