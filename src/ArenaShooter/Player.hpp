@@ -20,6 +20,7 @@ DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::Coll
 float32 m_speed = 5;
 float32 m_jumpForce = 40000;
 float32 m_airMovementForce = m_jumpForce / 15;
+Vector3f32 m_currentOffset = { 0,0,0 };
 Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
@@ -183,8 +184,9 @@ void CollisionStay(GameObject* other) override
 
 void CollisionEnter(GameObject* other)
 {
-	//Console::Log("Touch");
-	if (other->GetName() == "Ground" && m_pOwner->transform.GetWorldPosition().y - other->transform.GetWorldPosition().y > 0)
+	Console::Log("Touch");
+	Console::Log(other->GetName());
+	if (other->GetComponent<MeshRenderer>() && m_pOwner->transform.GetWorldPosition().y - other->transform.GetWorldPosition().y > 0)
 	{
 		m_isGrounded = true;
 	}
@@ -192,8 +194,8 @@ void CollisionEnter(GameObject* other)
 
 void CollisionExit(GameObject* other) override
 {
-	//Console::Log("Untouch");
-	if (other->GetName() == "Ground" && other->transform.GetWorldPosition().y < m_pOwner->transform.GetWorldPosition().y)
+	Console::Log("Untouch");
+	if (other->GetComponent<MeshRenderer>() && other->transform.GetWorldPosition().y < m_pOwner->transform.GetWorldPosition().y)
 	{
 		m_isGrounded = false;
 	}
@@ -202,7 +204,6 @@ WeaponController* GetWeaponController()
 {
 	return m_weaponController;
 }
-
 
 private:
 	float32 m_deltaTime;
