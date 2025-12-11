@@ -30,6 +30,11 @@ static void GoToGame()
 	SceneManager::GetInstance()->ChangeScene(GAME);
 }
 
+static void GoToOption()
+{
+	SceneManager::GetInstance()->ChangeScene(OPTIONS_MENU);
+}
+
 END_SCRIPT
 
 #endif

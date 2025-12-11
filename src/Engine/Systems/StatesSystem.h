@@ -2,23 +2,28 @@
 #define ENGINE_STATES_SYSTEM_H_INCLUDED
 #include "define.h"
 
-namespace gce 
+namespace gce
 {
 
 	struct StateMachine;
+	class GameObject;
 
 	class StatesSystem final
 	{
-	Vector<StateMachine*> m_stateMachineList;
-		
-	StatesSystem() = default;
-	~StatesSystem() = default;
+	public:
 
-	void HandleStateMachines();
+		StateMachine* CreateStateMachine(GameObject* pMe);
+		void DestroyStateMachine(GameObject* pMe);
+
+	private:
+
+		StatesSystem() = default;
+		~StatesSystem() = default;
+		void HandleStateMachines();
+
+		UnorderedMap<GameObject*, StateMachine*> m_stateMachineList;
 
 		friend class GameManager;
-		friend struct StateMachine;
-
 	};
 
 }

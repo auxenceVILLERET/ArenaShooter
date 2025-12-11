@@ -1,31 +1,31 @@
-#ifndef ENGINE_STATE_MACHINE_H_INCLUDED
-#define ENGINE_STATE_MACHINE_H_INCLUDED
+#ifndef CORE_STATE_MACHINE_H_INCLUDED
+#define CORE_STATE_MACHINE_H_INCLUDED
 
-#include "../define.h"
-#include "Containers/Vector.hpp"
+#include <functional>
 
 namespace gce
 {
 
 	class GameObject;
 
-	using OnBegin = void(*)(GameObject* pMe);
-	using OnUpdate = void(*)(GameObject* pMe);
-	using OnEnd = void(*)(GameObject* pMe);
+	using OnBegin = std::function<void()>;
+	using OnUpdate = std::function<void()>;
+	using OnEnd = std::function<void()>;
 
 	struct StateMachine
 	{
-		static StateMachine& Create(GameObject& me);
+		StateMachine();
 
 		struct Condition
 		{
-			bool(*condition)(GameObject* pMe);
+			std::function<bool()> condition;
 		};
 
 		struct Transition
 		{
 			Vector<Condition> conditions;
-			String target;
+			String fromTarget;
+			String toTarget;
 		};
 
 		struct Action
@@ -33,6 +33,8 @@ namespace gce
 			OnBegin onBegin;
 			OnUpdate onUpdate;
 			OnEnd onEnd;
+
+			Vector<Transition> m_transitions;
 		};
 
 		void AddAction(String& name, Action action = {});
@@ -43,22 +45,20 @@ namespace gce
 		void SetOnEndAction(String& name, OnEnd pOnEnd);
 
 		void AddTransition(Transition transition);
-		void AddTransition(Vector<Condition>& conditions, String& target);
+		void AddTransition(Vector<Condition>& conditions, String& fromTarget, String& toTarget);
 
 		void Update();
 
-		void Transit(String& target);
+		void Transit(String target);
 
 		String actualAction;
 
 	private:
 
-		GameObject* m_pMe = nullptr;
-
 		String m_actualAction;
-
 		UnorderedMap< String, Action> m_actions;
-		Vector<Transition> m_transitions;
+
+		friend class StatesSystem;
 	};
 }
 #endif

@@ -6,30 +6,31 @@
 #include "GameObject.h"
 #include "Health.h"
 #include "Projectile.hpp"
+#include "StateMachine/StateMachine.h"
 
 using namespace gce;
 
 DECLARE_SCRIPT(Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
 Health<float>* m_Hp;
+GameObject* m_pPlayer;
 
 void Awake() override
 {
-
+	
 }
 
 void Update() override
 {
-	if (m_Hp->GetHealth() <= 0.f)
-	{
-		m_Hp->SetIsAlive(false);
-	}
-
 	if (m_Hp->GetIsAlive() == true) return;
 
-	m_pOwner->Destroy();
-
 }
+
+void SetPlayer(GameObject* player)
+{
+	m_pPlayer = player;
+}
+
 
 virtual void Shoot()
 {
@@ -51,4 +52,6 @@ void CollisionEnter(GameObject* pOther) override
 }
 
 END_SCRIPT
+
+
 #endif

@@ -29,15 +29,23 @@ void InitMenu(CustomScene* menu, WindowParam* windowParam)
     uiImage.btmBrush->SetTransformMatrix({ posUi.x, posUi.y, 0 }, { 1.f / 16.f, 1.f / 16.f, 1.f / 16.f }, 0);
     uiImage.SetActive(true);
 
-    GameObject& object = menu->AddObject();
-    object.transform.LocalTranslate({ windowParam->width / 2.f, 200.f, 0.0f });
-    object.transform.LocalScale({ 216.0f, 69.0f, 1.0f });
-    UIButton& button = *object.AddComponent<UIButton>();
+    GameObject& playButton = menu->AddObject();
+    playButton.transform.LocalTranslate({ windowParam->width / 2.f, 200.f, 0.0f });
+    playButton.transform.LocalScale({ 216.0f, 69.0f, 1.0f });
+    UIButton& button = *playButton.AddComponent<UIButton>();
+
+    GameObject& optionButton = menu->AddObject();
+    optionButton.transform.LocalTranslate({ windowParam->width / 2.f, 500.f, 0.0f });
+    optionButton.transform.LocalScale({ 216.0f, 69.0f, 1.0f });
+    UIButton& button2 = *optionButton.AddComponent<UIButton>();
 
     button.AddListener(&(menu_controller.GetScript<MenuController>()->GoToGame));
+    button2.AddListener(&(menu_controller.GetScript<MenuController>()->GoToOption));
 
     button.pBitMapBrush = buttonBrush;
     button.pHoverBitMapBrush = button2Brush;
+    button2.pBitMapBrush = buttonBrush;
+    button2.pHoverBitMapBrush = button2Brush;
 }
 
 

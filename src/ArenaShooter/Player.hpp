@@ -15,10 +15,12 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update)
+DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit)
 
 float32 m_speed = 5;
-float32 m_jumpForce = 15000;
+float32 m_jumpForce = 40000;
+float32 m_airMovementForce = m_jumpForce / 15;
+Vector3f32 m_currentOffset = { 0,0,0 };
 Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
@@ -87,19 +89,43 @@ bool IsRising()
 
 bool IsAirborne()
 {
-	if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
+	//if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
+	{
+		Force land;
+		land.direction = (m_currentOffset * m_speed).Normalize();
+		land.norm = m_jumpForce;
+
 		return false;
-	else
+		m_pOwner->GetComponent<PhysicComponent>()->AddForce(land);
+	}
+	/*else*/
+	{
 		return true;
+	}
+}
+
+bool IsGrounded()
+{
+	if (m_isGrounded)
+	{
+		m_isGrounded = false;
+		return true;
+	}	
+	else
+		return false;
 }
 
 void Jump()
 {
-	if (IsAirborne() == false && IsRising() == false)
+	if (m_isGrounded)
 	{
 		Force jumpForce;
-		jumpForce.direction = { 0, 1, 0 };
+		jumpForce.direction = { 0, 1, 0};
 		jumpForce.norm = m_jumpForce;
+		
+		Vector3f32 jumpDirection;
+		jumpDirection = { m_currentOffset.x, 0, m_currentOffset.z };
+		jumpForce.direction += jumpDirection;
 
 		m_pOwner->GetComponent<PhysicComponent>()->AddForce(jumpForce);
 	}
@@ -107,16 +133,36 @@ void Jump()
 
 void Move(Vector3f32 direction)
 {
-	Vector3f32 offset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x) * m_speed;
-	
-	PhysicComponent& phys = *m_pOwner->GetComponent<PhysicComponent>();
-	Vector3f32 vel = phys.GetVelocity();
-	phys.SetVelocity({offset.x, vel.y, offset.z} );
+	m_currentOffset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x);
+	Vector3f32 offset = m_currentOffset * m_speed;
 
-	// if (IsAirborne())
-	// 	offset *= 0.25f;
+	if(m_isGrounded == true)
+	{
 
-	// m_pOwner->transform.LocalTranslate(offset);
+		PhysicComponent& phys = *m_pOwner->GetComponent<PhysicComponent>();
+		Vector3f32 vel = phys.GetVelocity();
+		phys.SetVelocity({ offset.x, vel.y, offset.z });
+	}
+	else if (m_isGrounded == false)
+	{
+		Force airMovementForce;
+		airMovementForce.direction = m_currentOffset;
+		airMovementForce.norm = m_airMovementForce;
+
+		PhysicComponent& phys = *m_pOwner->GetComponent<PhysicComponent>();
+		Vector3f32 vel = phys.GetVelocity();
+
+		if (m_currentOffset.x > 0 && vel.x > offset.x )
+			airMovementForce.direction.x = 0;
+		else if (m_currentOffset.x < 0 && vel.x < offset.x)
+			airMovementForce.direction.x = 0;
+		if (m_currentOffset.z > 0 && vel.z > offset.z)
+			airMovementForce.direction.z = 0;
+		else if (m_currentOffset.z < 0 && vel.z < offset.z)
+			airMovementForce.direction.z = 0;
+
+		m_pOwner->GetComponent<PhysicComponent>()->AddForce(airMovementForce);
+	}
 }
 
 void Rotate(Vector3f32 rotation)
@@ -131,14 +177,38 @@ void Die()
 
 }
 
+void CollisionStay(GameObject* other) override
+{
+	
+}
+
+void CollisionEnter(GameObject* other)
+{
+	Console::Log("Touch");
+	Console::Log(other->GetName());
+	if (other->GetComponent<MeshRenderer>() && m_pOwner->transform.GetWorldPosition().y - other->transform.GetWorldPosition().y > 0)
+	{
+		m_isGrounded = true;
+	}
+}
+
+void CollisionExit(GameObject* other) override
+{
+	Console::Log("Untouch");
+	if (other->GetComponent<MeshRenderer>() && other->transform.GetWorldPosition().y < m_pOwner->transform.GetWorldPosition().y)
+	{
+		m_isGrounded = false;
+	}
+}
 WeaponController* GetWeaponController()
 {
 	return m_weaponController;
 }
 
-
 private:
 	float32 m_deltaTime;
+
+	bool m_isGrounded;
 
 
 END_SCRIPT

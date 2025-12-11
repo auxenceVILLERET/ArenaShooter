@@ -35,7 +35,7 @@ Keyboard::Key m_keyRotLeft = Keyboard::A;
 Keyboard::Key m_keyRotRight = Keyboard::E;
 
 Vector3f32 m_previousMousePos;
-float32 m_mouseSensitivity = 0.2f;
+float32 m_mouseSensitivity = 0.05f;
 
 private:
 	Player* m_pMovement = nullptr;
@@ -58,16 +58,17 @@ void Update() override
 
 void HandleInput()
 {
+
 	Vector3f32 direction = {0, 0, 0};
 	
 	if (GetKey(m_keyForward))
-		direction += { 0, 0, 1 };
+	 	direction += { 0, 0, 1 };
 	if (GetKey(m_keyBackward))
-		direction += { 0, 0, -1 };
+	 	direction += { 0, 0, -1 };
 	if (GetKey(m_keyLeft))
-		direction += { -1, 0, 0 };
+	 	direction += { -1, 0, 0 };
 	if (GetKey(m_keyRight))
-		direction += { 1, 0, 0 };
+	 	direction += { 1, 0, 0 };
 
 	Move(direction);
 

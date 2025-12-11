@@ -2,6 +2,7 @@
 #include "CustomScene.h"
 #include "MainMenu.hpp"
 #include "GameMenu.hpp"
+#include "OptionsMenu.hpp"
 
 Game* Game::Create()
 {
@@ -22,7 +23,7 @@ void Game::Init()
 
     CustomScene* main_menu = m_SceneManager->GetScene(MAIN_MENU);
     CustomScene* game_menu = m_SceneManager->GetScene(GAME);
-    
+    CustomScene* option_menu = m_SceneManager->GetScene(OPTIONS_MENU);
     
     SceneManager::GetInstance()->ChangeScene(MAIN_MENU);
 
@@ -44,6 +45,7 @@ void Game::Init()
     
     InitMenuGame(game_menu, &windowParam, pPso);
 
+    InitOptionsMenu(option_menu, &windowParam);
 }
 
 int Game::RUN()
