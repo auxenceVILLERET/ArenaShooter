@@ -10,6 +10,8 @@
 #include "Maths/MathsFunctions.hpp"
 #include "GameTransform.h"
 #include "GameObject.h"
+#include "InputSystem.h"
+#include "InputsMethods.h"
 
 namespace gce {
 	void PhysicSystem::HandlePhysicCollision3D()
@@ -1237,5 +1239,88 @@ namespace gce {
 		}
 	}
 
+#pragma endregion
+
+	#pragma region RaycastRegion
+
+/////////////////////////////////////
+/// @brief Intersects a ray with all type of colliders (Sphere, Box)
+/// @param ray Ray to intersect.
+/// @param hitInfo Structure to store the hit information.
+/// @param maxDistance Maximum distance to check for intersection.
+/// @return true if Intersect
+/////////////////////////////////////
+bool PhysicSystem::IntersectRay(Ray const& ray, RaycastHit& hitInfo, float32 maxDistance)
+{
+	bool hasHit = false;
+	float32 closestDistance = maxDistance;
+
+	// SphereColliders
+	for (SphereCollider* sphere : SphereCollider::s_list)
+	{
+		RaycastHit tempHit;
+		if (sphere->RaycastCollider(ray, tempHit, closestDistance))
+		{
+			if (tempHit.distance < closestDistance)
+			{
+				closestDistance = tempHit.distance;
+				hitInfo = tempHit;
+				hasHit = true;
+			}
+		}
+	}
+	// BoxColliders
+	for (BoxCollider* box : BoxCollider::s_list)
+	{
+		RaycastHit tempHit;
+		if (box->RaycastCollider(ray, tempHit, closestDistance))
+		{
+			if (tempHit.distance < closestDistance)
+			{
+				closestDistance = tempHit.distance;
+				hitInfo = tempHit;
+				hasHit = true;
+			}
+		}
+	}
+
+	return hasHit;
+}
+
+/////////////////////////////////////
+/// @brief  Generate the Ray from cursor position and test if Intersect with colliders (Sphere, Box)
+/// @param cameraObject GameObject containing the Camera component.
+/// @param screenSize Size of the screen in pixels.
+/// @param hitInfo Structure to store the hit information.
+/// @param maxDistance Maximum distance to check for intersection.
+/// @return true if Intersect
+/////////////////////////////////////
+bool PhysicSystem::RaycastFromCursor(GameObject const& cameraObject, Vector2i32 const& screenSize, RaycastHit& hitInfo, float32 maxDistance)
+{
+	// 1. take the cursor position in SCREEN space TODO change with window not screen
+	Vector2i32 cursorPosition = GetMousePosition();
+
+	// 2. Take Camera Component
+	Camera const* cameraComponent = cameraObject.GetComponent<Camera>();
+	if (!cameraComponent)
+	{
+		OutputDebugString(L"[!] Camera component not found on GameObject.\n");
+		return false;
+	}
+	RenderCamera const& renderCamera = *cameraComponent;
+
+	// 3. Calculate mtrix view prov inverse
+	Matrix viewProj = renderCamera.GetVPMatrix();
+	Matrix viewProjInverse = viewProj.GetInverse();
+
+	// 4. Take world Camera Position
+	Vector3f32 cameraWorldPos = cameraObject.transform.GetWorldPosition();
+
+	// 5. Generate the Ray from the cursor position (GameObject to cursor position)
+	Ray ray = Raycast::FromScreenPoint(cursorPosition, screenSize, viewProjInverse, cameraWorldPos);
+
+	// 6. Test Intersect
+	return IntersectRay(ray, hitInfo, maxDistance);
+}
 #pragma endregion
 }

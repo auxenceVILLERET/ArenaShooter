@@ -6,6 +6,7 @@
 #include "Components/CircleCollider2D.h"
 #include "Components/BoxCollider.h"
 #include "Components/BoxCollider2D.h"
+#include "RenderCamera.h"
 
 namespace gce {
 
@@ -30,6 +31,13 @@ class PhysicSystem final
     void Collide3DSphereSphere(SphereCollider& firstSphere, SphereCollider& secondSphere, Vector3f32 const& hitPoint);
     void Collide3DSphereBox(bool flag, SphereCollider& sphereC, BoxCollider& boxC, Vector3f32 const& hitPoint);
     void Collide3DBoxBox(bool flag, BoxCollider& box1, BoxCollider& box2, Vector3f32 const& hitPoint, Vector3f32& overlapVect);
+
+public:
+	// Static methods for raycasting
+	// Intersects a ray with all type of colliders (Sphere, Box)
+	static bool IntersectRay(Ray const& ray, RaycastHit& hitInfo, float32 maxDistance);
+	// Generate the Ray from cursor position and test if Intersect with colliders
+	static bool RaycastFromCursor(GameObject const& camera, Vector2i32 const& screenSize, RaycastHit& hitInfo, float32 maxDistance);
 
 private :
     Vector<CollisionPair> CollisionList;

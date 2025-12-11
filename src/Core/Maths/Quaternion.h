@@ -21,6 +21,7 @@ namespace gce
 		Quaternion operator*(Quaternion const& o);
 		Quaternion* operator=(Quaternion const& o);
 		Quaternion* operator*=(Quaternion const& o);
+		Quaternion& operator/=(float scalar);
 
 		bool operator==(Quaternion const& o) const;
 		bool operator!=(Quaternion const& o) const;
@@ -31,6 +32,8 @@ namespace gce
 		bool Inverse();
 		bool Conjugate();
 		bool Normalize();
+
+		static Quaternion MultiplyMatrixWithQuaternion(const Matrix& m, const Quaternion& q);
 
 		bool IsIdentity() const;
 		bool IsNormZero() const;
