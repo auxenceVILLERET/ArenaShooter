@@ -17,8 +17,8 @@ using namespace gce;
 DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit)
 
 float32 m_speed = 5;
-float32 m_jumpForce = 50000;
-float32 m_airMovementForce = m_jumpForce / 10;
+float32 m_jumpForce = 40000;
+float32 m_airMovementForce = m_jumpForce / 15;
 Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
@@ -178,18 +178,16 @@ void CollisionStay(GameObject* other) override
 
 void CollisionEnter(GameObject* other)
 {
-	Console::Log("Touch");
-	if (other->GetName() == "Ground" && other->transform.GetWorldPosition().y < m_pOwner->transform.GetWorldPosition().y)
+	//Console::Log("Touch");
+	if (other->GetName() == "Ground" && m_pOwner->transform.GetWorldPosition().y - other->transform.GetWorldPosition().y > 0)
 	{
 		m_isGrounded = true;
-		Console::Log(other->transform.GetWorldPosition().y);
-		Console::Log(m_pOwner->transform.GetWorldPosition().y);
 	}
 }
 
 void CollisionExit(GameObject* other) override
 {
-	Console::Log("Untouch");
+	//Console::Log("Untouch");
 	if (other->GetName() == "Ground" && other->transform.GetWorldPosition().y < m_pOwner->transform.GetWorldPosition().y)
 	{
 		m_isGrounded = false;
