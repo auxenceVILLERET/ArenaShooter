@@ -22,11 +22,11 @@ BEGIN_TEST(ButtonComponent)
     ColorBrush blueBrush   { Color::Blue,    1.0f };
     ColorBrush yellowBrush { Color::Yellow,  1.0f };
 
-    BitMapBrush buttonBrush       { "res/Testing/Button/Button.png" };
-    BitMapBrush button2Brush      { "res/Testing/Button/Button2.png" };
-    BitMapBrush test1Brush        { "res/Textures/Test1.png" };
-    BitMapBrush roundButtonBrush  { "res/Testing/Button/roundButton.png" };
-    BitMapBrush roundButton2Brush { "res/Testing/Button/roundButton2.png" };
+    BitMapBrush buttonBrush       { RES_PATH"res/Testing/Button/Button.png" };
+    BitMapBrush button2Brush      { RES_PATH"res/Testing/Button/Button2.png" };
+    BitMapBrush test1Brush        { RES_PATH"res/Textures/Test1.png" };
+    BitMapBrush roundButtonBrush  { RES_PATH"res/Testing/Button/roundButton.png" };
+    BitMapBrush roundButton2Brush { RES_PATH"res/Testing/Button/roundButton2.png" };
 
     // ===== Initiating Objects ===== //
 

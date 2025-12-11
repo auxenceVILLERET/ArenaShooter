@@ -10,31 +10,38 @@
 
 using namespace gce;
 
-DECLARE_CHILD_SCRIPT(Rifle, Weapon, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_CHILD_SCRIPT(Rifle, Weapon, ScriptFlag::Awake | ScriptFlag::Update)
 
-void Start() override
+void Awake() override
 {
+    Weapon::Awake();
     m_shotCooldown = 0.3f;
     m_reloadCooldown = 1.5f;
+
+    for (int i = 0; i < 50; i++)
+    {
+        GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
+        MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
+        meshProjectile.pGeometry = SHAPES.SPHERE;
+        bullet.transform.SetWorldPosition({ 0.0f, 0.0f, 0.0f });
+        bullet.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+        bullet.SetName("Riffle bullet");
+
+        bullet.AddComponent<SphereCollider>();
+        bullet.AddComponent<PhysicComponent>()->SetGravityScale(0.0f);
+        m_pProjectiles.PushBack(bullet.AddScript<BulletRifle>());
+    }
 }
 
 void Shoot() override
 {
-    m_shotTimer.Start();
-    m_heat += m_heatPerShot;
+    Weapon::Shoot();
+    Projectile* proj = GetFirstAvailableProjectile();
+    BulletRifle* bulletRifle = dynamic_cast<BulletRifle*>(proj);
 
-    GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
-    bullet.AddScript<BulletRifle>()->Init(m_pOwner->transform.GetWorldForward(),m_pOwner->transform.GetWorldPosition(), 20.f, m_PSO);
+    if (bulletRifle)
+        bulletRifle->Init(m_pOwner->transform.GetWorldForward(),m_pOwner->transform.GetWorldPosition(), 20.f);
 
-}
-
-void Init(D12PipelineObject* pso) override
-{
-    m_PSO = pso;
-
-    MeshRenderer& meshProjectileRifle = *m_pOwner->AddComponent<MeshRenderer>();
-    meshProjectileRifle.pGeometry = SHAPES.SPHERE;
-    meshProjectileRifle.pPso = pso;
 }
 
 END_SCRIPT

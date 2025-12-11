@@ -58,6 +58,7 @@ namespace gce
 		
 		Matrix& GetMatrix() { return m_world; }
 		Matrix& GetVPMatrix() { return m_viewProj; };
+		const Matrix& GetVPMatrix() const { return m_viewProj; };
 
 		Matrix& GetProjMatrix() { return m_proj; }
 		CAMERA_TYPE& GetCameraType() { return m_type; }

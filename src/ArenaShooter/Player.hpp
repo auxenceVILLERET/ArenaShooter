@@ -11,10 +11,11 @@
 #include "Shapes.h"
 #include "Rifle.hpp"
 #include "Shotgun.hpp"
+#include "WeaponController.hpp"
 
 using namespace gce;
 
-DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit)
+DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit)
 
 float32 m_speed = 5;
 float32 m_jumpForce = 40000;
@@ -23,16 +24,10 @@ Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
 
-Vector3f32 m_currentOffset = {0,0,0};
+WeaponController* m_weaponController = nullptr;
 
-void Init(D12PipelineObject* pPso)
+void Awake() override
 {
-	m_pOwner->AddComponent<BoxCollider>();
-	m_pOwner->AddComponent<PhysicComponent>()->SetMass(80.0f);
-	m_pOwner->GetComponent<PhysicComponent>()->SetBounciness(0.0f);
-	m_pOwner->transform.SetWorldPosition({ 0,3,0 });
-	m_pOwner->transform.SetWorldScale({ 1.f, 1.f, 1.f });
-	
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
 	cam.SetParent(*m_pOwner);
 	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
@@ -44,29 +39,39 @@ void Init(D12PipelineObject* pPso)
 	m_camera->perspective.farPlane = 500.0f;
 	m_camera->perspective.aspectRatio = 600.0f / 400.0f;
 	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
-	
+
+	GameObject& weaponControllerObj = GameObject::Create(m_pOwner->GetScene());
+	m_weaponController = weaponControllerObj.AddScript<WeaponController>();
+	weaponControllerObj.SetParent(*m_pOwner);
 
 	GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
+	MeshRenderer& meshProjectileRifle = *rifle.AddComponent<MeshRenderer>();
+	meshProjectileRifle.pGeometry = SHAPES.SPHERE;
 	m_rifle = rifle.AddScript<Rifle>();
-	m_rifle->Init(pPso);
 	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	rifle.SetParent(cam);
 	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	m_weaponController->AddWeapon(m_rifle);
 
-	/*GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
+	GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
+	MeshRenderer& meshProjectileShotgun = *shotgun.AddComponent<MeshRenderer>();
+	meshProjectileShotgun.pGeometry = SHAPES.CYLINDER;
 	m_shotgun = shotgun.AddScript<Shotgun>();
-	m_shotgun->Init(pPso);
 	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	shotgun.SetParent(cam);
-	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });*/
+	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	m_weaponController->AddWeapon(m_shotgun);
 
 }
 
-void Start() override
+void Test()
 {
+	GameObject& testObject = GameObject::Create(m_pOwner->GetScene());
+	testObject.AddComponent<MeshRenderer>()->pGeometry = SHAPES.CUBE;
+
+	testObject.transform.SetWorldPosition(m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 2.f);
 	
 }
-
 
 void Update() override
 {
@@ -193,6 +198,11 @@ void CollisionExit(GameObject* other) override
 		m_isGrounded = false;
 	}
 }
+WeaponController* GetWeaponController()
+{
+	return m_weaponController;
+}
+
 
 private:
 	float32 m_deltaTime;

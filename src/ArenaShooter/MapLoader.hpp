@@ -8,15 +8,20 @@
 #include "Core/nlohmann.hpp"
 #include "Core/Maths/Quaternion.h"
 
+#include "SceneManager.h"
+#include "CustomScene.h"
+
 using json = nlohmann::json;
 using namespace gce;
 
 struct MapLoader
 {
-    static void LoadMap(String const& path, Scene* pScene, D12PipelineObject* pso)
+    static std::pair<Vector3f32, Vector3f32> LoadMap(String const& path, CustomScene* menu, D12PipelineObject* pso)
     {
-        if (pScene == nullptr) return;
+        if (menu == nullptr) return {};
 
+        std::pair<Vector3f32, Vector3f32> mapProperties;
+        
         Map<GameObject*, String> objects;
         
         std::ifstream file(path);
@@ -35,22 +40,40 @@ struct MapLoader
         for (int i = 0; i < jObjects.size(); ++i)
         {
             json currObject = jObjects[i];
-            GameObject& gameObject = GameObject::Create(*pScene);
+            std::string name = currObject["name"].get<std::string>();
+
+            if (name == "Container")
+            {
+                Vector3f32 position;
+                position.x = currObject["position"][0].get<float>();
+                position.y = currObject["position"][2].get<float>();
+                position.z = currObject["position"][1].get<float>();
+                
+                Vector3f32 scale;
+                scale.x = currObject["scale"][0].get<float>();
+                scale.y = currObject["scale"][2].get<float>();
+                scale.z = currObject["scale"][1].get<float>();
+
+                mapProperties.first = position;
+                mapProperties.second = scale;
+                continue;
+            }
+            
+            GameObject& gameObject = menu->AddObject();
             MeshRenderer& mesh = *gameObject.AddComponent<MeshRenderer>();
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
-            gameObject.SetName(currObject["name"].get<String>().c_str());
-            gameObject.SetName("Ground");
-			std::cout << "Loaded Object: " << gameObject.GetName() << "\n";
-
+            gameObject.SetName(name.c_str());
+            
             if (currObject["has_collider"].get<bool>() == true)
             {
+                // gameObject.AddComponent<PhysicComponent>()->SetGravityScale(0.0f);
                 gameObject.AddComponent<BoxCollider>();
-                /*if (currObject["destructible"].get<bool>() == true)
-                {
-                    Health* h = gameObject.AddScript<Health>();
-                    h->maxHealth = 1.0f;
-                }*/
+                // if (currObject["destructible"].get<bool>() == true)
+                // {
+                //     Health* h = gameObject.AddScript<Health>();
+                //     h->maxHealth = 1.0f;
+                // }
             }
             
             if (currObject.contains("texture") && currObject["texture"].is_string())
@@ -116,6 +139,8 @@ struct MapLoader
                     el.first->SetParent(*el2.first);
             }
         }
+
+        return mapProperties;
     }
 };
 

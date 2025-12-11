@@ -23,9 +23,12 @@ namespace gce
 		if (m_flags & ScriptFlag::Destroy) m_pListeners[3] = m_pOwner->m_destroyEvent.AddListener(&Script::OnDestroy, this);
 		if (m_pOwner->HasComponentOfSameFamily<BoxCollider>())
 		{
-			if (m_flags & ScriptFlag::CollisionEnter) m_pListeners[4] = m_pOwner->pCollisionEvents[0].AddListener(&Script::OnCollisionEnter, this);
-			if (m_flags & ScriptFlag::CollisionStay) m_pListeners[5] = m_pOwner->pCollisionEvents[1].AddListener(&Script::OnCollisionStay, this);
-			if (m_flags & ScriptFlag::CollisionExit) m_pListeners[6] = m_pOwner->pCollisionEvents[2].AddListener(&Script::OnCollisionExit, this);
+			if (m_flags & ScriptFlag::CollisionEnter)
+				m_pListeners[4] = m_pOwner->pCollisionEvents[0].AddListener(&Script::OnCollisionEnter, this);
+			if (m_flags & ScriptFlag::CollisionStay)
+				m_pListeners[5] = m_pOwner->pCollisionEvents[1].AddListener(&Script::OnCollisionStay, this);
+			if (m_flags & ScriptFlag::CollisionExit)
+				m_pListeners[6] = m_pOwner->pCollisionEvents[2].AddListener(&Script::OnCollisionExit, this);
 			if (m_flags & ScriptFlag::Collision2DEnter) m_pListeners[7] = m_pOwner->pCollision2DEvents[0].AddListener(&Script::OnCollision2DEnter, this);
 			if (m_flags & ScriptFlag::Collision2DStay) m_pListeners[8] = m_pOwner->pCollision2DEvents[1].AddListener(&Script::OnCollision2DStay, this);
 			if (m_flags & ScriptFlag::Collision2DExit) m_pListeners[9] = m_pOwner->pCollision2DEvents[2].AddListener(&Script::OnCollision2DExit, this);

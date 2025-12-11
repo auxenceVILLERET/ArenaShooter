@@ -9,11 +9,11 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(Enemy, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
+DECLARE_SCRIPT(Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
 Health<float>* m_Hp;
 
-void Start() override
+void Awake() override
 {
 
 }
@@ -36,17 +36,16 @@ virtual void Shoot()
 
 }
 
-
-virtual void Init(D12PipelineObject* pso)
-{
-
-}
-
 void CollisionEnter(GameObject* pOther) override
 {
 	if(pOther->GetScript<BulletRifle>())
 	{
 		m_Hp->TakeDamage(pOther->GetScript<BulletRifle>()->GetDmgBullet());
+		std::cout << m_Hp->GetHealth() << std::endl;
+	}
+	if (pOther->GetScript<BulletShotgun>())
+	{
+		m_Hp->TakeDamage(pOther->GetScript<BulletShotgun>()->GetDmgBullet());
 		std::cout << m_Hp->GetHealth() << std::endl;
 	}
 }

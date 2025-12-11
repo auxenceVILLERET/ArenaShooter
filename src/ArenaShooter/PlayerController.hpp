@@ -7,14 +7,14 @@
 #include "Core/Maths/Vector3.h"
 #include "GameManager.h"
 #include "Rifle.hpp"
+#include "WeaponController.hpp"
 
 #include "Player.hpp"
 #include "InputsMethods.h"
 
 using namespace gce;
 
-DECLARE_SCRIPT(PlayerController, ScriptFlag::Start | ScriptFlag::Update)
-
+DECLARE_SCRIPT(PlayerController, ScriptFlag::Awake | ScriptFlag::Update)
 
 float32 m_deltaTime;
 
@@ -43,7 +43,7 @@ private:
 
 public:
 
-void Start() override
+void Awake() override
 {
 	m_pPlayer = m_pOwner;
 	m_pMovement = m_pPlayer->GetScript<Player>();
@@ -72,14 +72,23 @@ void HandleInput()
 
 	Move(direction);
 
+	if (GetKeyDown(Keyboard::P))
+		m_pMovement->Test();
+	
 	if (GetKeyDown(m_keyJump))
 		m_pPlayer->GetScript<Player>()->Jump();
 	
-	if (GetKeyDown(m_keyReload))
-		m_pPlayer->GetScript<Player>()->m_rifle->Reload();
-
 	if (GetButton(m_buttonLeft))
-		m_pPlayer->GetScript<Player>()->m_rifle->BeginShot();
+		m_pPlayer->GetScript<Player>()->GetWeaponController()->Shoot();
+
+	if (GetKeyDown(m_keyReload))
+		m_pPlayer->GetScript<Player>()->GetWeaponController()->Reload();
+
+	if (GetKeyDown(Keyboard::NUMPAD1))
+		m_pPlayer->GetScript<Player>()->GetWeaponController()->EquipWeapon(0);
+
+	if (GetKeyDown(Keyboard::NUMPAD2))
+		m_pPlayer->GetScript<Player>()->GetWeaponController()->EquipWeapon(1);
 
 	if (GetKeyDown(m_keyEscape))
 	{

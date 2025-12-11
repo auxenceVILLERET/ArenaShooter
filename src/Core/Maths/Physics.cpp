@@ -658,31 +658,15 @@ Vector3f32 Physics::CalculateAngularCollisionVelocity(
     return angularVelocityA + deltaAngularVelocityA;
 }
 
-    void Physics::NewtonForceLaw(
-        Vector3f32& position,
-        Vector3f32& velocity,
-        Vector3f32& angularVelocity,
-        Vector3f32& forceSom,
-        float32 mass, 
-        float32 gravityScale,
-        float32 airDragCoefficient,
-        Vector3f32 staticForce,
-        Vector3f32 reactionForce,
-        float32 deltaTime)
+void Physics::NewtonForceLaw(Vector3f32& position, Vector3f32& velocity, Vector3f32& angularVelocity, Vector3f32& forceSom, float32 mass, float32 gravityScale, float32 airDragCoefficient, Vector3f32 staticForce, float32 deltaTime)
 {
     Vector3f32 gravity(0.f, -g * gravityScale, 0.f);
     Vector3f32 drag = -(velocity * velocity.Norm()) * airDragCoefficient;
 
     Vector3f32 acceleration = gravity + (drag + forceSom) / mass;
-    float32 test1 = acceleration.Norm();
-    float32 test2 = staticForce.Norm();
-
-    //Velocity limit to check the end of the movement
-    if (IsLess(velocity.Norm(), 0.25f, 1))
+    if (IsLess(velocity.Norm(), 0.15f, 1))
     {
-        // Static force preventing small forces and movement
-        Vector3f32 forceApplied = acceleration + reactionForce;
-        if (IsLess(forceApplied.Norm(), staticForce.Norm(), 1))
+        if (IsLess(acceleration.Norm(), staticForce.Norm(), 1))
         {
             velocity = { 0,0,0 };
             angularVelocity *= 0.3f;

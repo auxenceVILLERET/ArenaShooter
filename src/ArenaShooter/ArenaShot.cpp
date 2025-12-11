@@ -1,10 +1,8 @@
 #include "ArenaShot.h"
-#include "Player.hpp"
-#include "MapLoader.hpp"
-#include "PlayerController.hpp"
-#include "Rifle.hpp"
-#include "BulletRifle.hpp"
-#include "Kamikaze.hpp"
+#include "CustomScene.h"
+#include "MainMenu.hpp"
+#include "GameMenu.hpp"
+#include "OptionsMenu.hpp"
 
 Game* Game::Create()
 {
@@ -17,35 +15,17 @@ Game* Game::Create()
 
 Game::Game() {}
 
-DECLARE_SCRIPT(CamScript, ScriptFlag::Update)
-
-void Update() override
-{
-    GameTransform* t = &m_pOwner->transform;
-    float32 dt = GameManager::DeltaTime();
-    float32 speed = 5.f;
-    
-    if (GetKey(Keyboard::D))
-        t->WorldTranslate(Vector3f32(1.0f, 0.0f, 0.0f) * dt * speed);
-    if (GetKey(Keyboard::Q))
-        t->WorldTranslate(Vector3f32(-1.0f, 0.0f, 0.0f) * dt * speed);
-    if (GetKey(Keyboard::Z))
-        t->WorldTranslate(Vector3f32(0.0f, 0.0f, 1.0f) * dt * speed);
-    if (GetKey(Keyboard::S))
-        t->WorldTranslate(Vector3f32(0.0f, 0.0f, -1.0f) * dt * speed);
-
-    if (GetKey(Keyboard::NUMPAD6))
-        t->WorldRotate(Vector3f32(0.0f, 1.0f, 0.0f) * dt * speed);
-    if (GetKey(Keyboard::NUMPAD4))
-        t->WorldRotate(Vector3f32(0.0f, -1.0f, 0.0f) * dt * speed);
-}
-
-END_SCRIPT
-
 void Game::Init()
 {
-    GameManager::Create();
-    m_Scene = &Scene::Create();
+    m_SceneManager = SceneManager::GetInstance();
+    
+    m_SceneManager->Init();
+
+    CustomScene* main_menu = m_SceneManager->GetScene(MAIN_MENU);
+    CustomScene* game_menu = m_SceneManager->GetScene(GAME);
+    CustomScene* option_menu = m_SceneManager->GetScene(OPTIONS_MENU);
+    
+    SceneManager::GetInstance()->ChangeScene(MAIN_MENU);
 
     pPso = new D12PipelineObject(
         SHADERS.VERTEX,
@@ -61,16 +41,11 @@ void Game::Init()
     windowParam.height = 720;
     windowParam.isFullScreen = true;
 
-    GameObject& player = GameObject::Create(*m_Scene);
-    player.AddScript<Player>()->Init(pPso);
-    player.AddScript<PlayerController>();
+    InitMenu(main_menu, &windowParam);
+    
+    InitMenuGame(game_menu, &windowParam, pPso);
 
-    MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", m_Scene, pPso);
-
-    GameObject& kamikaze = GameObject::Create(*m_Scene);
-    kamikaze.AddScript<Kamikaze>()->Init(pPso);
-    kamikaze.AddComponent<BoxCollider>();
-
+    InitOptionsMenu(option_menu, &windowParam);
 }
 
 int Game::RUN()

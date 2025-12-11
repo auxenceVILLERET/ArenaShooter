@@ -5,9 +5,10 @@
 #include "Script.h"
 #include "GameObject.h"
 #include "Chrono.h"
+#include "Projectile.hpp"
 using namespace gce;
 
-DECLARE_SCRIPT(Weapon, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_SCRIPT(Weapon, ScriptFlag::Awake | ScriptFlag::Update)
 
 
 float32 m_reloadCooldown = 0.f;
@@ -21,8 +22,6 @@ bool m_isReloading = false;
 
 D12PipelineObject* m_PSO = nullptr;
 
-
-
 float32 m_heat = 0.f;          
 float32 m_maxHeat = 100.f;     
 float32 m_heatPerShot = 10.f;  
@@ -30,9 +29,13 @@ float32 m_coolRate = 8.f;
 
 bool m_isOverheated = false;
 
-void Start() override
+Vector<Projectile*> m_pProjectiles;
+
+GameObject* m_Owner = nullptr;
+
+void Awake() override
 {
-    
+    m_Owner = m_pOwner;
 }
 
 void Update() override
@@ -81,9 +84,9 @@ void Update() override
 
 }
 
-
 void BeginShot()
 {
+    
     if (m_isShooting) return;
     if (m_isReloading) return;
 
@@ -94,7 +97,10 @@ void BeginShot()
 
 virtual void Shoot()
 {
-    
+    m_shotTimer.Reset();
+    m_shotTimer.Start();
+    m_heat += m_heatPerShot;
+
 }
 
 virtual void Init(D12PipelineObject* pso)
@@ -109,6 +115,17 @@ void EndShot()
     m_shotTimer.Reset();
 }
 
+virtual Projectile* GetFirstAvailableProjectile()
+{
+    for (Projectile* projectile : m_pProjectiles)
+    {
+        if (!projectile->IsActive())
+            return projectile;
+    }
+
+    return nullptr;
+}
+
 void Reload()
 {
     if (m_isReloading == true) return;
@@ -118,6 +135,10 @@ void Reload()
     std::cout << "Reload" << std::endl;
 }
 
+GameObject* GetOwner()
+{
+    return m_Owner;
+}
 
 END_SCRIPT
 

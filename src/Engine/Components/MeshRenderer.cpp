@@ -13,6 +13,14 @@ void MeshRenderer::Init()
 {
     m_pOwner->transform.dirtyEvent.AddListener( &MeshRenderer::UpdateWorld, this );
     FrameResourcesManager::AddRenderItem( *this );
+    pPso = GameManager::GetDefaultPso();
+    pMaterial->subsurface = 0;
+    pMaterial->useDisplacementTexture = 0;
+    pMaterial->useTextureAlbedo = 0;
+    pMaterial->useTextureAmbient = 0;
+    pMaterial->useTextureMetalness = 0;
+    pMaterial->useTextureNormal = 0;
+    pMaterial->useTextureRoughness = 0;
 }
 
 

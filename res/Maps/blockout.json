@@ -3039,6 +3039,31 @@
             },
             "destructible": false,
             "has_collider": true
+        },
+        {
+            "name": "Container",
+            "type": "EMPTY",
+            "position": [
+                -0.049297332763671875,
+                -0.10509109497070312,
+                7.5
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                50.83667755126953,
+                41.73368453979492,
+                7.5
+            ],
+            "parent": null,
+            "texture": null,
+            "mesh": null,
+            "destructible": false,
+            "has_collider": true
         }
     ]
 }
