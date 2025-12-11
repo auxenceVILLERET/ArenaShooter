@@ -19,7 +19,7 @@ void Awake() override
 {
 	m_pSm = GameManager::GetStateSystem().CreateStateMachine(m_pOwner);
 	Enemy::Awake();
-    m_Hp = new Health<float>(100.f);
+    m_Hp = new Health<float>(1000.f);
 	String idle = "Idle";
 	m_pSm->AddAction(idle, [this]() {this->OnBeginIdle(); }, [this]() {this->OnUpdateIdle(); }, [this]() {this->OnEndIdle(); });
 
@@ -66,7 +66,7 @@ bool IsPlayerClose()
 	GameObject* player = m_pOwner->GetScript<Kamikaze>()->m_pPlayer;
 	if (player == nullptr) return false;
 	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm(); Console::Log("Distance entre joueur et ennemi : " + std::to_string(distance));
+	float distance = DistVect.Norm(); 
 	return distance < 20.0f; // Seuil de distance
 }
 
@@ -75,7 +75,7 @@ bool IsPlayerVeryClose()
 	GameObject* player = m_pOwner->GetScript<Kamikaze>()->m_pPlayer;
 	if (player == nullptr) return false;
 	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm(); Console::Log("Distance entre joueur et ennemi : " + std::to_string(distance));
+	float distance = DistVect.Norm(); 
 	return distance < 8.0f; // Seuil de distance
 }
 
@@ -83,19 +83,19 @@ bool IsPlayerFar()
 {
 	GameObject* player = m_pOwner->GetScript<Kamikaze>()->m_pPlayer;
 	if (player == nullptr) return false; Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm(); Console::Log("Distance entre joueur et ennemi : " + std::to_string(distance));
+	float distance = DistVect.Norm(); 
 	return distance < 25.0f; // Seuil de distance
 }
 
-void OnBeginIdle() { Console::Log("Idle"); }
+void OnBeginIdle() {}
 void OnUpdateIdle() {}
 void OnEndIdle() {}
 
-void OnBeginChase() { Console::Log("Chase"); }
+void OnBeginChase() {}
 void OnUpdateChase() {}
 void OnEndChase() {}
 
-void OnBeginAttack() { Console::Log("Attack"); }
+void OnBeginAttack() {}
 void OnUpdateAttack() {}
 void OnEndAttack() {}
 

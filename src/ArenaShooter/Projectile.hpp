@@ -37,7 +37,10 @@ void CollisionEnter(GameObject* other)
     if (m_pOwner->GetName() == other->GetName())
         return;
     
-    m_pOwner->SetActive(false);
+    if(m_pOwner->GetName() != "Handgun bullet")
+        return m_pOwner->SetActive(false);
+
+
 }
 
 virtual void Init(Vector3f32 dir,Vector3f32 pos, float32 speed)
