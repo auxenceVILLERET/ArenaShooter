@@ -58,6 +58,7 @@ void LevelGrid::Init(SceneName scene, std::pair<Vector3f32, Vector3f32> const& m
             Vector<Data> tempX;
             for (int x = 0; x < tileCountX; x++)
             {
+                
                 Data newTile;
                 newTile.gridPosition = {x, y, z};
                 newTile.worldPosition =
@@ -185,10 +186,7 @@ void LevelGrid::CalculateNodes()
             
             n->vNeighbours.PushBack(nNeig);
         }
-        std::cout << i << std::endl;
     }
-
-    
 }
 
 void LevelGrid::Reset()
@@ -232,13 +230,13 @@ Node* LevelGrid::AStar(Node* pStart, Node* pEnd, Enemy* pAgent)
 
             neighbour->targetDistance = neighbour->data->Distance(*pEnd->data);
             
-            int newCost = curr->cost + curr->data->Distance(*neighbour->data);
+            float32 newCost = curr->cost + curr->data->Distance(*neighbour->data);
             if (newCost < neighbour->cost)
             {
                 neighbour->cost = newCost;
                 neighbour->pCameFrom = curr;
+                queue.push(neighbour);
             }
-            queue.push(neighbour);
         }
     }
 

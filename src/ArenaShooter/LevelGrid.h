@@ -29,15 +29,15 @@ struct Node
     bool isVisited = false;
     Node* pCameFrom = nullptr;
 
-    int cost = MAX_COST;
-    int targetDistance = MAX_COST;
+    float32 cost = (float32)MAX_COST;
+    float32 targetDistance = (float32)MAX_COST;
 
     Vector<Node*> vNeighbours;
 
     bool operator()(Node const* a, Node const* b) const
     {
-        int totalCostA = a->cost + a->targetDistance;
-        int totalCostB = b->cost + b->targetDistance;
+        float32 totalCostA = a->cost + a->targetDistance;
+        float32 totalCostB = b->cost + b->targetDistance;
 
         if (totalCostA == totalCostB)
             return a->cost < b->cost;

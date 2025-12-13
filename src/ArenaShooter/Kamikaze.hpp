@@ -39,7 +39,7 @@ void Awake() override
 	StateMachine::Condition veryClosePlayerCondition = { [this]() { return this->IsPlayerVeryClose(); } };
 	Vector<StateMachine::Condition> veryClosePlayerConditions;
 	veryClosePlayerConditions.PushBack(veryClosePlayerCondition);
-	m_pSm->AddTransition(veryClosePlayerConditions, chase, attack);
+	// m_pSm->AddTransition(veryClosePlayerConditions, chase, attack);
  
 	StateMachine::Condition farPlayerCondition = { [this]() { return this->IsPlayerFar(); } };
 	Vector<StateMachine::Condition> farPlayerConditions;
@@ -69,7 +69,7 @@ bool IsPlayerClose()
 	GameObject* player = m_pOwner->GetScript<Kamikaze>()->m_pPlayer;
 	if (player == nullptr) return false;
 	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm(); Console::Log("Distance entre joueur et ennemi : " + std::to_string(distance));
+	float distance = DistVect.Norm();
 	return distance < 20.0f; // Seuil de distance
 }
 
@@ -78,7 +78,7 @@ bool IsPlayerVeryClose()
 	GameObject* player = m_pOwner->GetScript<Kamikaze>()->m_pPlayer;
 	if (player == nullptr) return false;
 	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm(); Console::Log("Distance entre joueur et ennemi : " + std::to_string(distance));
+	float distance = DistVect.Norm();
 	return distance < 8.0f; // Seuil de distance
 }
 
@@ -86,7 +86,7 @@ bool IsPlayerFar()
 {
 	GameObject* player = m_pOwner->GetScript<Kamikaze>()->m_pPlayer;
 	if (player == nullptr) return false; Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm(); Console::Log("Distance entre joueur et ennemi : " + std::to_string(distance));
+	float distance = DistVect.Norm();
 	return distance > 25.0f; // Seuil de distance
 }
 

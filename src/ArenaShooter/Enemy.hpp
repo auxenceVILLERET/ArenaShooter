@@ -137,7 +137,7 @@ void SetTarget()
 {
 	if (m_target.isSet == true) return;
 	if (m_vPaths.Empty()) return;
-	Path currentPath = m_vPaths.Front();
+	Path& currentPath = m_vPaths.Front();
 
 	if (m_pLevelGrid == nullptr) return;
 	
@@ -147,6 +147,7 @@ void SetTarget()
 		Vector3f32 position = m_pLevelGrid->GetNode(p)->data->worldPosition;
 		GoToPosition(position, m_speed);
 		currentPath.index++;
+		std::cout << position.x << "|" << position.y << "|" << position.z << std::endl;
 	}
 	else
 		m_vPaths.Erase(m_vPaths.begin());
@@ -186,43 +187,39 @@ void SetPath(Vector3f32 target)
 	
 	Path path;
 	//
-	// Vector<Vector2f32> dirs;
-	// dirs.PushBack(Vector2f32(0.0f, 0.0f));
-	// dirs.PushBack(Vector2f32(1.0f, 0.0f));
-	// dirs.PushBack(Vector2f32(-1.0f, -1.0f));
-	// dirs.PushBack(Vector2f32(-1.0f, 1.0f));
-	//
-	// Ray ray;
-	// bool blocked = false;
-	//
-	// for (Vector2f32 dir : dirs)
-	// {
-	// 	ray.origin = m_pOwner->transform.GetWorldPosition();
-	// 	ray.direction = targetDir;
-	//
-	// 	ray.origin += m_pOwner->transform.GetWorldRight() * dir.x * m_pOwner->transform.GetWorldScale().x * 0.5f;
-	// 	ray.origin += m_pOwner->transform.GetWorldUp() * dir.y * m_pOwner->transform.GetWorldScale().y * 0.5f;
-	//
-	// 	RaycastHit hitInfo;
-	// 	bool hit = PhysicSystem::IntersectRay(ray, hitInfo, distance);
-	//
-	// 	if (hit && hitInfo.pGameObject != nullptr && hitInfo.pGameObject->GetName() != "Player" &&  hitInfo.pGameObject != m_pOwner)
-	// 	{
-	// 		blocked = true;
-	// 		break;
-	// 	}
-	// }
-	//
-	// if (blocked == false && m_vPaths.Empty())
-	// {
-	// 	ResetPath();
-	// 	GoToPosition(target, m_speed);
-	// 	return;
-	// }
-	// if (blocked == true)
-	// {
-	// 	int o = 0;
-	// }
+	Vector<Vector2f32> dirs;
+	dirs.PushBack(Vector2f32(0.0f, 0.0f));
+	dirs.PushBack(Vector2f32(1.0f, 0.0f));
+	dirs.PushBack(Vector2f32(-1.0f, -1.0f));
+	dirs.PushBack(Vector2f32(-1.0f, 1.0f));
+	
+	Ray ray;
+	bool blocked = false;
+	
+	for (Vector2f32 dir : dirs)
+	{
+		ray.origin = m_pOwner->transform.GetWorldPosition();
+		ray.direction = targetDir;
+	
+		ray.origin += m_pOwner->transform.GetWorldRight() * dir.x * m_pOwner->transform.GetWorldScale().x * 0.5f;
+		ray.origin += m_pOwner->transform.GetWorldUp() * dir.y * m_pOwner->transform.GetWorldScale().y * 0.5f;
+	
+		RaycastHit hitInfo;
+		bool hit = PhysicSystem::IntersectRay(ray, hitInfo, distance);
+	
+		if (hit && hitInfo.pGameObject != nullptr && hitInfo.pGameObject->GetName() != "Player" &&  hitInfo.pGameObject != m_pOwner)
+		{
+			blocked = true;
+			break;
+		}
+	}
+	
+	if (blocked == false && m_vPaths.Empty())
+	{
+		ResetPath();
+		GoToPosition(target, m_speed);
+		return;
+	}
 	
 	Node* nResult = grid->AStar(nSelf, nEnd, this);
 	if (nResult == nullptr)
@@ -233,6 +230,13 @@ void SetPath(Vector3f32 target)
 		Vector3i32 p = nResult->data->gridPosition;
 		path.vPositions.Insert(path.vPositions.begin(), p);
 		nResult = nResult->pCameFrom;
+	}
+
+	path.vPositions.Erase(path.vPositions.begin());
+	if (m_vPaths.Empty() == false)
+	{
+		if (path.vPositions.Back() == m_vPaths.Front().vPositions.Back())
+			return;
 	}
 
 	grid->Reset();
