@@ -123,14 +123,10 @@ void GoToPosition(Vector3f32 const& pos, float32 speed)
 	m_target.distance = position.Distance(pos);
 	m_target.isSet = true;
 	m_target.isReached = false;
+
+	std::cout << m_target.position.x << "|" << m_target.position.y << "|" << m_target.position.z << std::endl;
 	
-	Vector3f32 eye = m_pOwner->transform.GetWorldPosition();
-	Vector3f32 target = m_pPlayer->transform.GetWorldPosition();
-	Vector3f32 dir = (target - eye).Normalize();
-	float yaw = atan2(dir.x, dir.z);
-	float pitch = asin(-dir.y);
-	Quaternion q = Quaternion::RotationEuler(pitch, yaw, 0);
-	m_pOwner->transform.SetLocalRotation(q);
+	OrientFace(m_target.position);
 }
 
 void SetTarget()
@@ -147,7 +143,6 @@ void SetTarget()
 		Vector3f32 position = m_pLevelGrid->GetNode(p)->data->worldPosition;
 		GoToPosition(position, m_speed);
 		currentPath.index++;
-		std::cout << position.x << "|" << position.y << "|" << position.z << std::endl;
 	}
 	else
 		m_vPaths.Erase(m_vPaths.begin());
@@ -170,28 +165,40 @@ Node* GetNextNode()
 	return nextNode;
 }
 
-void SetPath(Vector3f32 target)
+void OrientFace(Vector3f32 target)
+{
+	Vector3f32 eye = m_pOwner->transform.GetWorldPosition();
+	Vector3f32 dir = (target - eye).Normalize();
+	float yaw = atan2(dir.x, dir.z);
+	float pitch = asin(-dir.y);
+	Quaternion q = Quaternion::RotationEuler(pitch, yaw, 0);
+	m_pOwner->transform.SetLocalRotation(q);
+}
+
+bool SetPath(Vector3f32 target)
 {
 	LevelGrid* grid = m_pLevelGrid;
-	if (grid == nullptr) return;;
+	if (grid == nullptr) return false;
 	
 	Node* nEnd = grid->GetNode(grid->GetTilePosition(target));
 	Node* nSelf = grid->GetNode(grid->GetTilePosition(m_pOwner->transform.GetWorldPosition()));
 
-	if (nSelf == nullptr) return ;
-	if (nEnd == nullptr) return ;
-
+	if (nSelf == nullptr) return false;
+	if (nEnd == nullptr) return false;
+	
 	Vector3f32 targetDir = target - m_pOwner->transform.GetWorldPosition();
 	float32 distance = targetDir.Norm();
 	targetDir.SelfNormalize();
+	Vector3f32 targetRight = Vector3f32(0.0f, 1.0f, 0.0f).CrossProduct(targetDir).Normalize();
+	Vector3f32 targetUp = targetDir.CrossProduct(targetRight).Normalize();
 	
 	Path path;
 	//
 	Vector<Vector2f32> dirs;
 	dirs.PushBack(Vector2f32(0.0f, 0.0f));
-	dirs.PushBack(Vector2f32(1.0f, 0.0f));
-	dirs.PushBack(Vector2f32(-1.0f, -1.0f));
-	dirs.PushBack(Vector2f32(-1.0f, 1.0f));
+	// dirs.PushBack(Vector2f32(0.0f, 1.0f));
+	// dirs.PushBack(Vector2f32(-1.0f, -1.0f));
+	// dirs.PushBack(Vector2f32(1.0f, -1.0f));
 	
 	Ray ray;
 	bool blocked = false;
@@ -200,9 +207,10 @@ void SetPath(Vector3f32 target)
 	{
 		ray.origin = m_pOwner->transform.GetWorldPosition();
 		ray.direction = targetDir;
-	
-		ray.origin += m_pOwner->transform.GetWorldRight() * dir.x * m_pOwner->transform.GetWorldScale().x * 0.5f;
-		ray.origin += m_pOwner->transform.GetWorldUp() * dir.y * m_pOwner->transform.GetWorldScale().y * 0.5f;
+		
+		ray.origin += targetRight * dir.x * m_pOwner->transform.GetWorldScale().x * 0.5f;
+		ray.origin += targetUp * dir.y * m_pOwner->transform.GetWorldScale().y * 0.5f;
+		ray.origin += targetDir * m_pOwner->transform.GetWorldScale().z * 0.5f;
 	
 		RaycastHit hitInfo;
 		bool hit = PhysicSystem::IntersectRay(ray, hitInfo, distance);
@@ -218,12 +226,12 @@ void SetPath(Vector3f32 target)
 	{
 		ResetPath();
 		GoToPosition(target, m_speed);
-		return;
+		return true;
 	}
 	
 	Node* nResult = grid->AStar(nSelf, nEnd, this);
 	if (nResult == nullptr)
-		return;
+		 return false;
 
 	while (nResult != nullptr)
 	{
@@ -236,7 +244,7 @@ void SetPath(Vector3f32 target)
 	if (m_vPaths.Empty() == false)
 	{
 		if (path.vPositions.Back() == m_vPaths.Front().vPositions.Back())
-			return;
+			return true;
 	}
 
 	grid->Reset();
@@ -273,10 +281,14 @@ void SetPath(Vector3f32 target)
 	ResetPath();
 	if (path.vPositions.Empty() == false)
 		m_vPaths.PushBack(path);
+
+	return false;
+	
 }
 
 void ResetPath()
 {
+	m_direction = {0.0f, 0.0f, 0.0f};
 	m_vPaths.Clear();
 	m_target.isSet = false;
 }
