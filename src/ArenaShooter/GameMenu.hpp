@@ -17,8 +17,10 @@ void InitMenuGame(CustomScene* menu, WindowParam* windowParam, D12PipelineObject
 {
     std::pair<Vector3f32, Vector3f32> mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", menu, pso);
 
-    LevelGrid grid;
-    grid.Init(SceneName::GAME, mapProperties, {4.0f, 4.0f, 4.0f});
+    LevelGrid* grid = new LevelGrid();
+    grid->Init(SceneName::GAME, mapProperties, {4.0f, 4.0f, 4.0f});
+    
+    grid->Reset();
     
     GameObject& player = menu->AddObject();
     player.transform.SetWorldPosition({ 0,10,0 });
@@ -39,6 +41,7 @@ void InitMenuGame(CustomScene* menu, WindowParam* windowParam, D12PipelineObject
     kamikaze.AddScript<Kamikaze>();
     kamikaze.AddComponent<BoxCollider>();
     kamikaze.GetScript<Kamikaze>()->SetPlayer(&player);
+    kamikaze.GetScript<Kamikaze>()->SetGrid(grid);
 
 }
 

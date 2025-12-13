@@ -1039,9 +1039,10 @@ inline bool NearlyEqual(float32 a, float32 b, float32 epsilon) {
 
 	Matrix Matrix::LookAtLH(Vector3f32 const& eyePosition, Vector3f32 const& focusPosition, Vector3f32 const& up)
 	{
-
+		Vector3f32 rightHandConvert = Vector3f32(1, 1, -1);
 		Vector3f32 eyeDirection = focusPosition - eyePosition;
-		return LookToLH(eyePosition, eyeDirection, up);
+	
+		return LookToLH(eyePosition, eyeDirection * rightHandConvert, up);
 	}
 
 	Matrix Matrix::LookToLH(Vector3f32 const& eyePosition, Vector3f32 const& eyeDirection, Vector3f32 const& up)
@@ -1053,12 +1054,8 @@ inline bool NearlyEqual(float32 a, float32 b, float32 epsilon) {
 		assert(!XMVector3IsInfinite(UpDirection));*/
 
 		Vector3f32 r2 = eyeDirection.Normalize();
-		Vector3f32 uCrossR2 = up.CrossProduct(r2);
-		float32 uCrossR2F[3] = { uCrossR2.x, uCrossR2.y, uCrossR2.z };
-
-		Vector3f32 r0 = uCrossR2.Normalize();
-		Vector3f32 r1 = r2.CrossProduct(r0);
-
+		Vector3f32 r0 = up.CrossProduct(r2).Normalize();
+		Vector3f32 r1 = r2.CrossProduct(r0).Normalize();
 		Vector3f32 NegEyePosition = -eyePosition;
 
 		float d0 = r0.DotProduct(NegEyePosition);
@@ -1071,34 +1068,30 @@ inline bool NearlyEqual(float32 a, float32 b, float32 epsilon) {
 		__m128 mask3 = _mm_castsi128_ps(temp);
 		
 		// TODO: vvv THIS PART IS TO CHANGE ONCE VECTOR3F32 SSE IS APPROVED vvv 
-		float d0F[3] = { d0 };
-		float d1F[3] = { d1 };
-		float d2F[3] = { d2 };
-		__m128 d0M128 = _mm_load_ps(d0F);
-		__m128 d1M128 = _mm_load_ps(d1F);
-		__m128 d2M128 = _mm_load_ps(d2F);
+		// load rotation + translation
+		float r0F[4] = { r0.x, r0.y, r0.z, 0.0f };
+		float r1F[4] = { r1.x, r1.y, r1.z, 0.0f };
+		float r2F[4] = { r2.x, r2.y, r2.z, 0.0f };
 
-		float r0F[3] = { r0.x, r0.y, r0.z };
-		float r1F[3] = { r1.x, r1.y, r1.z };
-		float r2F[3] = { r2.x, r2.y, r2.z };
 		__m128 r0M128 = _mm_load_ps(r0F);
 		__m128 r1M128 = _mm_load_ps(r1F);
 		__m128 r2M128 = _mm_load_ps(r2F);
 
-		__m128 vTemp1 = _mm_andnot_ps(mask3, d0M128);
-		__m128 vTemp2 = _mm_and_ps(r0M128, mask3);
-		m[0] = _mm_or_ps(vTemp1, vTemp2);
+		float d0F[4] = { d0, 0.0f, 0.0f, 0.0f };
+		float d1F[4] = { d1, 0.0f, 0.0f, 0.0f };
+		float d2F[4] = { d2, 0.0f, 0.0f, 0.0f };
 
-		vTemp1 = _mm_andnot_ps(mask3, d0M128);
-		vTemp2 = _mm_and_ps(r0M128, mask3);
-		m[0] = _mm_or_ps(vTemp1, vTemp2);
-		vTemp1 = _mm_andnot_ps(mask3, d1M128);
-		vTemp2 = _mm_and_ps(r1M128, mask3);
-		m[1] = _mm_or_ps(vTemp1, vTemp2);
-		vTemp1 = _mm_andnot_ps(mask3, d2M128);
-		vTemp2 = _mm_and_ps(r2M128, mask3);
-		m[2] = _mm_or_ps(vTemp1, vTemp2);
-		m[3] = { 0, 0, 0, 1 };
+		__m128 d0M128 = _mm_load_ps(d0F);
+		__m128 d1M128 = _mm_load_ps(d1F);
+		__m128 d2M128 = _mm_load_ps(d2F);
+
+		// combine rotation and translation using mask3
+		m[0] = _mm_or_ps(_mm_andnot_ps(mask3, d0M128), _mm_and_ps(r0M128, mask3));
+		m[1] = _mm_or_ps(_mm_andnot_ps(mask3, d1M128), _mm_and_ps(r1M128, mask3));
+		m[2] = _mm_or_ps(_mm_andnot_ps(mask3, d2M128), _mm_and_ps(r2M128, mask3));
+
+		// last row = [0,0,0,1]
+		m[3] = _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f);
 		// ^^^ Part over this comment is temporary ^^^
 
 		Matrix result = m;

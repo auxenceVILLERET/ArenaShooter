@@ -5,9 +5,9 @@
 
 using namespace gce;
 
-#define MAX_COST (2147483647 / 2)
+struct Enemy;
 
-class Agent;
+#define MAX_COST (2147483647 / 2)
 
 struct Data
 {
@@ -15,7 +15,7 @@ struct Data
     Vector3f32 worldPosition;
     bool isAvailable;
     
-    Agent* pOccupyingAgent = nullptr;
+    Enemy* pOccupyingAgent = nullptr;
     
     float32 Distance(Data const& other)
     {
@@ -53,7 +53,7 @@ namespace gce
     public:
         void Init(SceneName scene, std::pair<Vector3f32, Vector3f32>const& mapProperties, Vector3f32 tileSize);
         void Reset();
-        Node* AStar(Node* pStart, Node* pEnd, Agent* pAgent);
+        Node* AStar(Node* pStart, Node* pEnd, Enemy* pAgent);
         void CalculateNodes();
         
         Node* GetNode(Vector3i32 const& pos);
@@ -71,8 +71,8 @@ namespace gce
         Vector<Vector<Vector<Data>>> m_vData;
         GameObject* tempCollider;
         
-        bool CalculateAvailability(Vector3i32 position, Vector<GameObject*>& objs);
-        Vector<Vector3i32>& GetNeighbours(Vector3i32 pos, Vector3i32 minPos, Vector3i32 maxPos);
+        bool CalculateAvailability(Vector3f32 position, Vector<GameObject*>& objs);
+        Vector<Vector3i32> GetNeighbours(Vector3i32 pos, Vector3i32 minPos, Vector3i32 maxPos);
 
     };   
 }

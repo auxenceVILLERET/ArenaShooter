@@ -8,22 +8,22 @@
 #include "Projectile.hpp"
 #include "LevelGrid.h"
 
-using namespace gce;
-
 struct Target 
 {
 	Vector3f32 position;
-	float32 distance;
-	bool isSet;
-	bool isReached;
+	float32 distance = 0.0f;
+	bool isSet = false;
+	bool isReached = false;
 };
 
 struct Path
 {
 	bool isLoop = false;
 	int8 index = 0;
-	std::vector<Vector3i32> vPositions;
+	Vector<Vector3i32> vPositions;
 };
+
+using namespace gce;
 
 DECLARE_SCRIPT(Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
@@ -33,6 +33,7 @@ GameObject* m_pPlayer;
 Target m_target;
 float32 m_speed = 0.0f;
 Vector3f32 m_direction;
+Vector<Path> m_vPaths;
 
 LevelGrid* m_pLevelGrid = nullptr;
 
@@ -54,10 +55,10 @@ void Update() override
 	{
 		m_target.distance = m_pOwner->transform.GetWorldPosition().Distance(m_target.position);
 
-		if (m_target.distance <= 0.0001f)
+		if (m_target.distance <= 0.001f)
 		{
 			m_pOwner->transform.SetWorldPosition(m_target.position);
-			m_direction = gce::Vector3f32({ 0.f, 0.f, 0.f });
+			m_direction = Vector3f32({ 0.f, 0.f, 0.f });
 			m_target.isSet = false;
 			m_target.isReached = true;
 		}
@@ -65,6 +66,11 @@ void Update() override
 
 	if (m_pLevelGrid == nullptr)
 		return;
+
+	if (m_vPaths.Empty()) return;
+	if (m_target.isSet == false)
+		SetTarget();
+	
 }
 
 void SetPlayer(GameObject* player)
@@ -108,18 +114,47 @@ void GoToPosition(Vector3f32 const& pos, float32 speed)
 	
 	direction.SelfNormalize();
 
+	m_direction = direction;
+
 	if (speed > 0.0f)
 		m_speed = speed;
 
-	m_target.position = position;
+	m_target.position = pos;
 	m_target.distance = position.Distance(pos);
 	m_target.isSet = true;
 	m_target.isReached = false;
+	
+	Vector3f32 eye = m_pOwner->transform.GetWorldPosition();
+	Vector3f32 target = m_pPlayer->transform.GetWorldPosition();
+	Vector3f32 dir = (target - eye).Normalize();
+	float yaw = atan2(dir.x, dir.z);
+	float pitch = asin(-dir.y);
+	Quaternion q = Quaternion::RotationEuler(pitch, yaw, 0);
+	m_pOwner->transform.SetLocalRotation(q);
+}
+
+void SetTarget()
+{
+	if (m_target.isSet == true) return;
+	if (m_vPaths.Empty()) return;
+	Path currentPath = m_vPaths.Front();
+
+	if (m_pLevelGrid == nullptr) return;
+	
+	if (currentPath.index < currentPath.vPositions.Size())
+	{
+		Vector3i32 p = currentPath.vPositions[currentPath.index];
+		Vector3f32 position = m_pLevelGrid->GetNode(p)->data->worldPosition;
+		GoToPosition(position, m_speed);
+		currentPath.index++;
+	}
+	else
+		m_vPaths.Erase(m_vPaths.begin());
 }
 
 Node* GetNextNode()
 {
-	LevelGrid* grid = m_pLevelGrid();
+	LevelGrid* grid = m_pLevelGrid;
 	if (grid == nullptr) return nullptr;
 	Node* node = grid->GetNode(grid->GetTilePosition(m_pOwner->transform.GetWorldPosition()));
 	
@@ -133,6 +168,115 @@ Node* GetNextNode()
 
 	return nextNode;
 }
+
+void SetPath(Vector3f32 target)
+{
+	LevelGrid* grid = m_pLevelGrid;
+	if (grid == nullptr) return;;
+	
+	Node* nEnd = grid->GetNode(grid->GetTilePosition(target));
+	Node* nSelf = grid->GetNode(grid->GetTilePosition(m_pOwner->transform.GetWorldPosition()));
+
+	if (nSelf == nullptr) return ;
+	if (nEnd == nullptr) return ;
+
+	Vector3f32 targetDir = target - m_pOwner->transform.GetWorldPosition();
+	float32 distance = targetDir.Norm();
+	targetDir.SelfNormalize();
+	
+	Path path;
+	//
+	// Vector<Vector2f32> dirs;
+	// dirs.PushBack(Vector2f32(0.0f, 0.0f));
+	// dirs.PushBack(Vector2f32(1.0f, 0.0f));
+	// dirs.PushBack(Vector2f32(-1.0f, -1.0f));
+	// dirs.PushBack(Vector2f32(-1.0f, 1.0f));
+	//
+	// Ray ray;
+	// bool blocked = false;
+	//
+	// for (Vector2f32 dir : dirs)
+	// {
+	// 	ray.origin = m_pOwner->transform.GetWorldPosition();
+	// 	ray.direction = targetDir;
+	//
+	// 	ray.origin += m_pOwner->transform.GetWorldRight() * dir.x * m_pOwner->transform.GetWorldScale().x * 0.5f;
+	// 	ray.origin += m_pOwner->transform.GetWorldUp() * dir.y * m_pOwner->transform.GetWorldScale().y * 0.5f;
+	//
+	// 	RaycastHit hitInfo;
+	// 	bool hit = PhysicSystem::IntersectRay(ray, hitInfo, distance);
+	//
+	// 	if (hit && hitInfo.pGameObject != nullptr && hitInfo.pGameObject->GetName() != "Player" &&  hitInfo.pGameObject != m_pOwner)
+	// 	{
+	// 		blocked = true;
+	// 		break;
+	// 	}
+	// }
+	//
+	// if (blocked == false && m_vPaths.Empty())
+	// {
+	// 	ResetPath();
+	// 	GoToPosition(target, m_speed);
+	// 	return;
+	// }
+	// if (blocked == true)
+	// {
+	// 	int o = 0;
+	// }
+	
+	Node* nResult = grid->AStar(nSelf, nEnd, this);
+	if (nResult == nullptr)
+		return;
+
+	while (nResult != nullptr)
+	{
+		Vector3i32 p = nResult->data->gridPosition;
+		path.vPositions.Insert(path.vPositions.begin(), p);
+		nResult = nResult->pCameFrom;
+	}
+
+	grid->Reset();
+
+	Path copy = path;
+	
+	if (path.vPositions.Size() > 1)
+	{
+		Vector3f32 dir = { 0, 0, 0 };
+		int i = 1;
+		while (i < path.vPositions.Size())
+		{
+			Vector3f32 a = {(float32)path.vPositions[i].x, (float32)path.vPositions[i].y, (float32)path.vPositions[i].z};
+			Vector3f32 b = {(float32)path.vPositions[i - 1].x, (float32)path.vPositions[i - 1].y, (float32)path.vPositions[i - 1].z};
+
+			Vector3f32 newDir = a - b;
+
+			if (i > 1)
+			{
+				Vector3f32 prevDir = b - Vector3f32((float32)path.vPositions[i - 2].x, (float32)path.vPositions[i - 2].y, (float32)path.vPositions[i - 2].z);
+
+				// check if direction is same
+				if (newDir == prevDir)
+				{
+					path.vPositions.Erase(path.vPositions.begin() + i - 1);
+					continue; // do not increment i, because indices shifted left
+				}
+			}
+
+			i++;
+		}
+	}
+
+	ResetPath();
+	if (path.vPositions.Empty() == false)
+		m_vPaths.PushBack(path);
+}
+
+void ResetPath()
+{
+	m_vPaths.Clear();
+	m_target.isSet = false;
+}
+
 
 END_SCRIPT
 
