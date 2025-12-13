@@ -12,6 +12,7 @@
 #include "Rifle.hpp"
 #include "Shotgun.hpp"
 #include "Handgun.hpp"
+#include "Health.h"
 #include "WeaponController.hpp"
 
 using namespace gce;
@@ -29,8 +30,12 @@ Handgun* m_handgun = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
+Health<int>* m_health = nullptr;
+
 void Awake() override
 {
+	m_health = new Health<int>(5);
+	
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
 	cam.SetParent(*m_pOwner);
 	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
@@ -73,7 +78,6 @@ void Awake() override
 	handgun.SetParent(cam);
 	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_handgun);
-
 }
 
 void Test()
@@ -215,73 +219,6 @@ WeaponController* GetWeaponController()
 {
 	return m_weaponController;
 }
-
-/*void RayCast()
-{
-	static float32 timer = 0.f;
-	float32 delay = 0.02f;
-	timer += GameManager::DeltaTime();
-	Ray ray;
-	float32 maxDistance = 100.f;
-
-	if (timer > delay)
-	{
-		timer = 0.f;
-
-		ray.origin = PlayerSphere->transform.GetWorldPosition();
-		ray.direction = PlayerSphere->transform.GetLocalForward();
-
-		RaycastHit hitInfo;
-		float32 distance = maxDistance;
-		Vector3f32 hitPoint = ray.origin + ray.direction * distance;
-
-		auto* window = GameManager::GetWindow();
-		Vector2f32 screenSize(window->GetWidth(), window->GetHeight());
-		wchar_t buffer[128];
-		swprintf(buffer, 128, L"[V] W and H : %.2f, %.2f\n", screenSize.x, screenSize.y);
-		OutputDebugString(buffer);
-		if (PhysicSystem::IntersectRay(ray, hitInfo, maxDistance))
-		{
-			if (hitInfo.pGameObject && hitInfo.pGameObject->HasComponent<MeshRenderer>())
-			{
-				hitInfo.pGameObject->GetComponent<MeshRenderer>()->pMaterial->albedoTextureID = laserTexture->GetTextureID();
-			}
-
-			distance = hitInfo.distance;
-			hitPoint = hitInfo.point;
-
-			wchar_t buffer[128];
-			swprintf(buffer, 128, L"[V] Hit at: %.2f, %.2f, %.2f | Dist: %.2f\n", hitPoint.x, hitPoint.y, hitPoint.z, distance);
-			OutputDebugString(buffer);
-
-			swprintf(buffer, 128, L"[V] Hit GameObject Name : %hs\n", hitInfo.pGameObject->GetName());
-			OutputDebugString(buffer);
-		}
-		else
-		{
-
-			targetSphere->GetComponent<MeshRenderer>()->pMaterial->albedoTextureID = brickTexture->GetTextureID();
-			targetSphere2->GetComponent<MeshRenderer>()->pMaterial->albedoTextureID = brickTexture->GetTextureID();
-
-			targetCube->GetComponent<MeshRenderer>()->pMaterial->albedoTextureID = metalTexture->GetTextureID();
-			targetCube2->GetComponent<MeshRenderer>()->pMaterial->albedoTextureID = metalTexture->GetTextureID();
-		}
-
-		Vector3f32 middle = ray.origin + ray.direction * (distance * 0.5f);
-		m_pOwner->transform.SetWorldPosition(middle);
-
-		Vector3f32 rightHandConvert = Vector3f32(1, 1, -1);
-		Quaternion lookRotation = Quaternion::RotationMatrix(Matrix::LookToLH(PlayerSphere->transform.GetWorldPosition(), ray.direction * rightHandConvert, PlayerSphere->transform.GetLocalUp()));
-
-		Quaternion correction;
-		correction.SetRotationEuler(-PI / 2.0f, 0, 0);
-
-		m_pOwner->transform.SetLocalRotation(correction * lookRotation);
-
-		m_pOwner->transform.SetLocalScale({ 1.f, distance * 0.5f, 1.f });
-
-	}
-}*/
 
 private:
 	float32 m_deltaTime;
