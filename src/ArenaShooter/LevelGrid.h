@@ -1,11 +1,13 @@
 #ifndef LEVELGRID_H_DEFINED
 #define LEVELGRID_H_DEFINED
 #include "Engine.h"
+#include "MapLoader.hpp"
 #include "SceneManager.h"
 
 using namespace gce;
 
 struct Enemy;
+struct MapProperties;
 
 #define MAX_COST (2147483647 / 2)
 
@@ -51,7 +53,7 @@ namespace gce
     class LevelGrid 
     {
     public:
-        void Init(SceneName scene, std::pair<Vector3f32, Vector3f32>const& mapProperties, Vector3f32 tileSize);
+        void Init(SceneName scene, MapProperties const& mapProperties, Vector3f32 tileSize);
         void Reset();
         Node* AStar(Node* pStart, Node* pEnd, Enemy* pAgent);
         void CalculateNodes();
@@ -64,7 +66,7 @@ namespace gce
         int32 m_LENGTH = 0;
         int32 m_HEIGHT = 0;
         
-        std::pair<Vector3f32, Vector3f32> m_mapProperties;
+        MapProperties m_mapProperties;
         Vector3f32 m_tileSize;
     
         Vector<Node> m_vNodes;

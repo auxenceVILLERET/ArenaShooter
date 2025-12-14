@@ -1,0 +1,127 @@
+import bpy
+import json
+import mathutils
+import os
+
+def vec(v):
+    return [float(v[0]), float(v[1]), float(v[2])]
+
+def export_mesh(obj, apply_world_matrix=False):
+    if obj.type != 'MESH':
+        return None
+
+    mesh = obj.to_mesh()
+    mesh.calc_loop_triangles()
+
+    vertices_flat = []
+    indices_flat = []
+    uvs_flat = []
+
+    # Vertices (still per vertex)
+    for v in mesh.vertices:
+        pos = v.co
+        vertices_flat.extend([float(pos.x), float(pos.y), float(pos.z)])
+
+    # Triangles and correct UVs (per loop)
+    if mesh.uv_layers.active:
+        uv_layer = mesh.uv_layers.active.data
+        has_uv = True
+    else:
+        has_uv = False
+
+    # Loop through triangles and preserve loop ordera
+    for tri in mesh.loop_triangles:
+
+        # you changed the vertex order to [1, 0, 2]
+        vert_order = [1, 0, 2]
+
+        # Add triangle indices
+        indices_flat.extend([
+            tri.vertices[vert_order[0]],
+            tri.vertices[vert_order[1]],
+            tri.vertices[vert_order[2]],
+        ])
+
+        if has_uv:
+            # tri.loops is also [l0, l1, l2] in the same original order
+            loop_order = [tri.loops[i] for i in vert_order]
+
+            for loop_index in loop_order:
+                uv = uv_layer[loop_index].uv
+                uvs_flat.extend([float(uv.x), float(uv.y)])
+
+    # If no UVs, return empty
+    if not has_uv:
+        uvs_flat = []
+
+    obj.to_mesh_clear()
+
+    return {
+        "vertices": vertices_flat,
+        "indices": indices_flat,
+        "uvs": uvs_flat
+    }
+
+def export_arrow_empty(obj):
+    # Start position (world space)
+    start = obj.matrix_world.to_translation()
+
+    # Arrow direction is local +Y
+    direction = mathutils.Vector((0, 1, 0))
+    direction_world = obj.matrix_world.to_3x3() @ direction
+
+    # Length based on Y scale
+    length = obj.scale.y
+
+    end = start + direction_world.normalized() * length
+
+    return {
+        "name": obj.name,
+        "start": [float(start.x), float(start.y), float(start.z)],
+        "end": [float(end.x), float(end.y), float(end.z)]
+    }
+
+def get_material_texture_name(obj):
+    """Return only the image filename used by the object's active material."""
+    mat = obj.active_material
+    if not mat or not mat.node_tree:
+        return None
+
+    for node in mat.node_tree.nodes:
+        if node.type == 'TEX_IMAGE' and node.image:
+            full_path = bpy.path.abspath(node.image.filepath)
+            return os.path.basename(full_path)   # <-- filename only
+
+    return None
+
+def export_scene(filepath):
+    scene_data = {"objects": []}
+
+    for obj in bpy.context.scene.objects:
+        item = {}
+        if obj.type == 'EMPTY' and obj.empty_display_type == 'SINGLE_ARROW':
+            item = export_arrow_empty(obj)
+            item["type"] = "ARROW"
+            scene_data["objects"].append(item)
+            continue
+        item["name"] = obj.name
+        item["type"] = obj.type
+        item["position"] = [float(x) for x in obj.matrix_world.to_translation()]
+        rot = obj.matrix_world.to_quaternion()
+        item["rotation"] = [float(rot.x), float(rot.y), float(rot.z), float(rot.w)]
+        item["scale"] = [float(x) for x in obj.matrix_world.to_scale()]
+        item["parent"] = obj.parent.name if obj.parent else None
+        item["texture"] = get_material_texture_name(obj)
+        item["mesh"] = export_mesh(obj)
+        item["destructible"] = obj["destructible"]
+        item["has_collider"] = obj["has_collider"]
+        scene_data["objects"].append(item)
+
+    with open(filepath, "w") as f:
+        json.dump(scene_data, f, indent=4)
+
+    print("Exported:", filepath)
+
+# Change the path to wherever you want to place the JSON
+output_path = os.path.join("C:/Users/vivie/OneDrive/Bureau/SolutionGenerator/ArenaShooter/res/Maps", "blockout.json")
+export_scene(output_path)

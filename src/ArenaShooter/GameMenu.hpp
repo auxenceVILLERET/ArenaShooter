@@ -15,7 +15,7 @@ using namespace gce;
 
 void InitMenuGame(CustomScene* menu, WindowParam* windowParam, D12PipelineObject* pso)
 {
-    std::pair<Vector3f32, Vector3f32> mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", menu, pso);
+    MapProperties mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", menu, pso);
 
     // std::srand(timeGetTime());
     std::srand(time(NULL));

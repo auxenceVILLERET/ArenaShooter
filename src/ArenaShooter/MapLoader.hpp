@@ -14,13 +14,26 @@
 using json = nlohmann::json;
 using namespace gce;
 
+struct Spawn
+{
+    Vector3f32 startPos;
+    Vector3f32 endPos;
+};
+
+struct MapProperties
+{
+    Vector3f32 pos;
+    Vector3f32 size;
+    Vector<Spawn> vSpawns;
+};
+
 struct MapLoader
 {
-    static std::pair<Vector3f32, Vector3f32> LoadMap(String const& path, CustomScene* menu, D12PipelineObject* pso)
+    static MapProperties LoadMap(String const& path, CustomScene* menu, D12PipelineObject* pso)
     {
         if (menu == nullptr) return {};
 
-        std::pair<Vector3f32, Vector3f32> mapProperties;
+        MapProperties mapProperties;
         
         Map<GameObject*, String> objects;
         
@@ -41,7 +54,7 @@ struct MapLoader
         {
             json currObject = jObjects[i];
             std::string name = currObject["name"].get<std::string>();
-            cstr nameCstr = name.c_str();
+            std::string type = currObject["type"].get<std::string>();
 
             if (name == "Container")
             {
@@ -55,8 +68,28 @@ struct MapLoader
                 scale.y = currObject["scale"][2].get<float>();
                 scale.z = currObject["scale"][1].get<float>();
 
-                mapProperties.first = position;
-                mapProperties.second = scale * 2.0f;
+                mapProperties.pos = position;
+                mapProperties.size = scale * 2.0f;
+                continue;
+            }
+
+            if ( type == "ARROW" )
+            {
+                Vector3f32 start;
+                start.x = currObject["start"][0].get<float>();
+                start.y = currObject["start"][2].get<float>();
+                start.z = currObject["start"][1].get<float>();
+
+                Vector3f32 end;
+                end.x = currObject["end"][0].get<float>();
+                end.y = currObject["end"][2].get<float>();
+                end.z = currObject["end"][1].get<float>();
+
+                Spawn spawn;
+                spawn.startPos = start;
+                spawn.endPos = end;
+
+                mapProperties.vSpawns.PushBack(spawn);
                 continue;
             }
             
@@ -64,7 +97,7 @@ struct MapLoader
             MeshRenderer& mesh = *gameObject.AddComponent<MeshRenderer>();
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
-            gameObject.SetName(nameCstr);
+            gameObject.SetName(name);
             
             if (currObject["has_collider"].get<bool>() == true)
             {
