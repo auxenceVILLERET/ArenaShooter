@@ -95,10 +95,11 @@ bool Shoot() override
 
 void EndShot() override
 {
+    m_chargingBullet->SetDmgBullet(5.f);
     float32 power = m_chargeValue / m_maxCharge;
     float32 dmg = m_chargingBullet->GetDmgBullet();
-    dmg = dmg + power * 40.f;
-    m_chargingBullet->SetDmgBullet(dmg);
+    float32 tempDmg = dmg + power * 40.f;
+    m_chargingBullet->SetDmgBullet(tempDmg);
 
     m_speed = maxSpeed - power * (maxSpeed - minSpeed);
     m_chargingBullet->SetSpeedBullet(m_speed);
@@ -110,7 +111,7 @@ void EndShot() override
     }
 
     m_chargingBullet = nullptr;
-    m_chargeValue = 0;
+    m_chargeValue = 0.f;
     m_scale = 0.f;
     m_isShooting = false;
     m_shotTimer.Pause();

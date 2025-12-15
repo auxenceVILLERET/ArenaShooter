@@ -19,6 +19,7 @@ namespace gce
         void SetNull();
         void SetOne();
 
+        [[nodiscard]] float32 Distance(Vector3f32 const& other) const;
         [[nodiscard]] float32 DotProduct(Vector3f32 const&) const;
         [[nodiscard]] float32 Norm() const;
         [[nodiscard]] float32 SquareNorm() const;
@@ -61,6 +62,65 @@ namespace gce
     private:
         float32 m_pData[3];
         Vector3f32(__m128 v);
+        __m128 Load() const;
+        void _vectorcall Store( __m128 v );
+	};
+
+    union Vector3i32
+    {
+    public:
+        Vector3i32() = default;
+        ~Vector3i32() = default;
+        Vector3i32(int32 x, int32 y, int32 z);
+        Vector3i32(int32 values[3]);
+        Vector3i32(Vector3i32 const&);
+        Vector3i32& operator=(Vector3i32 const&);
+
+        void SetNull();
+        void SetOne();
+        
+        [[nodiscard]] int32 DotProduct(Vector3i32 const&) const;
+        [[nodiscard]] int32 Norm() const;
+        [[nodiscard]] int32 SquareNorm() const;
+
+        [[nodiscard]] Vector3i32 CrossProduct(Vector3i32 const&) const;
+        [[nodiscard]] Vector3i32 Normalize() const;
+        Vector3i32& SelfNormalize();
+
+        [[nodiscard]] Vector3i32 operator-(Vector3i32 const&) const;
+        [[nodiscard]] Vector3i32 operator+(Vector3i32 const&) const;
+        [[nodiscard]] Vector3i32 operator*(Vector3i32 const&) const;
+        [[nodiscard]] Vector3i32 operator/(Vector3i32 const&) const;
+        [[nodiscard]] Vector3i32 operator*(int32 scalar) const;
+        [[nodiscard]] Vector3i32 operator/(int32 scalar) const;
+        [[nodiscard]] Vector3i32 operator-() const;
+
+        [[nodiscard]] int32& operator[](int8 index);
+        [[nodiscard]] int32 const& operator[](int8 index) const;
+
+        Vector3i32& operator+=(Vector3i32 const&);
+        Vector3i32& operator-=(Vector3i32 const&);
+        Vector3i32& operator*=(Vector3i32 const&);
+        Vector3i32& operator/=(Vector3i32 const&);
+        Vector3i32& operator*=(int32 scalar);
+        Vector3i32& operator/=(int32 scalar);
+
+        [[nodiscard]] bool operator==(Vector3i32 const&) const;
+        [[nodiscard]] bool operator!=(Vector3i32 const&) const;
+
+        [[nodiscard]] static Vector3i32 Lerp(Vector3i32 const& a, Vector3i32 const& b, float t);
+        [[nodiscard]] static Vector3i32 Lerp(Vector3i32 const& a, Vector3i32 const& b, Vector3i32 const& t);
+
+        struct 
+        {
+            int32 x;
+            int32 y;
+            int32 z;
+        };
+
+    private:
+        int32 m_pData[3];
+        Vector3i32(__m128 v);
         __m128 Load() const;
         void _vectorcall Store( __m128 v );
 	};

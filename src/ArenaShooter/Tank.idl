@@ -1,0 +1,10 @@
+namespace MonProjet1
+{
+    [bindable]
+    [default_interface]
+    runtimeclass Tank 
+    {
+        Tank();
+        Int32 MyProperty;
+    }
+}

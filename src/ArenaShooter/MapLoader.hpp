@@ -41,6 +41,7 @@ struct MapLoader
         {
             json currObject = jObjects[i];
             std::string name = currObject["name"].get<std::string>();
+            cstr nameCstr = name.c_str();
 
             if (name == "Container")
             {
@@ -55,7 +56,7 @@ struct MapLoader
                 scale.z = currObject["scale"][1].get<float>();
 
                 mapProperties.first = position;
-                mapProperties.second = scale;
+                mapProperties.second = scale * 2.0f;
                 continue;
             }
             
@@ -63,7 +64,7 @@ struct MapLoader
             MeshRenderer& mesh = *gameObject.AddComponent<MeshRenderer>();
             mesh.pGeometry = GeometryFactory::LoadJsonGeometry(currObject);
             mesh.pPso = pso;
-            gameObject.SetName(name.c_str());
+            gameObject.SetName(nameCstr);
             
             if (currObject["has_collider"].get<bool>() == true)
             {

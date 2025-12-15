@@ -12,7 +12,10 @@
 #include "Rifle.hpp"
 #include "Shotgun.hpp"
 #include "Handgun.hpp"
+#include "Health.h"
 #include "WeaponController.hpp"
+#include "BulletDrone.hpp"
+#include "BulletTank.hpp"
 
 using namespace gce;
 
@@ -20,6 +23,7 @@ DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::Coll
 
 float32 m_speed = 5;
 float32 m_jumpForce = 40000;
+float32 m_boostForce = 500;
 float32 m_airMovementForce = m_jumpForce / 15;
 Vector3f32 m_currentOffset = { 0,0,0 };
 Camera* m_camera = nullptr;
@@ -29,8 +33,13 @@ Handgun* m_handgun = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
+Health<int>* m_health = nullptr;
+
+
 void Awake() override
 {
+	m_health = new Health<int>(5);
+	
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
 	cam.SetParent(*m_pOwner);
 	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
@@ -73,7 +82,6 @@ void Awake() override
 	handgun.SetParent(cam);
 	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_handgun);
-
 }
 
 void Test()
@@ -88,6 +96,11 @@ void Test()
 void Update() override
 {
 	m_deltaTime = GameManager::DeltaTime();
+	RaycastUpdate();
+	if (m_health->GetHealth() <= 0)
+	{
+		m_pOwner->SetActive(false);
+	}
 }
 
 bool IsRising()
@@ -98,31 +111,11 @@ bool IsRising()
 		return true;
 }
 
-bool IsAirborne()
-{
-	//if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
-	{
-		Force land;
-		land.direction = (m_currentOffset * m_speed).Normalize();
-		land.norm = m_jumpForce;
-
-		return false;
-		m_pOwner->GetComponent<PhysicComponent>()->AddForce(land);
-	}
-	/*else*/
-	{
-		return true;
-	}
-}
-
 bool IsGrounded()
 {
-	if (m_isGrounded)
-	{
-		m_isGrounded = false;
+	if (m_isGrounded == true)
 		return true;
-	}	
-	else
+	else if (m_isGrounded == false)
 		return false;
 }
 
@@ -142,6 +135,18 @@ void Jump()
 	}
 }
 
+void BoostUp()
+{
+	if (m_isGrounded == false)
+	{
+		Force boostForce;
+		boostForce.direction = { 0, 1, 0 };
+		boostForce.norm = m_boostForce;
+
+		m_pOwner->GetComponent<PhysicComponent>()->AddForce(boostForce);
+	}
+}
+
 void Move(Vector3f32 direction)
 {
 	m_currentOffset = (m_pOwner->transform.GetLocalForward().Normalize() * direction.z + m_pOwner->transform.GetLocalRight().Normalize() * direction.x);
@@ -149,7 +154,6 @@ void Move(Vector3f32 direction)
 
 	if(m_isGrounded == true)
 	{
-
 		PhysicComponent& phys = *m_pOwner->GetComponent<PhysicComponent>();
 		Vector3f32 vel = phys.GetVelocity();
 		phys.SetVelocity({ offset.x, vel.y, offset.z });
@@ -195,25 +199,63 @@ void CollisionStay(GameObject* other) override
 
 void CollisionEnter(GameObject* other)
 {
-	Console::Log("Touch");
+	/*Console::Log("Touch");
 	Console::Log(other->GetName());
-	if (other->GetComponent<MeshRenderer>() && m_pOwner->transform.GetWorldPosition().y - other->transform.GetWorldPosition().y > 0)
+
+	m_isGrounded = true;*/
+
+	if (other->GetScript<BulletDrone>())
 	{
-		m_isGrounded = true;
+		m_health->TakeDamage(other->GetScript<BulletDrone>()->GetDmgBullet());
 	}
+	if (other->GetScript<BulletTank>())
+	{
+		m_health->TakeDamage(other->GetScript<BulletTank>()->GetDmgBullet());
+	}
+	
 }
 
 void CollisionExit(GameObject* other) override
 {
-	Console::Log("Untouch");
-	if (other->GetComponent<MeshRenderer>() && other->transform.GetWorldPosition().y < m_pOwner->transform.GetWorldPosition().y)
-	{
-		m_isGrounded = false;
-	}
+	/*Console::Log("Untouch");
+	
+	m_isGrounded = false;*/
 }
+
 WeaponController* GetWeaponController()
 {
 	return m_weaponController;
+}
+
+void RaycastUpdate()
+{
+	//Texture laserTexture(RES_PATH"res/Textures/rouge-laser.jpg");
+	Ray ray;
+	ray.origin = m_pOwner->transform.GetWorldPosition();
+	ray.direction = m_pOwner->transform.GetWorldUp();
+	ray.direction.y *= -1.f;
+
+	float32 maxDistance = 1.f;
+	RaycastHit hitInfo;
+	float32 distance = maxDistance;
+	Vector3f32 hitPoint = ray.origin + ray.direction * distance;
+	if (PhysicSystem::IntersectRay(ray, hitInfo, maxDistance))
+	{
+		if (hitInfo.pGameObject && hitInfo.pGameObject->HasComponent<MeshRenderer>())
+		{
+			//hitInfo.pGameObject->GetComponent<MeshRenderer>()->pMaterial->albedoTextureID = laserTexture.GetTextureID();
+		}
+
+		distance = hitInfo.distance;
+		hitPoint = hitInfo.point;
+
+
+		m_isGrounded = true;
+	}
+	else
+	{
+		m_isGrounded = false;
+	}
 }
 
 private:

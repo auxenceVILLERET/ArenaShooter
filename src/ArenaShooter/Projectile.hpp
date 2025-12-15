@@ -37,7 +37,7 @@ void CollisionEnter(GameObject* other)
     if (m_pOwner->GetName() == other->GetName())
         return;
     
-    m_pOwner->SetActive(false);
+    return m_pOwner->SetActive(false);
 }
 
 virtual void Init(Vector3f32 dir,Vector3f32 pos, float32 speed)
@@ -60,7 +60,7 @@ void Move()
     m_pOwner->transform.LocalTranslate(offset);
 }
 
-void UpdateDistance()
+virtual void UpdateDistance()
 {
     m_CurrentDistance += m_Speed * m_DeltaTime;
 

@@ -54,7 +54,7 @@ void BoxCollider::UpdateColliderComponent( uint8 const dirty )
 	m_worldBox.center = transform.GetWorldPosition() + m_localOffSet * transform.GetWorldScale();
 	m_worldBox.aabb.center = m_worldBox.center;
 
-	//Apply RotMatrix To center Point
+	//Apply RotMatrix To center 
 	if (m_localOffSet != Vector3f32{ 0,0,0 })
 	{
 		Physics::ScaleNRotateVect3(m_worldBox.center, transform.m_matrix);

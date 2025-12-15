@@ -50,7 +50,7 @@ namespace gce
 		void Update();
 
 		void Transit(String target);
-
+		
 		String actualAction;
 
 	private:

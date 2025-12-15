@@ -87,6 +87,7 @@ namespace gce {
 
 template <typename T> union Vector2;
 union Vector3f32;
+union Vector3i32;
 
 using Vector2i8   = Vector2<int8>;
 using Vector2i16  = Vector2<int16>;

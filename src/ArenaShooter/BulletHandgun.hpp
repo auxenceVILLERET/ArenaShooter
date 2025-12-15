@@ -10,12 +10,12 @@
 
 using namespace gce;
 
-DECLARE_CHILD_SCRIPT(BulletHandgun, Projectile, ScriptFlag::Start | ScriptFlag::Update)
+DECLARE_CHILD_SCRIPT(BulletHandgun, Projectile, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
 void Start() override
 {
     m_MaxDistance = 10.f;
-    m_dmgBullet = 10.f;
+    m_dmgBullet = 5.f;
 
     m_pOwner->SetActive(false);
 }
@@ -30,6 +30,26 @@ void Init(Vector3f32 dir, Vector3f32 pos, float32 speed) override
     Projectile::Init(dir, pos, speed);
     m_pOwner->GetComponent<SphereCollider>()->SetActive(true);
 
+}
+
+void CollisionEnter(GameObject* other) override
+{
+    if (m_pOwner->GetName() == other->GetName())
+        return;
+
+    m_pOwner->transform.SetWorldScale({0.2f, 0.2f, 0.2f});
+    return m_pOwner->SetActive(false);
+}
+
+void UpdateDistance() override
+{
+    m_CurrentDistance += m_Speed * m_DeltaTime;
+
+    if (m_CurrentDistance >= m_MaxDistance)
+    {
+        m_pOwner->transform.SetWorldScale({0.2f, 0.2f, 0.2f});
+        m_pOwner->SetActive(false);
+    }
 }
 
 void Activate(Vector3f32 pos)

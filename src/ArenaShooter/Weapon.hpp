@@ -126,7 +126,6 @@ void Reload()
 
     m_isReloading = true;
     m_reloadTimer.Start();
-    std::cout << "Reload" << std::endl;
 }
 
 GameObject* GetOwner()

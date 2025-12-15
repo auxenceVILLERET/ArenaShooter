@@ -35,7 +35,7 @@ Keyboard::Key m_keyRotLeft = Keyboard::A;
 Keyboard::Key m_keyRotRight = Keyboard::E;
 
 Vector3f32 m_previousMousePos;
-float32 m_mouseSensitivity = 0.05f;
+float32 m_mouseSensitivity = 0.1f;
 
 private:
 	Player* m_pMovement = nullptr;
@@ -77,6 +77,8 @@ void HandleInput()
 	
 	if (GetKeyDown(m_keyJump))
 		m_pPlayer->GetScript<Player>()->Jump();
+	if (GetKey(m_keyJump))
+		m_pPlayer->GetScript<Player>()->BoostUp();
 	
 	if (GetButtonDown(m_buttonLeft))
 	{

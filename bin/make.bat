@@ -1,2 +1,1 @@
 .\SolutionGenerator.exe -make ..
-pause
