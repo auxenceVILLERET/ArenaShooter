@@ -92,8 +92,7 @@ void Update() override
 	if (m_Hp->GetHealth() <= 0.f)
 	{
 		m_Hp->SetIsAlive(false);
-		GameManager::GetStateSystem().DestroyStateMachine(m_pOwner);
-		m_pOwner->Destroy();
+		m_pOwner->SetActive(false);
 	}
 
 	Enemy::Update();

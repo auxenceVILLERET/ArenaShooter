@@ -29,7 +29,7 @@ void Awake() override
 {
 	Enemy::Awake();
 	m_speed = 2.50f;
-	m_Hp = new Health<float>(100.f);
+	m_Hp = new Health<float>(1.f);
 	
 	m_pSm = GameManager::GetStateSystem().CreateStateMachine(m_pOwner);
 	String idle = "Idle";
@@ -75,7 +75,6 @@ void Update() override
 	if (m_Hp->GetHealth() <= 0.f)
 	{
 		m_Hp->SetIsAlive(false);
-		GameManager::GetStateSystem().DestroyStateMachine(m_pOwner);
 		m_pOwner->SetActive(false);
 	}
 	

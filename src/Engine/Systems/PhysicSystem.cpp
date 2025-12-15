@@ -1206,12 +1206,12 @@ namespace gce {
 		{
 			// Collision DYNAMIC vs STATIC/KINEMATIC -> Appliquer le Glissement (Sliding)
 			Vector3f32 currentVel = pPhysComp1->m_velocity;
-			Vector3f32 wallNormal = flag ? normal : -normal; // La normale doit pointer hors du mur.
-			float32 dot = currentVel.DotProduct(wallNormal);
+			// Vector3f32 wallNormal = flag ? normal : -normal; // La normale doit pointer hors du mur.
+			float32 dot = currentVel.DotProduct(normal);
 
 			if (dot < 0)
 			{
-				Vector3f32 wallPush = wallNormal * dot;
+				Vector3f32 wallPush = normal * dot;
 				pPhysComp1->m_velocity = currentVel - wallPush;
 			}
 		}
