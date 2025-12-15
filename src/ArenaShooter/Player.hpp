@@ -21,6 +21,7 @@ DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::Coll
 
 float32 m_speed = 5;
 float32 m_jumpForce = 40000;
+float32 m_boostForce = 500;
 float32 m_airMovementForce = m_jumpForce / 15;
 Vector3f32 m_currentOffset = { 0,0,0 };
 Camera* m_camera = nullptr;
@@ -104,31 +105,11 @@ bool IsRising()
 		return true;
 }
 
-bool IsAirborne()
-{
-	//if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
-	{
-		Force land;
-		land.direction = (m_currentOffset * m_speed).Normalize();
-		land.norm = m_jumpForce;
-
-		return false;
-		m_pOwner->GetComponent<PhysicComponent>()->AddForce(land);
-	}
-	/*else*/
-	{
-		return true;
-	}
-}
-
 bool IsGrounded()
 {
-	if (m_isGrounded)
-	{
-		m_isGrounded = false;
+	if (m_isGrounded == true)
 		return true;
-	}	
-	else
+	else if (m_isGrounded == false)
 		return false;
 }
 
@@ -145,6 +126,18 @@ void Jump()
 		jumpForce.direction += jumpDirection;
 
 		m_pOwner->GetComponent<PhysicComponent>()->AddForce(jumpForce);
+	}
+}
+
+void BoostUp()
+{
+	if (m_isGrounded == false)
+	{
+		Force boostForce;
+		boostForce.direction = { 0, 1, 0 };
+		boostForce.norm = m_boostForce;
+
+		m_pOwner->GetComponent<PhysicComponent>()->AddForce(boostForce);
 	}
 }
 
@@ -213,6 +206,7 @@ void CollisionExit(GameObject* other) override
 	
 	m_isGrounded = false;*/
 }
+
 WeaponController* GetWeaponController()
 {
 	return m_weaponController;
