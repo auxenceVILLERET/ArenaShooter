@@ -26,7 +26,7 @@ Keyboard::Key m_keyLeft = Keyboard::Q;
 Keyboard::Key m_keyRight = Keyboard::D;
 
 Keyboard::Key m_keyJump = Keyboard::SPACE;
-Keyboard::Key m_keyReload = Keyboard::R;
+Keyboard::Key m_keyUlti = Keyboard::R;
 
 Mouse::Button m_buttonLeft = Mouse::LEFT;
 Keyboard::Key m_keyEscape = Keyboard::ESCAPE;
@@ -97,9 +97,6 @@ void HandleInput()
 		m_wasShooting = false;
 	}
 
-	if (GetKeyDown(m_keyReload))
-		m_pPlayer->GetScript<Player>()->GetWeaponController()->Reload();
-
 	if (GetKeyDown(Keyboard::NUMPAD1))
 		m_pPlayer->GetScript<Player>()->GetWeaponController()->EquipWeapon(0);
 
@@ -108,6 +105,12 @@ void HandleInput()
 
 	if (GetKeyDown(Keyboard::NUMPAD3))
 		m_pPlayer->GetScript<Player>()->GetWeaponController()->EquipWeapon(2);
+	
+	if (GetKeyDown(m_keyUlti))
+	{
+		m_pPlayer->GetScript<Player>()->GetWeaponController()->EquipWeapon(3);
+		m_pPlayer->GetScript<Player>()->m_energyOrbs = 0;
+	}
 
 	if (GetKeyDown(m_keyEscape))
 	{

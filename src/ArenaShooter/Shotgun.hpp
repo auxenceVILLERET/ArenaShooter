@@ -20,7 +20,6 @@ void Awake() override
 {
     Weapon::Awake();
     m_shotCooldown = 1.0f;     
-    m_reloadCooldown = 2.0f;   
 
 
     for (int i = 0; i < 50; i++)

@@ -6,19 +6,20 @@
 #include "GameObject.h"
 #include "Chrono.h"
 #include "Projectile.hpp"
+
 using namespace gce;
+
+class WeaponController;
 
 DECLARE_SCRIPT(Weapon, ScriptFlag::Awake | ScriptFlag::Update)
 
 
-float32 m_reloadCooldown = 0.f;
 float32 m_shotCooldown = 0.f;
+WeaponController* m_pWeaponController = nullptr;
 
-Chrono m_reloadTimer;
 Chrono m_shotTimer;
 
 bool m_isShooting = false;
-bool m_isReloading = false;
 
 D12PipelineObject* m_PSO = nullptr;
 
@@ -62,14 +63,6 @@ void Update() override
         }
     }
 
-    // Fin de reload
-    if (m_isReloading && m_reloadTimer.GetElapsedTime() >= m_reloadCooldown)
-    {
-        m_isReloading = false;
-        m_heat = 0.f;
-        m_reloadTimer.Pause();
-        m_reloadTimer.Reset();
-    }
 
     // Cooldown tir
     if (m_isShooting && m_shotTimer.GetElapsedTime() >= m_shotCooldown && m_heat <= m_maxHeat && m_isOverheated == false)
@@ -94,7 +87,6 @@ virtual void BeginShot()
 virtual bool Shoot()
 {
     if (m_isShooting) return false;
-    if (m_isReloading) return false;
 
     m_isShooting = true;
 
@@ -120,12 +112,9 @@ virtual Projectile* GetFirstAvailableProjectile()
     return nullptr;
 }
 
-void Reload()
+void SetWeaponController(WeaponController* controller)
 {
-    if (m_isReloading == true) return;
-
-    m_isReloading = true;
-    m_reloadTimer.Start();
+    m_pWeaponController = controller;
 }
 
 GameObject* GetOwner()

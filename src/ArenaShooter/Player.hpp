@@ -12,6 +12,7 @@
 #include "Rifle.hpp"
 #include "Shotgun.hpp"
 #include "Handgun.hpp"
+#include "Bazooka.hpp"
 #include "Health.h"
 #include "WeaponController.hpp"
 #include "BulletDrone.hpp"
@@ -32,6 +33,7 @@ Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
 Handgun* m_handgun = nullptr;
+Bazooka* m_bazooka = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
@@ -85,6 +87,16 @@ void Awake() override
 	handgun.SetParent(cam);
 	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_handgun);
+
+	GameObject& bazooka = GameObject::Create(m_pOwner->GetScene());
+	MeshRenderer& meshProjectileBazooka = *bazooka.AddComponent<MeshRenderer>();
+	meshProjectileBazooka.pGeometry = SHAPES.CAPSULE;
+	m_bazooka = bazooka.AddScript<Bazooka>();
+	bazooka.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+	bazooka.SetParent(cam);
+	bazooka.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	m_weaponController->AddWeapon(m_bazooka, false);
+
 }
 
 void Test()
@@ -102,7 +114,7 @@ void Update() override
 	RaycastUpdate();
 
 	if(IsEnergyFull() == true) 
-		Console::Log("Energy Full");
+		m_weaponController->UnlockWeapon(3);
 
 	if (m_health->GetHealth() <= 0)
 	{

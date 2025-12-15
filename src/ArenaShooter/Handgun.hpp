@@ -25,7 +25,6 @@ void Awake() override
     Weapon::Awake();
 
     m_shotCooldown = 0.3f;
-    m_reloadCooldown = 1.5f;
 
     for (int i = 0; i < 10; i++)
     {
@@ -54,7 +53,6 @@ void Update() override
 void BeginShot() override
 {
     if (m_isShooting) return;
-    if (m_isReloading) return;
     m_isShooting = true;
     m_chargeValue = 0.f;
 
