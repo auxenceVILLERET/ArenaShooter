@@ -2,6 +2,9 @@
 #include "CustomScene.h"
 #include "Scene.h"
 #include "GameManager.h"
+#include "GameMenu.hpp"
+#include "MainMenu.hpp"
+#include "OptionsMenu.hpp"
 
 SceneManager* SceneManager::p_Instance = nullptr;
 
@@ -19,9 +22,13 @@ void SceneManager::Init()
 	GameManager::Create();
 	m_pScene = &Scene::Create();
 
-	for (int i = 0; i < 5; i++)
+	m_vScene.PushBack(new MainMenu(m_pScene));
+	m_vScene.PushBack(new GameScene(m_pScene));
+	m_vScene.PushBack(new OptionMenu(m_pScene));
+
+	for (int i = 0; i < m_vScene.Size(); i++)
 	{
-		m_vScene.push_back(new CustomScene(m_pScene));
+		m_vScene[i]->Init();
 	}
 }
 
@@ -32,4 +39,5 @@ void SceneManager::ChangeScene(SceneName name)
 	currScene = name;
 	GetScene(currScene)->SetActive();
 	GetScene(currScene)->IsActive = true;
+	GetScene(currScene)->Start();
 }

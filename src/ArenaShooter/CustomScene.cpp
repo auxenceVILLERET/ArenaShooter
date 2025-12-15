@@ -37,6 +37,18 @@ void CustomScene::SetInactive()
 	}
 }
 
+void CustomScene::Init()
+{
+	isInit = true;
+}
+
+
+void CustomScene::Start()
+{
+	if (isInit == false)
+		Init();
+}
+
 void CustomScene::CleanVector()
 {
 	for (int i = 0; i < m_vObject.Size(); i++)

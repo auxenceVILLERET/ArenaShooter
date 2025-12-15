@@ -14,9 +14,9 @@ enum SceneName
 {
 	MAIN_MENU,
 	GAME,
+	OPTIONS_MENU,
 	PAUSE_MENU,
-	GAMEOVER,
-	OPTIONS_MENU
+	GAMEOVER
 };
 
 class SceneManager
@@ -30,7 +30,7 @@ public:
 	static SceneManager* GetInstance();
 
 protected:
-	std::vector<CustomScene*> m_vScene;
+	Vector<CustomScene*> m_vScene;
 	SceneName currScene;
 
 private:

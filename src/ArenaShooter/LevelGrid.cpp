@@ -7,6 +7,7 @@
 #include "Maths/MathsFunctions.hpp"
 
 #include "CustomScene.h"
+#include "MapLoader.hpp"
 
 Node* LevelGrid::GetNode(Vector3i32 const& pos)
 {
@@ -20,9 +21,9 @@ Node* LevelGrid::GetNode(Vector3i32 const& pos)
 
 Vector3i32 LevelGrid::GetTilePosition(Vector3f32 const& pos)
 {
-    Vector3f32 anchorPoint = {m_mapProperties.first.x - m_mapProperties.second.x * 0.5f,
-                              m_mapProperties.first.y - m_mapProperties.second.y * 0.5f,
-                              m_mapProperties.first.z - m_mapProperties.second.z * 0.5f};
+    Vector3f32 anchorPoint = {m_mapProperties.pos.x - m_mapProperties.size.x * 0.5f,
+                              m_mapProperties.pos.y - m_mapProperties.size.y * 0.5f,
+                              m_mapProperties.pos.z - m_mapProperties.size.z * 0.5f};
     
     Vector3f32 newPos = { pos.x - anchorPoint.x, pos.y - anchorPoint.y, pos.z - anchorPoint.z };
     newPos /= m_tileSize;
@@ -32,19 +33,19 @@ Vector3i32 LevelGrid::GetTilePosition(Vector3f32 const& pos)
     return result;
 }
 
-void LevelGrid::Init(SceneName scene, std::pair<Vector3f32, Vector3f32> const& mapProperties, Vector3f32 tileSize)
+void LevelGrid::Init(SceneName scene, MapProperties const& mapProperties, Vector3f32 tileSize)
 {
     m_mapProperties = mapProperties;
     m_tileSize = tileSize;
     Vector<GameObject*>& vObjs = SceneManager::GetInstance()->GetScene(scene)->GetObjects();
     
-    int tileCountX = mapProperties.second.x / tileSize.x + 1.0f;
-    int tileCountY = mapProperties.second.y / tileSize.y + 1.0f;
-    int tileCountZ = mapProperties.second.z / tileSize.z + 1.0f;
+    int tileCountX = mapProperties.size.x / tileSize.x + 1.0f;
+    int tileCountY = mapProperties.size.y / tileSize.y + 1.0f;
+    int tileCountZ = mapProperties.size.z / tileSize.z + 1.0f;
 
-    Vector3f32 startTile = {mapProperties.first.x - mapProperties.second.x * 0.5f + tileSize.x * 0.5f,
-                            mapProperties.first.y - mapProperties.second.y * 0.5f + tileSize.y * 0.5f,
-                            mapProperties.first.z - mapProperties.second.z * 0.5f + tileSize.z * 0.5f};
+    Vector3f32 startTile = {mapProperties.pos.x - mapProperties.size.x * 0.5f + tileSize.x * 0.5f,
+                            mapProperties.pos.y - mapProperties.size.y * 0.5f + tileSize.y * 0.5f,
+                            mapProperties.pos.z - mapProperties.size.z * 0.5f + tileSize.z * 0.5f};
 
     tempCollider = &SceneManager::GetInstance()->GetCurrentScene()->AddObject();
     tempCollider->AddComponent<BoxCollider>();

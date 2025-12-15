@@ -37,13 +37,14 @@ enum ScriptFlag
 
 #define END_SCRIPT };
 
-template <typename ...Args>
-struct Event;
 
 namespace gce
 {
 	class GameObject;
 
+	template <typename ...Args>
+	struct Event;
+	
 	struct Script
 	{
 	public:

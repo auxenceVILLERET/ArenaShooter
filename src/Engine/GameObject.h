@@ -6,11 +6,12 @@
 #include "Components.h"
 #include "Maths/Vector3.h"
 
-template <typename ...Args>
-struct Event;
 
 namespace gce {
-
+    
+template <typename ...Args>
+struct Event;
+    
 class Scene;
 
 class GameObject

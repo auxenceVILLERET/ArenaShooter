@@ -8,24 +8,32 @@
 
 using namespace gce;
 
-void InitOptionsMenu(CustomScene* menu, WindowParam* windowParam)
+class OptionMenu : public CustomScene
 {
-    BitMapBrush* buttonBrush = new BitMapBrush{ "res/ArenaShooter/VilleretAuxence.jpg" };
-    BitMapBrush* button2Brush = new BitMapBrush{ "res/ArenaShooter/VilleretAuxence.jpg" };
+public:
+    OptionMenu(Scene* pScene) : CustomScene(pScene) {}
+    
+    void Init() override
+    {
+        CustomScene::Init();
 
-    GameObject& menu_controller = menu->AddObject();
-    menu_controller.AddScript<OptionController>();
+        BitMapBrush* buttonBrush = new BitMapBrush{ "res/ArenaShooter/VilleretAuxence.jpg" };
+        BitMapBrush* button2Brush = new BitMapBrush{ "res/ArenaShooter/VilleretAuxence.jpg" };
 
-    GameObject& playButton = menu->AddObject();
-    playButton.transform.LocalTranslate({ windowParam->width / 2.f, 200.f, 0.0f });
-    playButton.transform.LocalScale({ 216.0f, 69.0f, 1.0f });
-    UIButton& button = *playButton.AddComponent<UIButton>();
+        GameObject& menu_controller = AddObject();
+        menu_controller.AddScript<OptionController>();
+
+        GameObject& playButton = AddObject();
+        playButton.transform.LocalTranslate({ GameManager::GetWindowParam().width / 2.f, 200.f, 0.0f });
+        playButton.transform.LocalScale({ 216.0f, 69.0f, 1.0f });
+        UIButton& button = *playButton.AddComponent<UIButton>();
 
 
-    button.AddListener(&(menu_controller.GetScript<OptionController>()->GoToMainMenu));
+        button.AddListener(&(menu_controller.GetScript<OptionController>()->GoToMainMenu));
 
-    button.pBitMapBrush = buttonBrush;
-    button.pHoverBitMapBrush = button2Brush;
-}
+        button.pBitMapBrush = buttonBrush;
+        button.pHoverBitMapBrush = button2Brush;
+    }
+};
 
 #endif // !1

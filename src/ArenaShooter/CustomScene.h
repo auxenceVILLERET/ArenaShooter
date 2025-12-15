@@ -13,17 +13,22 @@ class CustomScene
 {
 public:
 	CustomScene(Scene* pScene);
+	~CustomScene();
 	GameObject& AddObject();
 	Vector<GameObject*>& GetObjects();
 	void SetActive();
 	void SetInactive();
+
+	virtual void Start();
 	
 protected:
+	virtual void Init();
 	
 private:
 	Vector<GameObject*> m_vObject;
 	Scene* m_pScene;
 	bool IsActive = false;
+	bool isInit = false;
 
 	void CleanVector();
 	

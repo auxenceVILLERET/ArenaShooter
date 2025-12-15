@@ -25,7 +25,7 @@ struct Path
 
 using namespace gce;
 
-DECLARE_SCRIPT(Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter)
+DECLARE_SCRIPT(Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter | ScriptFlag::Destroy)
 
 Health<float>* m_Hp;
 GameObject* m_pPlayer;
@@ -92,11 +92,11 @@ void CollisionEnter(GameObject* pOther) override
 	}
 	if (pOther->GetScript<BulletShotgun>())
 	{
-		m_Hp->TakeDamage(pOther->GetScript<BulletShotgun>()->GetDmgBullet());
+	m_Hp->TakeDamage(pOther->GetScript<BulletShotgun>()->GetDmgBullet());
 	}
 	if (pOther->GetScript<BulletHandgun>())
 	{
-		m_Hp->TakeDamage(pOther->GetScript<BulletHandgun>()->GetDmgBullet());
+	m_Hp->TakeDamage(pOther->GetScript<BulletHandgun>()->GetDmgBullet());
 	}
 }
 
@@ -288,6 +288,9 @@ void ResetPath()
 	m_target.isSet = false;
 }
 
+private:
+
+	friend class WaveManager;
 
 END_SCRIPT
 

@@ -76,7 +76,7 @@ void Update() override
 	{
 		m_Hp->SetIsAlive(false);
 		GameManager::GetStateSystem().DestroyStateMachine(m_pOwner);
-		m_pOwner->Destroy();
+		m_pOwner->SetActive(false);
 	}
 	
 	Enemy::Update();
@@ -93,7 +93,7 @@ void Explode()
 
 	Console::Log("Explode");
 	
-	Destroy();
+	m_pOwner->SetActive(false);
 }
 
 void Shoot() override

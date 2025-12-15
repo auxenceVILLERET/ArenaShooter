@@ -40,12 +40,6 @@ void Game::Init()
     windowParam.width = 1080;
     windowParam.height = 720;
     windowParam.isFullScreen = true;
-
-    InitMenu(main_menu, &windowParam);
-    
-    InitMenuGame(game_menu, &windowParam, pPso);
-
-    InitOptionsMenu(option_menu, &windowParam);
 }
 
 int Game::RUN()

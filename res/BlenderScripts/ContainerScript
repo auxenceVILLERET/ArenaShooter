@@ -1,0 +1,24 @@
+import bpy
+import mathutils
+
+objs = bpy.context.selected_objects
+
+# Compute combined bounding box
+min_v = mathutils.Vector((float('inf'),)*3)
+max_v = mathutils.Vector((float('-inf'),)*3)
+
+for obj in objs:
+    for v in obj.bound_box:
+        world_v = obj.matrix_world @ mathutils.Vector(v)
+        min_v = mathutils.Vector(map(min, zip(min_v, world_v)))
+        max_v = mathutils.Vector(map(max, zip(max_v, world_v)))
+
+# Create empty cube
+empty = bpy.data.objects.new("Container", None)
+empty.empty_display_type = 'CUBE'
+bpy.context.collection.objects.link(empty)
+
+# Position & scale
+empty.location = (min_v + max_v) / 2
+size = max_v - min_v
+empty.scale = size / 2
