@@ -12,7 +12,8 @@ using namespace gce;
 
 void InitMenu(CustomScene* menu, WindowParam* windowParam)
 {
-    BitMapBrush* buttonBrush = new BitMapBrush{ "res/ArenaShooter/START.PNG"};
+    BitMapBrush* buttonStart = new BitMapBrush{ "res/ArenaShooter/commencer_e.png"};
+    BitMapBrush* buttonStart2 = new BitMapBrush{ "res/ArenaShooter/commencer_allumé.png" };
     BitMapBrush* buttonOptionsBrush = new BitMapBrush{ "res/ArenaShooter/OPTIONS.PNG" };
     BitMapBrush* buttonQuitBrush = new BitMapBrush{ "res/ArenaShooter/QUIT.PNG" };
     BitMapBrush* button2Brush = new BitMapBrush{ "res/ArenaShooter/VilleretAuxence.jpg" };
@@ -49,8 +50,8 @@ void InitMenu(CustomScene* menu, WindowParam* windowParam)
     button.AddListener(&(menu_controller.GetScript<MenuController>()->GoToGame));
     button2.AddListener(&(menu_controller.GetScript<MenuController>()->GoToOption));
 
-    button.pBitMapBrush = buttonBrush;
-    button.pHoverBitMapBrush = button2Brush;
+    button.pBitMapBrush = buttonStart;
+    button.pHoverBitMapBrush = buttonStart2;
 
     button2.pBitMapBrush = buttonOptionsBrush;
     button2.pHoverBitMapBrush = button2Brush;
