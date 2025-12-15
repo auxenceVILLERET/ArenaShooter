@@ -71,6 +71,8 @@ void OnStart()
     {
         pEnemy->m_pOwner->SetActive(false);
     }
+
+    waveIntervalChrono.Start();
 }
 
 int8 GetEnemyCount()
@@ -103,7 +105,8 @@ T* GetFirstAvailableEnemy()
 void StartWave()
 {
     currentWave++;
-    waveValue = 5 + currentWave * 3 + floorFactor * 3;
+    // waveValue = 5 + currentWave * 3 + floorFactor * 3;
+    waveValue = 1;
     remainingWaveValue = waveValue;
     isSpawningWave = true;
 }
@@ -127,6 +130,7 @@ void SpawnEnemy(Spawn selectedSpawn)
     if (chosenEnemy == KAMIKAZE)
     {
         Kamikaze* tempScript = GetFirstAvailableEnemy<Kamikaze>();
+        if (tempScript == nullptr) return;
         tempScript->m_pOwner->transform.SetWorldPosition(selectedSpawn.startPos);
         tempScript->GoToPosition(selectedSpawn.endPos, tempScript->m_speed);
         tempScript->m_pOwner->SetActive(true);
@@ -171,8 +175,11 @@ void Update() override
 
     if (isFightingWave == false && isSpawningWave == false)
     {
-        if (currentWave < maxWaveCount)
-            StartWave();
+        if (waveIntervalChrono.GetElapsedTime() > waveInterval)
+        {
+            if (currentWave < maxWaveCount)
+                StartWave();   
+        }
     }
     
 }

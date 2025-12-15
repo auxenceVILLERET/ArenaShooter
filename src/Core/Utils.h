@@ -153,7 +153,8 @@ template <typename T>
 T RandomFrom(Vector<T>& vect)
 {
     int size = vect.Size() - 1;
-    if (size == 0) return T();
+    if (size + 1 == 0) return T();
+    if (size + 1 == 1) return vect[0];
     int randIndex = rand() % size;
     return vect[randIndex];
 }

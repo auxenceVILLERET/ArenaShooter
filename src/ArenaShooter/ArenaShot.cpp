@@ -16,15 +16,11 @@ Game* Game::Create()
 Game::Game() {}
 
 void Game::Init()
+
 {
     m_SceneManager = SceneManager::GetInstance();
     
     m_SceneManager->Init();
-
-    CustomScene* main_menu = m_SceneManager->GetScene(MAIN_MENU);
-    CustomScene* game_menu = m_SceneManager->GetScene(GAME);
-    CustomScene* option_menu = m_SceneManager->GetScene(OPTIONS_MENU);
-    CustomScene* gameover_menu = m_SceneManager->GetScene(GAMEOVER);
     
     SceneManager::GetInstance()->ChangeScene(MAIN_MENU);
 
