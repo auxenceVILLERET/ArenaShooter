@@ -20,10 +20,11 @@ public:
     {
         CustomScene::Init();
         BitMapBrush* buttonStart = new BitMapBrush{ "res/ArenaShooter/commencer_e.png" };
-        BitMapBrush* buttonStart2 = new BitMapBrush{ "res/ArenaShooter/commencer_allume.png" };
-        BitMapBrush* buttonOptionsBrush = new BitMapBrush{ "res/ArenaShooter/OPTIONS.PNG" };
-        BitMapBrush* buttonQuitBrush = new BitMapBrush{ "res/ArenaShooter/QUIT.PNG" };
-        BitMapBrush* button2Brush = new BitMapBrush{ "res/ArenaShooter/VilleretAuxence.jpg" };
+        BitMapBrush* buttonStart2 = new BitMapBrush{ "res/ArenaShooter/commencer_a.png" };
+        BitMapBrush* buttonOptionsBrush = new BitMapBrush{ "res/ArenaShooter/parametres_e.png" };
+        BitMapBrush* buttonOptionsBrush2 = new BitMapBrush{ "res/ArenaShooter/parametres_a.png" };
+        BitMapBrush* buttonQuitBrush = new BitMapBrush{ "res/ArenaShooter/quitter_e.png" };
+        BitMapBrush* buttonQuitBrush2 = new BitMapBrush{ "res/ArenaShooter/quitter_a.png" };
         
         GameObject& menu_controller = AddObject();
         menu_controller.AddScript<MenuController>();
@@ -64,10 +65,10 @@ public:
         button.pHoverBitMapBrush = buttonStart2;
 
         button2.pBitMapBrush = buttonOptionsBrush;
-        button2.pHoverBitMapBrush = button2Brush;
+        button2.pHoverBitMapBrush = buttonOptionsBrush2;
 
         button3.pBitMapBrush = buttonQuitBrush;
-        button3.pHoverBitMapBrush = button2Brush;
+        button3.pHoverBitMapBrush = buttonQuitBrush2;
     }
 };
 

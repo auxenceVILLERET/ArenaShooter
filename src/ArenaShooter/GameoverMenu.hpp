@@ -21,8 +21,8 @@ public:
         CustomScene::Init();
         BitMapBrush* buttonStart = new BitMapBrush{ "res/ArenaShooter/recommencer_e.png" };
         BitMapBrush* buttonStart2 = new BitMapBrush{ "res/ArenaShooter/recommencer_a.png" };
-        BitMapBrush* buttonMenu = new BitMapBrush{ "res/ArenaShooter/recommencer_e.png" };
-        BitMapBrush* buttonMenu2 = new BitMapBrush{ "res/ArenaShooter/recommencer_a.png" };
+        BitMapBrush* buttonMenu = new BitMapBrush{ "res/ArenaShooter/retour_au_menu_e.png" };
+        BitMapBrush* buttonMenu2 = new BitMapBrush{ "res/ArenaShooter/retour_au_menu_a.png" };
 
         WindowParam* windowParam = &GameManager::GetWindowParam();
 
