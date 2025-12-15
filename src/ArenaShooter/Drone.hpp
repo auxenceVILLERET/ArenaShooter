@@ -66,6 +66,12 @@ void Awake() override
 	blockedConditions.PushBack(blockedCondition);
 	m_pSm->AddTransition(blockedConditions, chase, idle);
 
+	StateMachine::Condition rayCondition = { [this]() { return this->CheckPlayer(); } };
+	Vector<StateMachine::Condition> rayConditions;
+	rayConditions.PushBack(rayCondition);
+	m_pSm->AddTransition(rayConditions, shooting, chase);
+
+
 	for (int i = 0; i < 10; i++)
 	{
 		GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
@@ -136,6 +142,20 @@ bool IsBlocked()
 	return isBlocked && blockedChrono.GetElapsedTime() > blockedToggleTime;
 }
 
+bool CheckPlayer()
+{
+	Vector3f32 direction = m_pPlayer->transform.GetWorldPosition() - m_pOwner->transform.GetWorldPosition();
+	direction.SelfNormalize();
+	Ray ray;
+	ray.origin = m_pOwner->transform.GetWorldPosition();
+	ray.direction = direction;
+
+	RaycastHit hitInfo;
+	bool hit = PhysicSystem::IntersectRay(ray, hitInfo, 25.f);
+
+	return hit && hitInfo.pGameObject != nullptr && hitInfo.pGameObject->GetName() != "Player" && hitInfo.pGameObject != m_pOwner;
+}
+
 
 void OnBeginIdle() { Console::Log("Idle"); }
 void OnUpdateIdle()
@@ -194,6 +214,7 @@ void OnUpdateShooting()
 {
 	Vector3f32 direction = m_pPlayer->transform.GetWorldPosition() - m_pOwner->transform.GetWorldPosition();
 	direction.SelfNormalize();
+	OrientFace(m_pPlayer->transform.GetWorldPosition());
 	m_deltaTime += GameManager::DeltaTime();
 	if (m_deltaTime >= m_shootingInterval)
 	{
