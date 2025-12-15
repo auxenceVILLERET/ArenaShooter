@@ -37,7 +37,7 @@ static void GoToOption()
 
 static void Quit()
 {
-
+	GameManager::GetWindow()->~Window();
 }
 
 END_SCRIPT

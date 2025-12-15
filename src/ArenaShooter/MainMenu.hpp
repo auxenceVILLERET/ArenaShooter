@@ -58,6 +58,7 @@ public:
 
         button.AddListener(&(menu_controller.GetScript<MenuController>()->GoToGame));
         button2.AddListener(&(menu_controller.GetScript<MenuController>()->GoToOption));
+		button3.AddListener(&(menu_controller.GetScript<MenuController>()->Quit));
 
         button.pBitMapBrush = buttonStart;
         button.pHoverBitMapBrush = buttonStart2;

@@ -105,8 +105,7 @@ T* GetFirstAvailableEnemy()
 void StartWave()
 {
     currentWave++;
-    // waveValue = 5 + currentWave * 3 + floorFactor * 3;
-    waveValue = 1;
+    waveValue = 5 + currentWave * 3 + floorFactor * 3;
     remainingWaveValue = waveValue;
     isSpawningWave = true;
 }
