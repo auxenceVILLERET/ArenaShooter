@@ -3,6 +3,7 @@
 
 #include "define.h"
 #include "Scene.h"
+#include "Containers/Vector.hpp"
 
 using namespace gce;
 
@@ -13,15 +14,19 @@ class CustomScene
 public:
 	CustomScene(Scene* pScene);
 	GameObject& AddObject();
+	Vector<GameObject*>& GetObjects();
 	void SetActive();
 	void SetInactive();
-
+	
 protected:
 	
 private:
-	std::vector<GameObject*> m_vObject;
+	Vector<GameObject*> m_vObject;
 	Scene* m_pScene;
 	bool IsActive = false;
+
+	void CleanVector();
+	
 	friend class SceneManager;
 };
 

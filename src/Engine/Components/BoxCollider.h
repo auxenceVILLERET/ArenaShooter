@@ -23,10 +23,9 @@ public:
     //bool m_dirty_offset;
     //bool m_dirty_scale; //#TODO dirty mask
 
-protected:
+    Box m_worldBox;
     void UpdateColliderComponent( uint8 dirty ) override;
 private:
-    Box m_worldBox;
 
     friend class PhysicSystem;
 };

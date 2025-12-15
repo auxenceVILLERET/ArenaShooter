@@ -184,6 +184,10 @@ constexpr float32 PhysicsEPSILON = 0.01f;
     {
         return radians * (180.0f / PI);
     }
+
+    static int8 RoundToInt(float32 x) {
+        return (x >= 0) ? int8(x + 0.5) : int8(x - 0.5);
+    }
 }
 
 #endif
