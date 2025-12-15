@@ -42,6 +42,8 @@ void Awake() override
 {
 	m_health = new Health<int>(5);
 	
+	Geometry* pShotgunGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/shotgun_lower.obj");
+
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
 	cam.SetParent(*m_pOwner);
 	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
@@ -69,11 +71,12 @@ void Awake() override
 
 	GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
 	MeshRenderer& meshProjectileShotgun = *shotgun.AddComponent<MeshRenderer>();
-	meshProjectileShotgun.pGeometry = SHAPES.CYLINDER;
+	meshProjectileShotgun.pGeometry = pShotgunGeo;
 	m_shotgun = shotgun.AddScript<Shotgun>();
-	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+	shotgun.transform.SetWorldScale({ 0.2f,0.2f,0.2f });
 	shotgun.SetParent(cam);
-	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	shotgun.transform.SetLocalPosition({ 0.8f,-1.f,0.3f });
+	shotgun.transform.SetLocalRotation({ 0.f, 0.f, 0.f });
 	m_weaponController->AddWeapon(m_shotgun);
 
 	GameObject& handgun = GameObject::Create(m_pOwner->GetScene());
