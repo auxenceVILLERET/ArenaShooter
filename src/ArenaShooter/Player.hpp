@@ -21,6 +21,7 @@ DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::Coll
 
 float32 m_speed = 5;
 float32 m_jumpForce = 40000;
+float32 m_boostForce = 500;
 float32 m_airMovementForce = m_jumpForce / 15;
 Vector3f32 m_currentOffset = { 0,0,0 };
 Camera* m_camera = nullptr;
@@ -31,6 +32,7 @@ Handgun* m_handgun = nullptr;
 WeaponController* m_weaponController = nullptr;
 
 Health<int>* m_health = nullptr;
+
 
 void Awake() override
 {
@@ -92,6 +94,7 @@ void Test()
 void Update() override
 {
 	m_deltaTime = GameManager::DeltaTime();
+	RaycastUpdate();
 }
 
 bool IsRising()
@@ -102,31 +105,11 @@ bool IsRising()
 		return true;
 }
 
-bool IsAirborne()
-{
-	//if (m_pOwner->transform.GetWorldPosition().y <= 0.5f)
-	{
-		Force land;
-		land.direction = (m_currentOffset * m_speed).Normalize();
-		land.norm = m_jumpForce;
-
-		return false;
-		m_pOwner->GetComponent<PhysicComponent>()->AddForce(land);
-	}
-	/*else*/
-	{
-		return true;
-	}
-}
-
 bool IsGrounded()
 {
-	if (m_isGrounded)
-	{
-		m_isGrounded = false;
+	if (m_isGrounded == true)
 		return true;
-	}	
-	else
+	else if (m_isGrounded == false)
 		return false;
 }
 
@@ -143,6 +126,18 @@ void Jump()
 		jumpForce.direction += jumpDirection;
 
 		m_pOwner->GetComponent<PhysicComponent>()->AddForce(jumpForce);
+	}
+}
+
+void BoostUp()
+{
+	if (m_isGrounded == false)
+	{
+		Force boostForce;
+		boostForce.direction = { 0, 1, 0 };
+		boostForce.norm = m_boostForce;
+
+		m_pOwner->GetComponent<PhysicComponent>()->AddForce(boostForce);
 	}
 }
 
@@ -199,25 +194,59 @@ void CollisionStay(GameObject* other) override
 
 void CollisionEnter(GameObject* other)
 {
-	Console::Log("Touch");
+	/*Console::Log("Touch");
 	Console::Log(other->GetName());
-	//if (other->GetComponent<MeshRenderer>())
-	{
-		m_isGrounded = true;
-	}
+
+	m_isGrounded = true;*/
 }
 
 void CollisionExit(GameObject* other) override
 {
-	Console::Log("Untouch");
-	//if (other->GetComponent<MeshRenderer>())
-	{
-		m_isGrounded = false;
-	}
+	/*Console::Log("Untouch");
+	
+	m_isGrounded = false;*/
 }
+
 WeaponController* GetWeaponController()
 {
 	return m_weaponController;
+}
+
+void RaycastUpdate()
+{
+	//Texture laserTexture(RES_PATH"res/Textures/rouge-laser.jpg");
+	Ray ray;
+	ray.origin = m_pOwner->transform.GetWorldPosition();
+	ray.direction = m_pOwner->transform.GetWorldUp();
+	ray.direction.y *= -1.f;
+
+	Console::Log(ray.origin.x);
+	Console::Log(ray.origin.z);
+
+	float32 maxDistance = 1.f;
+	RaycastHit hitInfo;
+	float32 distance = maxDistance;
+	Vector3f32 hitPoint = ray.origin + ray.direction * distance;
+	if (PhysicSystem::IntersectRay(ray, hitInfo, maxDistance))
+	{
+		if (hitInfo.pGameObject && hitInfo.pGameObject->HasComponent<MeshRenderer>())
+		{
+			//hitInfo.pGameObject->GetComponent<MeshRenderer>()->pMaterial->albedoTextureID = laserTexture.GetTextureID();
+		}
+
+		distance = hitInfo.distance;
+		hitPoint = hitInfo.point;
+
+		Console::Log("Touch");
+		Console::Log(hitInfo.pGameObject->GetName());
+
+		m_isGrounded = true;
+	}
+	else
+	{
+		Console::Log("Untouch");
+		m_isGrounded = false;
+	}
 }
 
 private:
