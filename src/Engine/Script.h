@@ -143,7 +143,7 @@ namespace gce
 		void UnInit();
 
 		void OnAwake() { if (m_flags & ScriptFlag::Awake) Awake(); }
-		void OnStart() { if ( IsActive() ) Start(); }
+		void OnStart() { Start(); }
 		void OnUpdate() { if ( IsActive() ) Update(); }
 		void OnFixedUpdate() { if ( IsActive() ) FixedUpdate(); }
 		void OnDestroy() { if ( IsActive() ) Destroy(); }

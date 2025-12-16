@@ -22,8 +22,7 @@ float32 m_scale;
 
 void Start() override
 {
-    Weapon::Start()();
-
+    Weapon::Start();
     m_shotCooldown = 0.3f;
     m_reloadCooldown = 1.5f;
 

@@ -41,8 +41,6 @@ public:
     void Start() override
     {
         CustomScene::Start();
-        player->GetScript<Player>()->m_health->Heal(5);
-        player->transform.SetWorldPosition({ 0,10,0 });
         MapProperties mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", this);
 
         std::srand(timeGetTime());
