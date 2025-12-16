@@ -7,7 +7,10 @@
 #include "Chrono.h"
 #include "Projectile.hpp"
 
+
 using namespace gce;
+
+struct WeaponController;
 
 DECLARE_SCRIPT(Weapon, ScriptFlag::Start | ScriptFlag::Update)
 
@@ -27,11 +30,9 @@ bool m_isOverheated = false;
 
 Vector<Projectile*> m_pProjectiles;
 
-GameObject* m_Owner = nullptr;
-
 void Start() override
 {
-    m_Owner = m_pOwner;
+
 }
 
 void Update() override
@@ -114,7 +115,7 @@ void SetWeaponController(WeaponController* controller)
 
 GameObject* GetOwner()
 {
-    return m_Owner;
+    return m_pOwner;
 }
 
 END_SCRIPT

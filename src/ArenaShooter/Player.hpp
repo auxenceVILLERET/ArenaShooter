@@ -23,7 +23,7 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit)
+DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit | ScriptFlag::SetActive)
 
 float32 m_speed = 5;
 float32 m_jumpForce = 40000;
@@ -39,6 +39,7 @@ UiHp* m_uiHp = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
+CustomScene* m_customScene = nullptr;
 
 Health<int>* m_health = nullptr;
 int8 m_energyOrbs = 0;
@@ -46,9 +47,15 @@ int8 m_maxEnergyOrbs = 2;
 
 void Start() override
 {
-	m_health = new Health<int>(5);
 	
-	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
+
+}
+
+void Init()
+{
+	m_health = new Health<int>(5);
+
+	GameObject& cam = m_customScene->AddObject();
 	cam.SetParent(*m_pOwner);
 	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
 	m_camera = cam.AddComponent<Camera>();
@@ -64,7 +71,7 @@ void Start() override
 	m_weaponController = weaponControllerObj.AddScript<WeaponController>();
 	weaponControllerObj.SetParent(*m_pOwner);
 
-	GameObject& hpUi = GameObject::Create(m_pOwner->GetScene());
+	GameObject& hpUi = m_customScene->AddObject();
 	ImageUI& uiImage = *hpUi.AddComponent<ImageUI>();
 	Vector2f32 center = { 1920 / 2 , 1080 / 2 };
 	Vector2f32 size = { 1920, 1080 };
@@ -73,8 +80,9 @@ void Start() override
 	m_uiHp = hpUi.AddScript<UiHp>();
 	m_uiHp->m_pPlayer = m_health;
 	m_uiHp->UiHpImage = &uiImage;
+	uiImage.btmBrush = new BitMapBrush("res/ArenaShooter/stade1.png");
 
-	GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
+	GameObject& rifle = m_customScene->AddObject();
 	MeshRenderer& meshProjectileRifle = *rifle.AddComponent<MeshRenderer>();
 	meshProjectileRifle.pGeometry = SHAPES.SPHERE;
 	m_rifle = rifle.AddScript<Rifle>();
@@ -83,7 +91,7 @@ void Start() override
 	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_rifle);
 
-	GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
+	GameObject& shotgun = m_customScene->AddObject();
 	MeshRenderer& meshProjectileShotgun = *shotgun.AddComponent<MeshRenderer>();
 	meshProjectileShotgun.pGeometry = SHAPES.CYLINDER;
 	m_shotgun = shotgun.AddScript<Shotgun>();
@@ -92,7 +100,7 @@ void Start() override
 	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_shotgun);
 
-	GameObject& handgun = GameObject::Create(m_pOwner->GetScene());
+	GameObject& handgun = m_customScene->AddObject();
 	MeshRenderer& meshProjectileHandgun = *handgun.AddComponent<MeshRenderer>();
 	meshProjectileHandgun.pGeometry = SHAPES.CUBE;
 	m_handgun = handgun.AddScript<Handgun>();
@@ -101,7 +109,7 @@ void Start() override
 	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_handgun);
 
-	GameObject& bazooka = GameObject::Create(m_pOwner->GetScene());
+	GameObject& bazooka = m_customScene->AddObject();
 	MeshRenderer& meshProjectileBazooka = *bazooka.AddComponent<MeshRenderer>();
 	meshProjectileBazooka.pGeometry = SHAPES.CAPSULE;
 	m_bazooka = bazooka.AddScript<Bazooka>();
@@ -109,12 +117,18 @@ void Start() override
 	bazooka.SetParent(cam);
 	bazooka.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_bazooka, false);
+}
 
+void SetActiveEvent() override
+{
+	if (m_health != nullptr)
+		m_health->Heal(5);
+	m_pOwner->transform.SetWorldPosition({ 0,10,0 });
 }
 
 void Test()
 {
-	GameObject& testObject = GameObject::Create(m_pOwner->GetScene());
+	GameObject& testObject = m_customScene->AddObject();
 	testObject.AddComponent<MeshRenderer>()->pGeometry = SHAPES.CUBE;
 
 	testObject.transform.SetWorldPosition(m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 2.f);

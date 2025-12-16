@@ -37,14 +37,14 @@ public:
         player->AddScript<Player>();
         
         player->AddScript<PlayerController>();
+		player->GetScript<Player>()->m_customScene = this;
+		player->GetScript<Player>()->Init();
 
     }
 
     void Start() override
     {
         CustomScene::Start();
-        player->GetScript<Player>()->m_health->Heal(5);
-        player->transform.SetWorldPosition({ 0,10,0 });
 
         GameObject& crosshair = AddObject();
         ImageUI& uiImage = *crosshair.AddComponent<ImageUI>();
