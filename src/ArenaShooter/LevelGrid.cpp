@@ -33,11 +33,11 @@ Vector3i32 LevelGrid::GetTilePosition(Vector3f32 const& pos)
     return result;
 }
 
-void LevelGrid::Init(SceneName scene, MapProperties const& mapProperties, Vector3f32 tileSize)
+void LevelGrid::Init(CustomScene* pScene, MapProperties const& mapProperties, Vector3f32 tileSize)
 {
     m_mapProperties = mapProperties;
     m_tileSize = tileSize;
-    Vector<GameObject*>& vObjs = SceneManager::GetInstance()->GetScene(scene)->GetObjects();
+    Vector<GameObject*>& vObjs = pScene->GetObjects();
     
     int tileCountX = mapProperties.size.x / tileSize.x + 1.0f;
     int tileCountY = mapProperties.size.y / tileSize.y + 1.0f;

@@ -53,7 +53,7 @@ namespace gce
     class LevelGrid 
     {
     public:
-        void Init(SceneName scene, MapProperties const& mapProperties, Vector3f32 tileSize);
+        void Init(CustomScene* pScene, MapProperties const& mapProperties, Vector3f32 tileSize);
         void Reset();
         Node* AStar(Node* pStart, Node* pEnd, Enemy* pAgent);
         void CalculateNodes();

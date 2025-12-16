@@ -28,7 +28,7 @@ void Start() override
     if ( hasLevelGrid )
     {
         pLevelGrid = new LevelGrid();
-        pLevelGrid->Init();
+        pLevelGrid->Init(pScene, roomProperties, {4.0f, 4.0f, 4.0f});
     }
     
     if ( hasWaves )
