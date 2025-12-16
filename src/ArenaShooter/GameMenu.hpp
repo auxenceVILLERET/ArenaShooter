@@ -38,7 +38,6 @@ public:
         
         player->AddScript<PlayerController>();
 		player->GetScript<Player>()->m_customScene = this;
-		player->GetScript<Player>()->Init();
 
     }
 

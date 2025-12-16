@@ -20,6 +20,7 @@
 #include "SceneManager.h"
 #include "CustomScene.h"
 #include "UiHp.hpp"
+#include "UiHeat.hpp"
 
 using namespace gce;
 
@@ -37,6 +38,7 @@ Shotgun* m_shotgun = nullptr;
 Handgun* m_handgun = nullptr;
 Bazooka* m_bazooka = nullptr;
 UiHp* m_uiHp = nullptr;
+UiHeat* m_uiHeat = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
@@ -63,14 +65,14 @@ void Start() override
 	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
 }
 
-void Init()
-{
-	
-}
-
 void SetActiveEvent() override
 {
-	GameObject& weaponControllerObj = GameObject::Create(m_pOwner->GetScene());
+	if (m_health != nullptr)
+		m_health->Heal(5);
+	m_pOwner->transform.SetWorldPosition({ 0,10,0 });
+	m_pOwner->transform.SetWorldRotation({ 0,0,0 });
+
+	GameObject& weaponControllerObj = m_customScene->AddObject();
 	m_weaponController = weaponControllerObj.AddScript<WeaponController>();
 	weaponControllerObj.SetParent(*m_pOwner);
 
@@ -85,6 +87,22 @@ void SetActiveEvent() override
 	m_uiHp->UiHpImage = &uiImage;
 	uiImage.btmBrush = new BitMapBrush("res/ArenaShooter/stade1.png");
 
+	/*GameObject& heatUiEmpty = m_customScene->AddObject();
+	ImageUI& uiHeatImage = *heatUiEmpty.AddComponent<ImageUI>();
+	uiHeatImage.InitializeImage(posUi, size, 1.f);*/
+	//uiHeatImage.btmBrush = new BitMapBrush("res/ArenaShooter/Villeret.png");
+
+	GameObject& heatUi = m_customScene->AddObject();
+	ImageUI& uiHeatBar = *heatUi.AddComponent<ImageUI>();
+	Vector2f32 center2 = { (GameManager::GetWindow()->GetWidth() / 2.f), (GameManager::GetWindow()->GetHeight() / 2.f) };
+	Vector2f32 size2 = { 600, 600 };
+	Vector2f32 posUi2 = center2 - size2 * 0.5f;
+	uiHeatBar.InitializeImage(posUi2, size2, 1.f);
+	m_uiHeat = heatUi.AddScript<UiHeat>();
+	m_uiHeat->UiHeatH = &uiHeatBar;
+	uiHeatBar.btmBrush = new BitMapBrush("res/ArenaShooter/barre_de_surcharge.png");
+
+
 	GameObject& rifle = m_customScene->AddObject();
 	MeshRenderer& meshProjectileRifle = *rifle.AddComponent<MeshRenderer>();
 	meshProjectileRifle.pGeometry = SHAPES.SPHERE;
@@ -92,6 +110,7 @@ void SetActiveEvent() override
 	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	rifle.SetParent(*m_camObj);
 	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	rifle.SetActive(false);
 	m_weaponController->AddWeapon(m_rifle);
 
 	GameObject& shotgun = m_customScene->AddObject();
@@ -101,6 +120,7 @@ void SetActiveEvent() override
 	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	shotgun.SetParent(*m_camObj);
 	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	shotgun.SetActive(false);
 	m_weaponController->AddWeapon(m_shotgun);
 
 	GameObject& handgun = m_customScene->AddObject();
@@ -110,6 +130,7 @@ void SetActiveEvent() override
 	handgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	handgun.SetParent(*m_camObj);
 	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	handgun.SetActive(false);
 	m_weaponController->AddWeapon(m_handgun);
 
 	GameObject& bazooka = m_customScene->AddObject();
@@ -119,11 +140,9 @@ void SetActiveEvent() override
 	bazooka.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	bazooka.SetParent(*m_camObj);
 	bazooka.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	bazooka.SetActive(false);
 	m_weaponController->AddWeapon(m_bazooka, false);
 	
-	if (m_health != nullptr)
-		m_health->Heal(5);
-	m_pOwner->transform.SetWorldPosition({ 0,10,0 });
 }
 
 void Test()
@@ -142,6 +161,8 @@ void Update() override
 
 	if(IsEnergyFull() == true) 
 		m_weaponController->UnlockWeapon(3);
+
+	m_uiHeat->UiHeatBar(m_weaponController->GetCurrentWeapon()->GetHeat(),{1000,600,0});
 
 	if (m_health->GetHealth() <= 0)
 	{

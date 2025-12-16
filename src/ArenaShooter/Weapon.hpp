@@ -75,6 +75,11 @@ void Update() override
 
 }
 
+float32 GetHeat()
+{
+    return m_heat;
+}
+
 virtual void BeginShot()
 {
       

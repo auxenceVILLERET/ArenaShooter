@@ -7,7 +7,7 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(WeaponController, ScriptFlag::Start)
+DECLARE_SCRIPT(WeaponController, ScriptFlag::Start | ScriptFlag::Update)
 
 private:
     std::vector<Weapon*> m_weapons;   
@@ -20,12 +20,24 @@ public:
     {
     }
 
+    void Update() override
+    {
+        for (int i = 0; i < m_weapons.size(); i++)
+        {
+            if(i == m_currentIndex)
+                m_weapons[i]->GetOwner()->SetActive(true);
+            else
+				m_weapons[i]->GetOwner()->SetActive(false);
+        }
+	}
+
     void AddWeapon(Weapon* weapon, bool unlocked = true)
     {
         m_weapons.push_back(weapon);
         m_weaponUnlocked.push_back(unlocked);
 
 		weapon->SetWeaponController(this);
+        weapon->GetOwner()->SetActive(false);
 
         if (m_currentIndex == -1 && unlocked)
         {
@@ -89,7 +101,6 @@ public:
         }
     }
 
-
     void NextWeapon()
     {
         if (m_weapons.size() <= 1)
@@ -106,7 +117,6 @@ public:
         w->Shoot();
     }
 
-
     void BeginShot()
     {
         Weapon* w = GetCurrentWeapon();
@@ -120,8 +130,6 @@ public:
         if (!w) return;
         w->EndShot();
     }
-
-
 
     END_SCRIPT
 
