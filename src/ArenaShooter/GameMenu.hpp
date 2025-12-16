@@ -24,16 +24,7 @@ public:
     void Init() override
     {
         CustomScene::Init();
-        Vector<GameObject*> temp;
-        MapProperties mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", this, temp);
 
-        std::srand(timeGetTime());
-    
-        LevelGrid* grid = new LevelGrid();
-        grid->Init(SceneName::GAME, mapProperties, {4.0f, 4.0f, 4.0f});
-    
-        grid->Reset();
-    
         GameObject& player = AddObject();
         player.transform.SetWorldPosition({ 0,10,0 });
         player.transform.SetWorldScale({ 1.f, 1.f, 1.f });
@@ -44,6 +35,16 @@ public:
 
         player.AddScript<Player>();
         player.AddScript<PlayerController>();
+        
+        Vector<GameObject*> temp;
+        MapProperties mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", this, temp);
+
+        std::srand(timeGetTime());
+    
+        LevelGrid* grid = new LevelGrid();
+        grid->Init(SceneName::GAME, mapProperties, {4.0f, 4.0f, 4.0f});
+    
+        grid->Reset();
     
         GameObject& waveManager = AddObject();
         WaveManager* wManagerComponent = waveManager.AddScript<WaveManager>();
