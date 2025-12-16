@@ -49,6 +49,11 @@ void Awake() override
 
 	Geometry* pShotgunGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/shotgun_lower.obj");
 
+	Geometry* pHandgunGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/Handgun.obj");
+	Texture* albedoHandgun = new Texture(RES_PATH"res/ArenaShooter/Obj/Handgun_color.png");
+	Texture* roughHandgun = new Texture(RES_PATH"res/ArenaShooter/Obj/Handgun_Metalic.png");
+	Texture* metalHandgun = new Texture(RES_PATH"res/ArenaShooter/Obj/Handgun_Roughness.png");
+
 	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
 	cam.SetParent(*m_pOwner);
 	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
@@ -92,11 +97,17 @@ void Awake() override
 
 	GameObject& handgun = GameObject::Create(m_pOwner->GetScene());
 	MeshRenderer& meshProjectileHandgun = *handgun.AddComponent<MeshRenderer>();
-	meshProjectileHandgun.pGeometry = SHAPES.CUBE;
+	meshProjectileHandgun.pGeometry = pHandgunGeo;
+	meshProjectileHandgun.pMaterial->albedoTextureID = albedoHandgun->GetTextureID();
+	meshProjectileHandgun.pMaterial->useTextureAlbedo = 1;
+	meshProjectileHandgun.pMaterial->roughnessTextureID = roughHandgun->GetTextureID();
+	meshProjectileHandgun.pMaterial->useTextureRoughness = 1;
+	meshProjectileHandgun.pMaterial->metalnessTextureID = metalHandgun->GetTextureID();
+	meshProjectileHandgun.pMaterial->useTextureMetalness = 1;
 	m_handgun = handgun.AddScript<Handgun>();
 	handgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	handgun.SetParent(cam);
-	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	handgun.transform.SetLocalPosition({ 0.5f,-0.3f,1.f });
 	m_weaponController->AddWeapon(m_handgun);
 }
 

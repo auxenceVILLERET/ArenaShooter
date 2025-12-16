@@ -86,7 +86,7 @@ bool Shoot() override
         m_chargingBullet->SetScale(m_scale);
 
 
-        Vector3f32 pos = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * m_scale;
+        Vector3f32 pos = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * (m_scale + 0.5f);
 
         m_chargingBullet->SetPosition(pos);
     }
@@ -107,7 +107,7 @@ void EndShot() override
 
     if (m_chargingBullet)
     {
-        m_chargingBullet->Init(m_pOwner->transform.GetWorldForward(), m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * m_scale, m_speed);
+        m_chargingBullet->Init(m_pOwner->transform.GetWorldForward(), m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * (m_scale + 0.5f), m_speed);
     }
 
     m_chargingBullet = nullptr;
