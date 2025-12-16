@@ -11,7 +11,7 @@
 
 using namespace gce;
 
-DECLARE_CHILD_SCRIPT(Drone, Enemy, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
+DECLARE_CHILD_SCRIPT(Drone, Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
 StateMachine* m_pSm = nullptr;
 

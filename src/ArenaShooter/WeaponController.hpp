@@ -7,17 +7,12 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(WeaponController, ScriptFlag::Awake)
+DECLARE_SCRIPT(WeaponController, ScriptFlag::Start)
 
 private:
     std::vector<Weapon*> m_weapons;   
     int m_currentIndex = -1;          
 public:
-
-    void Awake() override
-    {
-    }
-
     void AddWeapon(Weapon* weapon)
     {
         m_weapons.push_back(weapon);

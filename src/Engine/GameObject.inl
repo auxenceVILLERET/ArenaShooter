@@ -12,7 +12,16 @@ inline String GameObject::GetName() const { return m_name; }
 inline Scene& GameObject::GetScene(){ return *m_pScene; }
 inline void GameObject::SetName(String name) { m_name = name; }
 
-inline void GameObject::SetActive( bool const active ) { m_active = active; }
+inline void GameObject::SetActive( bool const active )
+{
+    m_active = active;
+
+    for (std::pair<uint16, uint16> pair : m_scripts)
+    {
+        if ((Script::s_list[pair.second]->m_flags & ScriptFlag::SetActive) | (Script::s_list[pair.second]->m_flags & ScriptFlag::SetInnactive))
+            Script::s_list[pair.second]->OnSetActive(active);
+    }
+}
 
 inline bool GameObject::HasParent() const { return m_pParent != nullptr; }
 inline GameObject* GameObject::GetParent() { return m_pParent; }

@@ -21,7 +21,7 @@
 
 using namespace gce;
 
-DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit)
+DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit)
 
 float32 m_speed = 5;
 float32 m_jumpForce = 40000;
@@ -38,7 +38,7 @@ WeaponController* m_weaponController = nullptr;
 Health<int>* m_health = nullptr;
 
 
-void Awake() override
+void Start() override
 {
 	m_health = new Health<int>(5);
 	

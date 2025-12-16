@@ -8,8 +8,7 @@
 #include "Projectile.hpp"
 using namespace gce;
 
-DECLARE_SCRIPT(Weapon, ScriptFlag::Awake | ScriptFlag::Update)
-
+DECLARE_SCRIPT(Weapon, ScriptFlag::Start | ScriptFlag::Update)
 
 float32 m_reloadCooldown = 0.f;
 float32 m_shotCooldown = 0.f;
@@ -19,8 +18,6 @@ Chrono m_shotTimer;
 
 bool m_isShooting = false;
 bool m_isReloading = false;
-
-D12PipelineObject* m_PSO = nullptr;
 
 float32 m_heat = 0.f;          
 float32 m_maxHeat = 100.f;     
