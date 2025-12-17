@@ -20,13 +20,18 @@ void Awake() override
     m_shotCooldown = 0.3f;
     m_reloadCooldown = 1.5f;
 
+    Geometry* pGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/laser.obj");
+    Texture* albedo = new Texture(RES_PATH"res/ArenaShooter/Obj/LaserTxtBlue.png");
+
     for (int i = 0; i < 50; i++)
     {
         GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
         MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
-        meshProjectile.pGeometry = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/laser.obj");
+        meshProjectile.pGeometry = pGeo;
+        meshProjectile.pMaterial->albedoTextureID = albedo->GetTextureID();
+        meshProjectile.pMaterial->useTextureAlbedo = 1.f;
         bullet.transform.SetWorldPosition({ 0.0f, 0.0f, 0.0f });
-        bullet.transform.SetWorldScale({ 1.f,1.f,1.f });
+        bullet.transform.SetWorldScale({ 1.3f,1.3f,1.3f });
         bullet.SetName("Riffle bullet");
 
         bullet.AddComponent<SphereCollider>();
