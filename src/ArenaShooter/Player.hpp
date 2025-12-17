@@ -107,21 +107,20 @@ void SetActiveEvent() override
 	m_uiHp->UiHpImage = &uiImage;
 	uiImage.btmBrush = new BitMapBrush("res/ArenaShooter/stade1.png");
 
-	/*GameObject& heatUiEmpty = m_customScene->AddObject();
-	ImageUI& uiHeatImage = *heatUiEmpty.AddComponent<ImageUI>();
-	uiHeatImage.InitializeImage(posUi, size, 1.f);*/
-	//uiHeatImage.btmBrush = new BitMapBrush("res/ArenaShooter/Villeret.png");
-
 	GameObject& heatUi = m_customScene->AddObject();
-	ImageUI& uiHeatBar = *heatUi.AddComponent<ImageUI>();
-	Vector2f32 center2 = { (GameManager::GetWindow()->GetWidth() / 2.f), (GameManager::GetWindow()->GetHeight() / 2.f) };
-	Vector2f32 size2 = { 118, 510 };
-	Vector2f32 posUi2 = center2 - size2 * 0.5f;
-	uiHeatBar.InitializeImage(posUi2, size2, 1.f);
-	m_uiHeat = heatUi.AddScript<UiHeat>();
-	m_uiHeat->UiHeatH = &uiHeatBar;
-	uiHeatBar.btmBrush = new BitMapBrush("res/ArenaShooter/barre_de_surcharge.png");
+	ImageUI& uiHeatImage = *heatUi.AddComponent<ImageUI>();
+	Vector2f32 size2 = { 35, 153 };
+	uiHeatImage.InitializeImage({ 1100, 480 }, size2, 1.f);
+	uiHeatImage.btmBrush =  new BitMapBrush("res/ArenaShooter/barre_de_surcharge.png");
+	uiHeatImage.btmBrush->SetTransformMatrix({ 1100, 480, 0 }, { 0.3f , 0.3f , 0.3f }, 0);
 
+	GameObject& heatUiBar = m_customScene->AddObject();
+	ImageUI& uiHeatBarImage = *heatUiBar.AddComponent<ImageUI>();
+	m_uiHeat = heatUiBar.AddScript<UiHeat>();
+	m_uiHeat->UiHeatH = &uiHeatBarImage;
+	uiHeatBarImage.InitializeImage({ 1100, 630 }, {44,7}, 1.f);
+	uiHeatBarImage.btmBrush = new BitMapBrush("res/ArenaShooter/curseur_barre_de_surcharge.png");
+	uiHeatBarImage.btmBrush->SetTransformMatrix({ 1100, 630, 0 }, { 0.6f , 0.6f , 0.6f }, 0);
 
 	GameObject& rifle = m_customScene->AddObject();
 	MeshRenderer& meshProjectileRifle = *rifle.AddComponent<MeshRenderer>();
@@ -204,7 +203,7 @@ void Update() override
 	if(IsEnergyFull() == true) 
 		m_weaponController->UnlockWeapon(3);
 
-	m_uiHeat->UiHeatBar(m_weaponController->GetCurrentWeapon()->GetHeat(),{1000,600,0});
+	m_uiHeat->UiHeatBar(m_weaponController->GetCurrentWeapon()->GetHeat(),{1100,630,0});
 
 	if (m_health->GetHealth() <= 0)
 	{
