@@ -44,6 +44,8 @@ public:
     void Start() override
     {
         CustomScene::Start();
+        
+        std::srand(timeGetTime());
 
         GameObject& crosshair = AddObject();
         ImageUI& uiImage = *crosshair.AddComponent<ImageUI>();
@@ -55,25 +57,23 @@ public:
         uiImage.btmBrush = new BitMapBrush("res/ArenaShooter/crosshair.png");
         uiImage.btmBrush->SetTransformMatrix({ posUi.x, posUi.y, 0 }, { 1.f / 4.f, 1.f / 4.f, 1.f / 4.f }, 0);
         uiImage.SetActive(true);
-
-        MapProperties mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", this);
-
-        std::srand(timeGetTime());
-
-        LevelGrid* grid = new LevelGrid();
-        grid->Init(SceneName::GAME, mapProperties, { 4.0f, 4.0f, 4.0f });
-
-        grid->Reset();
-
-        GameObject& waveManager = AddObject();
-        WaveManager* wManagerComponent = waveManager.AddScript<WaveManager>();
-        wManagerComponent->grid = grid;
-        wManagerComponent->player = player;
-        wManagerComponent->currScene = this;
-        wManagerComponent->spawns = mapProperties.vSpawns;
-        wManagerComponent->OnInit();
-        pWaveManager = wManagerComponent;
-        pWaveManager->OnStart();
+        
+        // MapProperties mapProperties = MapLoader::LoadMap(RES_PATH"res/Maps/blockout.json", this);
+        //
+        // LevelGrid* grid = new LevelGrid();
+        // grid->Init(this, mapProperties, { 4.0f, 4.0f, 4.0f });
+        //
+        // grid->Reset();
+        //
+        // GameObject& waveManager = AddObject();
+        // WaveManager* wManagerComponent = waveManager.AddScript<WaveManager>();
+        // wManagerComponent->grid = grid;
+        // wManagerComponent->player = player;
+        // wManagerComponent->currScene = this;
+        // wManagerComponent->spawns = mapProperties.vSpawns;
+        // wManagerComponent->OnInit();
+        // pWaveManager = wManagerComponent;
+        // pWaveManager->OnStart();
     }
 
 private:
