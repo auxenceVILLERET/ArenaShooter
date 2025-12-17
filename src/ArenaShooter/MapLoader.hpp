@@ -25,6 +25,8 @@ struct MapProperties
     Vector3f32 pos;
     Vector3f32 size;
     Vector<Spawn> vSpawns;
+    Vector3f32 playerSpawn;
+    bool hasPlayerSpawn;
 };
 
 struct MapLoader
@@ -56,7 +58,7 @@ struct MapLoader
             std::string name = currObject["name"].get<std::string>();
             std::string type = currObject["type"].get<std::string>();
 
-            if (name == "Container")
+            if (name.find("Container") == std::string::npos)
             {
                 Vector3f32 position;
                 position.x = currObject["position"][0].get<float>();
@@ -73,6 +75,18 @@ struct MapLoader
                 continue;
             }
 
+            if (name == "PlayerSpawn")
+            {
+                Vector3f32 position;
+                position.x = currObject["position"][0].get<float>();
+                position.y = currObject["position"][2].get<float>();
+                position.z = currObject["position"][1].get<float>();
+
+                mapProperties.playerSpawn = position;
+                mapProperties.hasPlayerSpawn = true;
+                continue;
+            }
+            
             if ( type == "ARROW" )
             {
                 Vector3f32 start;
