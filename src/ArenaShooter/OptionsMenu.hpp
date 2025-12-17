@@ -17,6 +17,22 @@ public:
     {
         CustomScene::Init();
 
+        GameObject& Background = AddObject();
+        ImageUI& uiImage = *Background.AddComponent<ImageUI>();
+        Vector2f32 size = { 1920, 1080 };
+        uiImage.InitializeImage({ 0,0 }, size, 1.f);
+        uiImage.btmBrush = new BitMapBrush("res/ArenaShooter/Option/paramettre.png");
+        uiImage.btmBrush->SetTransformMatrix({ 0, 0, 0 }, { 1.f , 1.f , 1.f }, 0);
+        uiImage.SetActive(true);
+
+        GameObject& ligne = AddObject();
+        ImageUI& uiImageL = *ligne.AddComponent<ImageUI>();
+        uiImageL.InitializeImage({ 0,0 }, {1920,134}, 1.f);
+        uiImageL.btmBrush = new BitMapBrush("res/ArenaShooter/Option/Ligne.png");
+        uiImageL.btmBrush->SetTransformMatrix({ 0, 0, 0 }, { 1.f , 1.f , 1.f }, 0);
+        uiImageL.SetActive(true);
+        
+
         BitMapBrush* buttonBrush = new BitMapBrush{ "res/ArenaShooter/VilleretAuxence.jpg" };
         BitMapBrush* button2Brush = new BitMapBrush{ "res/ArenaShooter/VilleretAuxence.jpg" };
 
