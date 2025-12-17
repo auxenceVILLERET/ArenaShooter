@@ -216,14 +216,15 @@ bool SetPath(Vector3f32 target)
 	for (Vector2f32 dir : dirs)
 	{
 		ray.origin = m_pOwner->transform.GetWorldPosition();
-		ray.direction = targetDir;
 		
 		ray.origin += targetRight * dir.x * m_pOwner->transform.GetWorldScale().x * 0.5f;
 		ray.origin += targetUp * dir.y * m_pOwner->transform.GetWorldScale().y * 0.5f;
+		ray.direction = ( target - ray.origin).Normalize();
 	
 		RaycastHit hitInfo;
 		bool hit = PhysicSystem::IntersectRay(ray, hitInfo, distance);
-	
+
+		
 		if (hit && hitInfo.pGameObject != nullptr && hitInfo.pGameObject->GetName() != "Player" &&  hitInfo.pGameObject != m_pOwner)
 		{
 			blocked = true;
