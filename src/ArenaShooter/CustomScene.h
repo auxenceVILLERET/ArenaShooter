@@ -16,6 +16,7 @@ public:
 	~CustomScene();
 	GameObject& AddObject();
 	Vector<GameObject*>& GetObjects();
+	template<typename T> Vector<T*> GetAllScripts();
 	void SetActive();
 	void SetInactive();
 	void Empty(int indexStart);

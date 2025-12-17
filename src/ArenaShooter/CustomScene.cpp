@@ -26,6 +26,19 @@ Vector<GameObject*>& CustomScene::GetObjects()
 	return m_vObject;
 }
 
+template <typename T>
+Vector<T*> CustomScene::GetAllScripts()
+{
+	Vector<T*> vScripts;
+	for (GameObject* pObject : m_vObject)
+	{
+		T* pScript = pObject->GetScript<T>();
+		if (pScript != nullptr)
+			vScripts.PushBack(pScript);
+	}
+	return vScripts;
+}
+
 void CustomScene::SetActive()
 {
 	for (int i = 0; i < m_vObject.Size(); i++)
