@@ -73,6 +73,9 @@ void HandleInput()
 	if (GetKey(m_keyRotLeft))
 		m_pPlayer->GetScript<Player>()->Die();
 
+	if (GetKeyDown(m_keyRotRight))
+		m_pPlayer->GetScript<Player>()->m_energyOrbs += 1;
+
 	Move(direction);
 
 	if (GetKeyDown(Keyboard::P))
@@ -109,7 +112,8 @@ void HandleInput()
 	if (GetKeyDown(m_keyUlti))
 	{
 		m_pPlayer->GetScript<Player>()->GetWeaponController()->EquipWeapon(3);
-		m_pPlayer->GetScript<Player>()->m_energyOrbs = 0;
+		if(m_pPlayer->GetScript<Player>()->IsEnergyFull() == true)
+			m_pPlayer->GetScript<Player>()->m_energyOrbs = 0;
 	}
 
 	if (GetKeyDown(m_keyEscape))

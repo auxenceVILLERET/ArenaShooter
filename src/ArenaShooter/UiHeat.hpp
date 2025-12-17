@@ -5,9 +5,11 @@
 #include "Script.h"
 #include "GameObject.h"
 
+using namespace gce;
+
 DECLARE_SCRIPT(UiHeat, ScriptFlag::Update)
 
-ImageUI* UiHeatH= nullptr;
+ImageUI* UiHeatH = nullptr;
 
 void Update() override
 {

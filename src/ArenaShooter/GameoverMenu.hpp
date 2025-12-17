@@ -53,12 +53,12 @@ public:
 
         GameObject& restartButton = AddObject();
         restartButton.transform.LocalTranslate({ 1450.f, 800.f, 0.0f });
-        restartButton.transform.LocalScale({ 416.0f, 120.0f, 1.0f });
+        restartButton.transform.LocalScale({ 648.f, 120.0f, 1.0f });
         UIButton& buttonRestart = *restartButton.AddComponent<UIButton>();
 
         GameObject& menuButton = AddObject();
         menuButton.transform.LocalTranslate({ 500.f, 800.f, 0.0f });
-        menuButton.transform.LocalScale({ 416.0f, 120.0f, 1.0f });
+        menuButton.transform.LocalScale({ 708.f, 120.0f, 1.0f });
         UIButton& buttonMenuM = *menuButton.AddComponent<UIButton>();
 
         buttonRestart.AddListener(&(controller.GetScript<GameoverController>()->GoToGame));

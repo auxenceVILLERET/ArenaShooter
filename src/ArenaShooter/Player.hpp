@@ -21,6 +21,7 @@
 #include "CustomScene.h"
 #include "UiHp.hpp"
 #include "UiHeat.hpp"
+#include "UiEnergyOrb.hpp"
 
 using namespace gce;
 
@@ -39,6 +40,7 @@ Handgun* m_handgun = nullptr;
 Bazooka* m_bazooka = nullptr;
 UiHp* m_uiHp = nullptr;
 UiHeat* m_uiHeat = nullptr;
+UiEnergyOrb* m_uiEnergyOrb = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
@@ -46,7 +48,7 @@ CustomScene* m_customScene = nullptr;
 
 Health<int>* m_health = nullptr;
 int8 m_energyOrbs = 0;
-int8 m_maxEnergyOrbs = 2;
+int8 m_maxEnergyOrbs = 8;
 
 void Start() override
 {
@@ -177,6 +179,19 @@ void SetActiveEvent() override
 	bazooka.SetActive(false);
 	m_weaponController->AddWeapon(m_bazooka, false);
 	
+	GameObject& energyUiEmpty = m_customScene->AddObject();
+	ImageUI& uiEnergyEmpty = *energyUiEmpty.AddComponent<ImageUI>();
+	uiEnergyEmpty.InitializeImage({ 90, 880 }, { 128,128 }, 1.f);
+	uiEnergyEmpty.btmBrush = new BitMapBrush("res/ArenaShooter/contours_bouboules.png");
+	uiEnergyEmpty.btmBrush->SetTransformMatrix({ 90, 880, 0 }, { 1.f , 1.0f , 1.0f }, 0);
+
+	GameObject& energyUi = m_customScene->AddObject();
+	ImageUI& uiEnergy = *energyUi.AddComponent<ImageUI>();
+	m_uiEnergyOrb = energyUi.AddScript<UiEnergyOrb>();
+	m_uiEnergyOrb->UiEnergyH = &uiEnergy;
+	uiEnergy.InitializeImage({ 90, 880 }, { 128,128 }, 1.f);
+	uiEnergy.btmBrush = new BitMapBrush("res/ArenaShooter/bouboule.png");
+	uiEnergy.btmBrush->SetTransformMatrix({ 90, 880, 0 }, { 1.f , 1.0f , 1.0f }, 0);
 
 	GameObject& heatUiBar = m_customScene->AddObject();
 	ImageUI& uiHeatBarImage = *heatUiBar.AddComponent<ImageUI>();
@@ -202,10 +217,14 @@ void Update() override
 	m_deltaTime = GameManager::DeltaTime();
 	RaycastUpdate();
 
-	if(IsEnergyFull() == true) 
+	if (IsEnergyFull() == true)
+	{
 		m_weaponController->UnlockWeapon(3);
+		m_energyOrbs = m_maxEnergyOrbs;
+	}
 
 	m_uiHeat->UiHeatBar(m_weaponController->GetCurrentWeapon()->GetHeat(),{1100,630,0});
+	m_uiEnergyOrb->UiEnergyOrbBar(m_energyOrbs, {90, 880 ,0});
 
 	if (m_health->GetHealth() <= 0)
 	{
