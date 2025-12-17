@@ -67,7 +67,7 @@ bool Shoot() override
         BulletShotgun* bulletShotgun = dynamic_cast<BulletShotgun*>(proj);
 
         if (bulletShotgun)
-            bulletShotgun->Init(worldDirection,m_pOwner->transform.GetWorldPosition(), 20.f);
+            bulletShotgun->Init(worldDirection,m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.8f, 20.f);
     }
 }
 

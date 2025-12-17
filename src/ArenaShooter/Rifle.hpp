@@ -24,9 +24,9 @@ void Awake() override
     {
         GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
         MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
-        meshProjectile.pGeometry = SHAPES.SPHERE;
+        meshProjectile.pGeometry = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/laser.obj");
         bullet.transform.SetWorldPosition({ 0.0f, 0.0f, 0.0f });
-        bullet.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+        bullet.transform.SetWorldScale({ 1.f,1.f,1.f });
         bullet.SetName("Riffle bullet");
 
         bullet.AddComponent<SphereCollider>();
