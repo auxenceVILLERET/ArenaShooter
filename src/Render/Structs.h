@@ -306,6 +306,7 @@ namespace gce
         BitMapBrush(std::string const& path);
         void SetTransformMatrix(Vector3f32 const& position, Vector3f32 const& scale, float32 rotation);
         void SetOpacity(float32 opacity);
+        Vector2f32 const GetSize() { return m_size; }
         ~BitMapBrush() override { m_pBitMapBrush->Release(); }
 
         Vector2f32 const& GetSize() const { return m_size; }

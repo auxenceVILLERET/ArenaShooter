@@ -19,13 +19,18 @@ void Start() override
     Weapon::Start();
     m_shotCooldown = 0.3f;
 
+    Geometry* pGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/laser.obj");
+    Texture* albedo = new Texture(RES_PATH"res/ArenaShooter/Obj/LaserTxtBlue.png");
+
     for (int i = 0; i < 50; i++)
     {
         GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
         MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
-        meshProjectile.pGeometry = SHAPES.SPHERE;
+        meshProjectile.pGeometry = pGeo;
+        meshProjectile.pMaterial->albedoTextureID = albedo->GetTextureID();
+        meshProjectile.pMaterial->useTextureAlbedo = 1.f;
         bullet.transform.SetWorldPosition({ 0.0f, 0.0f, 0.0f });
-        bullet.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+        bullet.transform.SetWorldScale({ 1.3f,1.3f,1.3f });
         bullet.SetName("Riffle bullet");
 
         bullet.AddComponent<SphereCollider>();
@@ -42,7 +47,7 @@ bool Shoot() override
     BulletRifle* bulletRifle = dynamic_cast<BulletRifle*>(proj);
 
     if (bulletRifle)
-        bulletRifle->Init(m_pOwner->transform.GetWorldForward(),m_pOwner->transform.GetWorldPosition(), 20.f);
+        bulletRifle->Init(m_pOwner->transform.GetWorldForward(), m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.2f, 20.f);
 
 }
 

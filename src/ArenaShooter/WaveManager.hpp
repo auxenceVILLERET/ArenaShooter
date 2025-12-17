@@ -46,12 +46,18 @@ Vector<Enemy*> vEnemy;
 
 void OnInit() 
 {
+    Geometry* pKamikazeGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/Kamikaze.obj");
+    Texture* albedoKamikaze = new Texture(RES_PATH"res/ArenaShooter/Obj/Kamikaze_Color.png");
+
     for (int i = 0; i < 20; i++)
     {
         GameObject* newEnemy = &currScene->AddObject();
         MeshRenderer& mesh = *newEnemy->AddComponent<MeshRenderer>();
-        mesh.pGeometry = SHAPES.CUBE;
-        newEnemy->transform.SetWorldScale({ 1.f,1.f,1.f });
+        mesh.pGeometry = pKamikazeGeo;
+		mesh.pMaterial->albedoTextureID = albedoKamikaze->GetTextureID();
+		mesh.pMaterial->useTextureAlbedo = 1;
+        newEnemy->transform.SetWorldScale({ 1.3f,1.3f,1.3f });
+
         newEnemy->SetName("Kamikaze");
         Kamikaze* tempScript = newEnemy->AddScript<Kamikaze>();
         tempScript->SetGrid(grid);

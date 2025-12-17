@@ -21,6 +21,7 @@
 #include "CustomScene.h"
 #include "UiHp.hpp"
 #include "UiHeat.hpp"
+#include "UiEnergyOrb.hpp"
 
 using namespace gce;
 
@@ -39,6 +40,7 @@ Handgun* m_handgun = nullptr;
 Bazooka* m_bazooka = nullptr;
 UiHp* m_uiHp = nullptr;
 UiHeat* m_uiHeat = nullptr;
+UiEnergyOrb* m_uiEnergyOrb = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
@@ -46,12 +48,16 @@ CustomScene* m_customScene = nullptr;
 
 Health<int>* m_health = nullptr;
 int8 m_energyOrbs = 0;
-int8 m_maxEnergyOrbs = 2;
+int8 m_maxEnergyOrbs = 8;
 
 void Start() override
 {
 	m_health = new Health<int>(5);
 
+	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
+	cam.SetParent(*m_pOwner);
+	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
+	m_camera = cam.AddComponent<Camera>();
 	m_camObj = &m_customScene->AddObject();
 	m_camObj->SetParent(*m_pOwner);
 	m_camObj->transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
@@ -67,6 +73,22 @@ void Start() override
 
 void SetActiveEvent() override
 {
+
+	Geometry* pRifleGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/Rifle.obj");
+	Texture* albedoRifle = new Texture(RES_PATH"res/ArenaShooter/Obj/Rifle_Color.png");
+	Texture* roughRifle = new Texture(RES_PATH"res/ArenaShooter/Obj/Rifle_Mettalic.png");
+	Texture* metalRifle = new Texture(RES_PATH"res/ArenaShooter/Obj/Rifle_roughness.png");
+
+	Geometry* pShotgunGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/shotgun_lower.obj");
+	Texture* albedoShotgun = new Texture(RES_PATH"res/ArenaShooter/Obj/shotgun_color.png");
+	Texture* roughShotgun = new Texture(RES_PATH"res/ArenaShooter/Obj/shotgun_Roughness.png");
+	Texture* normalShotgun = new Texture(RES_PATH"res/ArenaShooter/Obj/shotgun_Normal.png");
+
+	Geometry* pHandgunGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/handgun_lower.obj");
+	Texture* albedoHandgun = new Texture(RES_PATH"res/ArenaShooter/Obj/handun_c.png");
+	Texture* roughHandgun = new Texture(RES_PATH"res/ArenaShooter/Obj/handgun_rough.png");
+	Texture* ambiantHandgun = new Texture(RES_PATH"res/ArenaShooter/Obj/handhun_ao.png");
+
 	if (m_health != nullptr)
 		m_health->Heal(5);
 	m_pOwner->transform.SetWorldRotation({ 0,0,0 });
@@ -86,50 +108,64 @@ void SetActiveEvent() override
 	m_uiHp->UiHpImage = &uiImage;
 	uiImage.btmBrush = new BitMapBrush("res/ArenaShooter/stade1.png");
 
-	/*GameObject& heatUiEmpty = m_customScene->AddObject();
-	ImageUI& uiHeatImage = *heatUiEmpty.AddComponent<ImageUI>();
-	uiHeatImage.InitializeImage(posUi, size, 1.f);*/
-	//uiHeatImage.btmBrush = new BitMapBrush("res/ArenaShooter/Villeret.png");
-
 	GameObject& heatUi = m_customScene->AddObject();
-	ImageUI& uiHeatBar = *heatUi.AddComponent<ImageUI>();
-	Vector2f32 center2 = { (GameManager::GetWindow()->GetWidth() / 2.f), (GameManager::GetWindow()->GetHeight() / 2.f) };
-	Vector2f32 size2 = { 118, 510 };
-	Vector2f32 posUi2 = center2 - size2 * 0.5f;
-	uiHeatBar.InitializeImage(posUi2, size2, 1.f);
-	m_uiHeat = heatUi.AddScript<UiHeat>();
-	m_uiHeat->UiHeatH = &uiHeatBar;
-	uiHeatBar.btmBrush = new BitMapBrush("res/ArenaShooter/barre_de_surcharge.png");
+	ImageUI& uiHeatImage = *heatUi.AddComponent<ImageUI>();
+	Vector2f32 size2 = { 35, 153 };
+	uiHeatImage.InitializeImage({ 1100, 480 }, size2, 1.f);
+	uiHeatImage.btmBrush =  new BitMapBrush("res/ArenaShooter/barre_de_surcharge.png");
+	uiHeatImage.btmBrush->SetTransformMatrix({ 1100, 480, 0 }, { 0.3f , 0.3f , 0.3f }, 0);
 
 
 	GameObject& rifle = m_customScene->AddObject();
 	MeshRenderer& meshProjectileRifle = *rifle.AddComponent<MeshRenderer>();
-	meshProjectileRifle.pGeometry = SHAPES.SPHERE;
+	meshProjectileRifle.pGeometry = pRifleGeo;
+	meshProjectileRifle.pMaterial->albedoTextureID = albedoRifle->GetTextureID();
+	meshProjectileRifle.pMaterial->useTextureAlbedo = 1;
+	meshProjectileRifle.pMaterial->roughnessTextureID = roughRifle->GetTextureID();
+	meshProjectileRifle.pMaterial->useTextureRoughness = 1;
+	meshProjectileRifle.pMaterial->metalnessTextureID = metalRifle->GetTextureID();
+	meshProjectileRifle.pMaterial->useTextureMetalness = 1;
 	m_rifle = rifle.AddScript<Rifle>();
-	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	rifle.SetParent(*m_camObj);
-	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	rifle.transform.SetWorldScale({ 1.3f,1.3f,1.3f });
+	rifle.transform.SetLocalPosition({ 0.3f,-0.2f,0.3f });
 	rifle.SetActive(false);
+
 	m_weaponController->AddWeapon(m_rifle);
 
 	GameObject& shotgun = m_customScene->AddObject();
 	MeshRenderer& meshProjectileShotgun = *shotgun.AddComponent<MeshRenderer>();
-	meshProjectileShotgun.pGeometry = SHAPES.CYLINDER;
+	meshProjectileShotgun.pGeometry = pShotgunGeo;
+	meshProjectileShotgun.pMaterial->albedoTextureID = albedoShotgun->GetTextureID();
+	meshProjectileShotgun.pMaterial->useTextureAlbedo = 1;
+	meshProjectileShotgun.pMaterial->roughnessTextureID = roughShotgun->GetTextureID();
+	meshProjectileShotgun.pMaterial->useTextureRoughness = 1;
+	meshProjectileShotgun.pMaterial->normalTextureID = normalShotgun->GetTextureID();
+	meshProjectileShotgun.pMaterial->useTextureNormal = 1;
 	m_shotgun = shotgun.AddScript<Shotgun>();
-	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	shotgun.SetParent(*m_camObj);
-	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	shotgun.transform.SetWorldScale({ 1.1f,1.1f,1.1f });
+	shotgun.transform.SetLocalPosition({ 0.7f,-0.5f,1.5f });
+	shotgun.transform.SetLocalRotation({ 0.f, 0.f, 0.f });
 	shotgun.SetActive(false);
+
 	m_weaponController->AddWeapon(m_shotgun);
 
 	GameObject& handgun = m_customScene->AddObject();
 	MeshRenderer& meshProjectileHandgun = *handgun.AddComponent<MeshRenderer>();
-	meshProjectileHandgun.pGeometry = SHAPES.CUBE;
+	meshProjectileHandgun.pGeometry = pHandgunGeo;
+	meshProjectileHandgun.pMaterial->albedoTextureID = albedoHandgun->GetTextureID();
+	meshProjectileHandgun.pMaterial->useTextureAlbedo = 1;
+	meshProjectileHandgun.pMaterial->roughnessTextureID = roughHandgun->GetTextureID();
+	meshProjectileHandgun.pMaterial->useTextureRoughness = 1;
+	meshProjectileHandgun.pMaterial->ambientTextureID = ambiantHandgun->GetTextureID();
+	meshProjectileHandgun.pMaterial->useTextureAmbient = 1;
 	m_handgun = handgun.AddScript<Handgun>();
 	handgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
 	handgun.SetParent(*m_camObj);
-	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	handgun.transform.SetLocalPosition({ 0.5f,-0.5f,1.f });
 	handgun.SetActive(false);
+
 	m_weaponController->AddWeapon(m_handgun);
 
 	GameObject& bazooka = m_customScene->AddObject();
@@ -142,6 +178,28 @@ void SetActiveEvent() override
 	bazooka.SetActive(false);
 	m_weaponController->AddWeapon(m_bazooka, false);
 	
+	GameObject& energyUiEmpty = m_customScene->AddObject();
+	ImageUI& uiEnergyEmpty = *energyUiEmpty.AddComponent<ImageUI>();
+	uiEnergyEmpty.InitializeImage({ 90, 880 }, { 128,128 }, 1.f);
+	uiEnergyEmpty.btmBrush = new BitMapBrush("res/ArenaShooter/contours_bouboules.png");
+	uiEnergyEmpty.btmBrush->SetTransformMatrix({ 90, 880, 0 }, { 1.f , 1.0f , 1.0f }, 0);
+
+	GameObject& energyUi = m_customScene->AddObject();
+	ImageUI& uiEnergy = *energyUi.AddComponent<ImageUI>();
+	m_uiEnergyOrb = energyUi.AddScript<UiEnergyOrb>();
+	m_uiEnergyOrb->UiEnergyH = &uiEnergy;
+	uiEnergy.InitializeImage({ 90, 880 }, { 128,128 }, 1.f);
+	uiEnergy.btmBrush = new BitMapBrush("res/ArenaShooter/bouboule.png");
+	uiEnergy.btmBrush->SetTransformMatrix({ 90, 880, 0 }, { 1.f , 1.0f , 1.0f }, 0);
+
+	GameObject& heatUiBar = m_customScene->AddObject();
+	ImageUI& uiHeatBarImage = *heatUiBar.AddComponent<ImageUI>();
+	m_uiHeat = heatUiBar.AddScript<UiHeat>();
+	m_uiHeat->UiHeatH = &uiHeatBarImage;
+	uiHeatBarImage.InitializeImage({ 1100, 630 }, { 44,7 }, 1.f);
+	uiHeatBarImage.btmBrush = new BitMapBrush("res/ArenaShooter/curseur_barre_de_surcharge.png");
+	uiHeatBarImage.btmBrush->SetTransformMatrix({ 1100, 630, 0 }, { 0.6f , 0.6f , 0.6f }, 0);
+
 }
 
 void Test()
@@ -158,10 +216,14 @@ void Update() override
 	m_deltaTime = GameManager::DeltaTime();
 	RaycastUpdate();
 
-	if(IsEnergyFull() == true) 
+	if (IsEnergyFull() == true)
+	{
 		m_weaponController->UnlockWeapon(3);
+		m_energyOrbs = m_maxEnergyOrbs;
+	}
 
-	m_uiHeat->UiHeatBar(m_weaponController->GetCurrentWeapon()->GetHeat(),{1000,600,0});
+	m_uiHeat->UiHeatBar(m_weaponController->GetCurrentWeapon()->GetHeat(),{1100,630,0});
+	m_uiEnergyOrb->UiEnergyOrbBar(m_energyOrbs, {90, 880 ,0});
 
 	if (m_health->GetHealth() <= 0)
 	{

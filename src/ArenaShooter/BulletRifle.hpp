@@ -28,6 +28,15 @@ void Update() override
 void Init(Vector3f32 dir,Vector3f32 pos, float32 speed) override
 {
     Projectile::Init(dir,pos,speed);
+    OrientFace(dir);
+}
+
+void OrientFace(Vector3f32 dir)
+{
+	float yaw = atan2(dir.x, dir.z);
+	float pitch = asin(-dir.y);
+	Quaternion q = Quaternion::RotationEuler(pitch, yaw, 0);
+	m_pOwner->transform.SetLocalRotation(q);
 }
 
 END_SCRIPT

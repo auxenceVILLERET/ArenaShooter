@@ -59,7 +59,7 @@ void BeginShot() override
     m_chargingBullet = dynamic_cast<BulletHandgun*>(proj);
     m_chargingBullet->SetInactiveColider();
 
-    Vector3f32 pos = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 0.5f;
+    Vector3f32 pos = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 0.5f + (m_pOwner->transform.GetWorldUp() * 0.25f);
 
     m_chargingBullet->Activate(pos);
     m_chargingBullet->SetSpeedBullet(0);
@@ -83,7 +83,7 @@ bool Shoot() override
         m_chargingBullet->SetScale(m_scale);
 
 
-        Vector3f32 pos = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * m_scale;
+        Vector3f32 pos = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * (m_scale + 0.5f) + (m_pOwner->transform.GetWorldUp() * 0.25f);
 
         m_chargingBullet->SetPosition(pos);
     }
@@ -104,7 +104,7 @@ void EndShot() override
 
     if (m_chargingBullet)
     {
-        m_chargingBullet->Init(m_pOwner->transform.GetWorldForward(), m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * m_scale, m_speed);
+        m_chargingBullet->Init(m_pOwner->transform.GetWorldForward(), m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * (m_scale + 0.5f) + (m_pOwner->transform.GetWorldUp() * 0.25f), m_speed);
     }
 
     m_chargingBullet = nullptr;

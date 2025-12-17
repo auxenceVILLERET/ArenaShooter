@@ -41,18 +41,18 @@ public:
         uiImage.SetActive(true);
 
         GameObject& playButton = AddObject();
-        playButton.transform.LocalTranslate({ 1000.f, 600.f, 0.0f });
-        playButton.transform.LocalScale({ 416.0f, 120.0f, 1.0f });
+        playButton.transform.LocalTranslate({ 1000.f, 650.f, 0.0f });
+        playButton.transform.LocalScale({ 564.0f, 120.0f, 1.0f });
         UIButton& button = *playButton.AddComponent<UIButton>();
 
         GameObject& optionButton = AddObject();
         optionButton.transform.LocalTranslate({ 1000.f, 800.f, 0.0f });
-        optionButton.transform.LocalScale({ 416.0f, 120.0f, 1.0f });
+        optionButton.transform.LocalScale({ 552.0f, 120.0f, 1.0f });
         UIButton& button2 = *optionButton.AddComponent<UIButton>();
 
         GameObject& quitButton = AddObject();
-        quitButton.transform.LocalTranslate({ 1000.f, 1000.f, 0.0f });
-        quitButton.transform.LocalScale({ 416.0f, 120.0f, 1.0f });
+        quitButton.transform.LocalTranslate({ 1000.f, 950.f, 0.0f });
+        quitButton.transform.LocalScale({ 396.0f, 120.0f, 1.0f });
         UIButton& button3 = *quitButton.AddComponent<UIButton>();
 
         button.AddListener(&(menu_controller.GetScript<MenuController>()->GoToGame));

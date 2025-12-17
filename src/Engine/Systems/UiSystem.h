@@ -8,8 +8,11 @@ namespace gce {
 
 class UiSystem final
 {
+
+private:
 	UiSystem() = default;
 	~UiSystem() = default;
+
 
 	// ===========================================
 	/// @brief Operates every UI Component.
@@ -24,6 +27,8 @@ class UiSystem final
 	/// @note Button -> TextRenderer
 	// ========================================
 	void HandleUiRendering();
+
+	uint8 m_selectedType = 0;
 
 	friend class GameManager;
 };

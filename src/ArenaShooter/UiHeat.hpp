@@ -5,9 +5,11 @@
 #include "Script.h"
 #include "GameObject.h"
 
+using namespace gce;
+
 DECLARE_SCRIPT(UiHeat, ScriptFlag::Update)
 
-ImageUI* UiHeatH= nullptr;
+ImageUI* UiHeatH = nullptr;
 
 void Update() override
 {
@@ -16,9 +18,9 @@ void Update() override
 
 void UiHeatBar(float32 m_heat, Vector3f32 pos)
 {
-	//UiHeatH->InitializeImage({ pos.x, pos.y }, { 118,(510 * m_heat / 100.f) }, 1.f);
-	UiHeatH->btmBrush->SetTransformMatrix(pos, { 1.f , m_heat / 100.f, 1.f }, 180);
-
+	float32 y = pos.y - m_heat / 100.f * 153.f;
+	UiHeatH->InitializeImage({ pos.x, y}, {44,7}, 1.f);
+	UiHeatH->btmBrush->SetTransformMatrix({pos.x,y , pos.z}, {0.6f , 0.6f , 0.6f}, 0);
 }
 
 
