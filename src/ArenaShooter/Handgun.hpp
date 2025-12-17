@@ -10,7 +10,7 @@
 
 using namespace gce;
 
-DECLARE_CHILD_SCRIPT(Handgun, Weapon, ScriptFlag::Awake | ScriptFlag::Update)
+DECLARE_CHILD_SCRIPT(Handgun, Weapon, ScriptFlag::Start | ScriptFlag::Update)
 
 BulletHandgun* m_chargingBullet = nullptr;
 float32 m_chargeValue = 0.f;
@@ -20,12 +20,10 @@ float32 maxSpeed = 20.f;
 float32 minSpeed = 8.f;
 float32 m_scale;
 
-void Awake() override
+void Start() override
 {
-    Weapon::Awake();
-
+    Weapon::Start();
     m_shotCooldown = 0.3f;
-    m_reloadCooldown = 1.5f;
 
     for (int i = 0; i < 10; i++)
     {
@@ -54,7 +52,6 @@ void Update() override
 void BeginShot() override
 {
     if (m_isShooting) return;
-    if (m_isReloading) return;
     m_isShooting = true;
     m_chargeValue = 0.f;
 

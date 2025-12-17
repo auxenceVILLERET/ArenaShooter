@@ -63,7 +63,7 @@ namespace gce {
 
         if (param.isSplitScreen) m_pWindow = new SplitScreenWindow(param.title, param.width, param.height, param.screenDisposition);
         else m_pWindow = new RenderWindow(param.title, param.width, param.height);
-        if (param.isFullScreen) m_pWindow->SetFullScreen(WINDOWED_MAXIMISE);
+        if (param.isFullScreen) m_pWindow->SetFullScreen(BORDERLESS);
         LightManager::SetLightsProperties(8.0f, 100.0f, 2.0f, 32.0f, 1.f);
 
         m_lifespanSystem.HandleCreations();

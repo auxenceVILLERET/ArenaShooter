@@ -12,38 +12,50 @@
 #include "Rifle.hpp"
 #include "Shotgun.hpp"
 #include "Handgun.hpp"
+#include "Bazooka.hpp"
 #include "Health.h"
 #include "WeaponController.hpp"
 #include "BulletDrone.hpp"
 #include "BulletTank.hpp"
+#include "SceneManager.h"
+#include "CustomScene.h"
+#include "UiHp.hpp"
+#include "UiHeat.hpp"
 
 using namespace gce;
 
-DECLARE_SCRIPT(Player, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit)
+DECLARE_SCRIPT(Player, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionStay | ScriptFlag::CollisionEnter | ScriptFlag::CollisionExit | ScriptFlag::SetActive)
 
 float32 m_speed = 5;
 float32 m_jumpForce = 40000;
 float32 m_boostForce = 500;
 float32 m_airMovementForce = m_jumpForce / 15;
 Vector3f32 m_currentOffset = { 0,0,0 };
+GameObject* m_camObj = nullptr;
 Camera* m_camera = nullptr;
 Rifle* m_rifle = nullptr;
 Shotgun* m_shotgun = nullptr;
 Handgun* m_handgun = nullptr;
+Bazooka* m_bazooka = nullptr;
+UiHp* m_uiHp = nullptr;
+UiHeat* m_uiHeat = nullptr;
 
 WeaponController* m_weaponController = nullptr;
 
+CustomScene* m_customScene = nullptr;
+
 Health<int>* m_health = nullptr;
+int8 m_energyOrbs = 0;
+int8 m_maxEnergyOrbs = 2;
 
-
-void Awake() override
+void Start() override
 {
 	m_health = new Health<int>(5);
-	
-	GameObject& cam = GameObject::Create(m_pOwner->GetScene());
-	cam.SetParent(*m_pOwner);
-	cam.transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
-	m_camera = cam.AddComponent<Camera>();
+
+	m_camObj = &m_customScene->AddObject();
+	m_camObj->SetParent(*m_pOwner);
+	m_camObj->transform.SetLocalPosition({ 0.f, 0.8f, 0.f });
+	m_camera = m_camObj->AddComponent<Camera>();
 	m_camera->SetMainCamera();
 	m_camera->SetType(PERSPECTIVE);
 	m_camera->perspective.fov = XM_PIDIV4;
@@ -51,42 +63,91 @@ void Awake() override
 	m_camera->perspective.farPlane = 500.0f;
 	m_camera->perspective.aspectRatio = 600.0f / 400.0f;
 	m_camera->perspective.up = { 0.0f, 1.0f, 0.0f };
+}
 
-	GameObject& weaponControllerObj = GameObject::Create(m_pOwner->GetScene());
+void SetActiveEvent() override
+{
+	if (m_health != nullptr)
+		m_health->Heal(5);
+	m_pOwner->transform.SetWorldPosition({ 0,10,0 });
+	m_pOwner->transform.SetWorldRotation({ 0,0,0 });
+
+	GameObject& weaponControllerObj = m_customScene->AddObject();
 	m_weaponController = weaponControllerObj.AddScript<WeaponController>();
 	weaponControllerObj.SetParent(*m_pOwner);
 
-	GameObject& rifle = GameObject::Create(m_pOwner->GetScene());
+	GameObject& hpUi = m_customScene->AddObject();
+	ImageUI& uiImage = *hpUi.AddComponent<ImageUI>();
+	Vector2f32 center = { 1920 / 2 , 1080 / 2 };
+	Vector2f32 size = { 1920, 1080 };
+	Vector2f32 posUi = center - size * 0.5f;
+	uiImage.InitializeImage(posUi, size, 1.f);
+	m_uiHp = hpUi.AddScript<UiHp>();
+	m_uiHp->m_pPlayer = m_health;
+	m_uiHp->UiHpImage = &uiImage;
+	uiImage.btmBrush = new BitMapBrush("res/ArenaShooter/stade1.png");
+
+	/*GameObject& heatUiEmpty = m_customScene->AddObject();
+	ImageUI& uiHeatImage = *heatUiEmpty.AddComponent<ImageUI>();
+	uiHeatImage.InitializeImage(posUi, size, 1.f);*/
+	//uiHeatImage.btmBrush = new BitMapBrush("res/ArenaShooter/Villeret.png");
+
+	GameObject& heatUi = m_customScene->AddObject();
+	ImageUI& uiHeatBar = *heatUi.AddComponent<ImageUI>();
+	Vector2f32 center2 = { (GameManager::GetWindow()->GetWidth() / 2.f), (GameManager::GetWindow()->GetHeight() / 2.f) };
+	Vector2f32 size2 = { 118, 510 };
+	Vector2f32 posUi2 = center2 - size2 * 0.5f;
+	uiHeatBar.InitializeImage(posUi2, size2, 1.f);
+	m_uiHeat = heatUi.AddScript<UiHeat>();
+	m_uiHeat->UiHeatH = &uiHeatBar;
+	uiHeatBar.btmBrush = new BitMapBrush("res/ArenaShooter/barre_de_surcharge.png");
+
+
+	GameObject& rifle = m_customScene->AddObject();
 	MeshRenderer& meshProjectileRifle = *rifle.AddComponent<MeshRenderer>();
 	meshProjectileRifle.pGeometry = SHAPES.SPHERE;
 	m_rifle = rifle.AddScript<Rifle>();
 	rifle.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
-	rifle.SetParent(cam);
+	rifle.SetParent(*m_camObj);
 	rifle.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	rifle.SetActive(false);
 	m_weaponController->AddWeapon(m_rifle);
 
-	GameObject& shotgun = GameObject::Create(m_pOwner->GetScene());
+	GameObject& shotgun = m_customScene->AddObject();
 	MeshRenderer& meshProjectileShotgun = *shotgun.AddComponent<MeshRenderer>();
 	meshProjectileShotgun.pGeometry = SHAPES.CYLINDER;
 	m_shotgun = shotgun.AddScript<Shotgun>();
 	shotgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
-	shotgun.SetParent(cam);
+	shotgun.SetParent(*m_camObj);
 	shotgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	shotgun.SetActive(false);
 	m_weaponController->AddWeapon(m_shotgun);
 
-	GameObject& handgun = GameObject::Create(m_pOwner->GetScene());
+	GameObject& handgun = m_customScene->AddObject();
 	MeshRenderer& meshProjectileHandgun = *handgun.AddComponent<MeshRenderer>();
 	meshProjectileHandgun.pGeometry = SHAPES.CUBE;
 	m_handgun = handgun.AddScript<Handgun>();
 	handgun.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
-	handgun.SetParent(cam);
+	handgun.SetParent(*m_camObj);
 	handgun.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	handgun.SetActive(false);
 	m_weaponController->AddWeapon(m_handgun);
+
+	GameObject& bazooka = m_customScene->AddObject();
+	MeshRenderer& meshProjectileBazooka = *bazooka.AddComponent<MeshRenderer>();
+	meshProjectileBazooka.pGeometry = SHAPES.CAPSULE;
+	m_bazooka = bazooka.AddScript<Bazooka>();
+	bazooka.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+	bazooka.SetParent(*m_camObj);
+	bazooka.transform.SetLocalPosition({ 0.3f,-0.3f,1.f });
+	bazooka.SetActive(false);
+	m_weaponController->AddWeapon(m_bazooka, false);
+	
 }
 
 void Test()
 {
-	GameObject& testObject = GameObject::Create(m_pOwner->GetScene());
+	GameObject& testObject = m_customScene->AddObject();
 	testObject.AddComponent<MeshRenderer>()->pGeometry = SHAPES.CUBE;
 
 	testObject.transform.SetWorldPosition(m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 2.f);
@@ -97,10 +158,26 @@ void Update() override
 {
 	m_deltaTime = GameManager::DeltaTime();
 	RaycastUpdate();
+
+	if(IsEnergyFull() == true) 
+		m_weaponController->UnlockWeapon(3);
+
+	m_uiHeat->UiHeatBar(m_weaponController->GetCurrentWeapon()->GetHeat(),{1000,600,0});
+
 	if (m_health->GetHealth() <= 0)
 	{
 		m_pOwner->SetActive(false);
+		SceneManager::GetInstance()->GetCurrentScene()->Empty(2);
+		SceneManager::GetInstance()->ChangeScene(GAMEOVER);
 	}
+}
+
+bool IsEnergyFull()
+{
+	if (m_energyOrbs >= m_maxEnergyOrbs)
+		return true;
+	else
+		return false;
 }
 
 bool IsRising()
@@ -156,7 +233,7 @@ void Move(Vector3f32 direction)
 	{
 		PhysicComponent& phys = *m_pOwner->GetComponent<PhysicComponent>();
 		Vector3f32 vel = phys.GetVelocity();
-		phys.SetVelocity({ offset.x, vel.y, offset.z });
+		phys.SetVelocity({ offset.x, vel.y , offset.z });
 	}
 	else if (m_isGrounded == false)
 	{
@@ -189,7 +266,7 @@ void Rotate(Vector3f32 rotation)
 
 void Die()
 {
-
+	m_health->TakeDamage(5);
 }
 
 void CollisionStay(GameObject* other) override
@@ -206,11 +283,11 @@ void CollisionEnter(GameObject* other)
 
 	if (other->GetScript<BulletDrone>())
 	{
-		m_health->TakeDamage(other->GetScript<BulletDrone>()->GetDmgBullet());
+		TakeDamage(other->GetScript<BulletDrone>()->GetDmgBullet());
 	}
 	if (other->GetScript<BulletTank>())
 	{
-		m_health->TakeDamage(other->GetScript<BulletTank>()->GetDmgBullet());
+		TakeDamage(other->GetScript<BulletTank>()->GetDmgBullet());
 	}
 	
 }
@@ -255,6 +332,12 @@ void RaycastUpdate()
 	{
 		m_isGrounded = false;
 	}
+}
+
+void TakeDamage(int dmg)
+{
+	m_health->TakeDamage(dmg);
+	m_uiHp->UiImageHp();
 }
 
 private:

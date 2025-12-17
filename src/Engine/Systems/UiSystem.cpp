@@ -63,6 +63,15 @@ void UiSystem::HandleUiRendering()
 	Window* const pWindow = GameManager::GetWindow();
 	pWindow->BeginUI();
 
+	for (ImageUI* const pImage : ImageUI::s_list)
+	{
+		if (pImage->IsActive() == false || pImage->m_created == false)
+			continue;
+
+		pWindow->SetActiveBrush(*pImage->btmBrush);
+		pWindow->DrawShapeUI(*pImage->rectImage, 1);
+	}
+
 	// Button
 	for ( UIButton* const pButton : UIButton::s_list )
 	{
@@ -79,15 +88,6 @@ void UiSystem::HandleUiRendering()
 
 		pWindow->SetActiveBrush( *pTextRenderer->pBrush );
 		pWindow->DrawTextUI( pTextRenderer->text, *pTextRenderer->pFont, *pTextRenderer->rectPosF );
-	}
-
-	for (ImageUI* const pImage : ImageUI::s_list)
-	{
-		if (pImage->IsActive() == false || pImage->m_created == false)
-			continue;
-
-		pWindow->SetActiveBrush(*pImage->btmBrush);
-		pWindow->DrawShapeUI(*pImage->rectImage, 1);
 	}
 
 	pWindow->EndUI();

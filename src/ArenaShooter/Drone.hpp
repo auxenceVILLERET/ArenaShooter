@@ -8,10 +8,11 @@
 #include "GameManager.h"
 #include "StateMachine/StateMachine.h"
 #include "BulletDrone.hpp"
+#include "EnergyOrb.hpp"
 
 using namespace gce;
 
-DECLARE_CHILD_SCRIPT(Drone, Enemy, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
+DECLARE_CHILD_SCRIPT(Drone, Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter)
 
 StateMachine* m_pSm = nullptr;
 
@@ -93,6 +94,15 @@ void Update() override
 	{
 		m_Hp->SetIsAlive(false);
 		m_pOwner->SetActive(false);
+
+		GameObject& energyOrb = GameObject::Create(m_pOwner->GetScene());
+		MeshRenderer& meshEnergyOrb = *energyOrb.AddComponent<MeshRenderer>();
+		meshEnergyOrb.pGeometry = SHAPES.SPHERE;
+		energyOrb.transform.SetWorldScale({ 0.5f,0.5f,0.5f });
+		energyOrb.transform.SetWorldPosition(m_pOwner->transform.GetWorldPosition());
+		energyOrb.AddScript<EnergyOrb>();
+		energyOrb.AddComponent<BoxCollider>();
+		energyOrb.AddComponent<PhysicComponent>()->SetMass(1.0f);
 	}
 
 	Enemy::Update();

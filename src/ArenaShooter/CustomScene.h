@@ -18,7 +18,7 @@ public:
 	Vector<GameObject*>& GetObjects();
 	void SetActive();
 	void SetInactive();
-
+	void Empty(int indexStart);
 	virtual void Start();
 	
 protected:

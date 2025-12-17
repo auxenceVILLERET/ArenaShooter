@@ -15,8 +15,8 @@ enum SceneName
 	MAIN_MENU,
 	GAME,
 	OPTIONS_MENU,
-	PAUSE_MENU,
-	GAMEOVER
+	GAMEOVER,
+	PAUSE_MENU
 };
 
 class SceneManager

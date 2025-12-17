@@ -7,10 +7,11 @@
 #include "Enemy.hpp"
 #include "GameManager.h"
 #include "StateMachine/StateMachine.h"
+#include "EnergyOrb.hpp"
 
 using namespace gce;
 
-DECLARE_CHILD_SCRIPT(Kamikaze, Enemy, ScriptFlag::Start | ScriptFlag::Update | ScriptFlag::CollisionEnter)
+DECLARE_CHILD_SCRIPT(Kamikaze, Enemy, ScriptFlag::Awake | ScriptFlag::Update | ScriptFlag::CollisionEnter | ScriptFlag::Destroy)
 
 StateMachine* m_pSm = nullptr;
 
@@ -76,9 +77,23 @@ void Update() override
 	{
 		m_Hp->SetIsAlive(false);
 		m_pOwner->SetActive(false);
+
+		GameObject& energyOrb = GameObject::Create(m_pOwner->GetScene());
+		MeshRenderer& meshEnergyOrb = *energyOrb.AddComponent<MeshRenderer>();
+		meshEnergyOrb.pGeometry = SHAPES.SPHERE;
+		energyOrb.transform.SetWorldScale({ 0.5f,0.5f,0.5f });
+		energyOrb.transform.SetWorldPosition(m_pOwner->transform.GetWorldPosition());
+		energyOrb.AddScript<EnergyOrb>();
+		energyOrb.AddComponent<BoxCollider>();
+		energyOrb.AddComponent<PhysicComponent>()->SetMass(1.0f);
 	}
 	
 	Enemy::Update();
+}
+
+void Destroy() override
+{
+	GameManager::GetStateSystem().DestroyStateMachine(m_pOwner);
 }
 
 void Explode()
@@ -87,10 +102,8 @@ void Explode()
 	{
 		float32 distanceToPlayer = (m_pPlayer->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition()).Norm();
 		if (distanceToPlayer < explosionRadius)
-			m_pPlayer->GetScript<Player>()->m_health->TakeDamage(1);
+			m_pPlayer->GetScript<Player>()->TakeDamage(1);
 	}
-
-	Console::Log("Explode");
 	
 	m_pOwner->SetActive(false);
 }

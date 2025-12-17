@@ -5,6 +5,7 @@
 #include "GameMenu.hpp"
 #include "MainMenu.hpp"
 #include "OptionsMenu.hpp"
+#include "GameoverMenu.hpp"
 
 SceneManager* SceneManager::p_Instance = nullptr;
 
@@ -25,6 +26,7 @@ void SceneManager::Init()
 	m_vScene.PushBack(new MainMenu(m_pScene));
 	m_vScene.PushBack(new GameScene(m_pScene));
 	m_vScene.PushBack(new OptionMenu(m_pScene));
+	m_vScene.PushBack(new GameoverMenu(m_pScene));
 
 	for (int i = 0; i < m_vScene.Size(); i++)
 	{

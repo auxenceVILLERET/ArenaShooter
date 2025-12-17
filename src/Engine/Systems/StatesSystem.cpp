@@ -22,7 +22,7 @@ namespace gce
 		if (m_stateMachineList.contains(pMe) == false)
 			return;
 
-		m_stateMachineList.erase(pMe);
++		m_stateMachineList.erase(pMe);
 	}
 
 	//////////////////////////////////////////////////////////////////////

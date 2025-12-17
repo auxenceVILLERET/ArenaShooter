@@ -10,17 +10,16 @@
 
 using namespace gce;
 
-DECLARE_CHILD_SCRIPT(Shotgun, Weapon, ScriptFlag::Awake | ScriptFlag::Update)
+DECLARE_CHILD_SCRIPT(Shotgun, Weapon, ScriptFlag::Start | ScriptFlag::Update)
 
 float32 m_spreadAngle = 5.f; // Angle de dispersion des projectiles (horizontal)
 float32 m_verticalSpread = 5.f; // Angle de dispersion verticale (au-dessus / en-dessous)
 int m_numPellets = 8;         // Nombre de projectiles tir�s
 
-void Awake() override
+void Start() override
 {
-    Weapon::Awake();
+    Weapon::Start();
     m_shotCooldown = 1.0f;     
-    m_reloadCooldown = 2.0f;   
 
 
     for (int i = 0; i < 50; i++)

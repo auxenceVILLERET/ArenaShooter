@@ -51,6 +51,7 @@ void OnInit()
         MeshRenderer& mesh = *newEnemy->AddComponent<MeshRenderer>();
         mesh.pGeometry = SHAPES.CUBE;
         newEnemy->transform.SetWorldScale({ 1.f,1.f,1.f });
+        newEnemy->SetName("Kamikaze");
         Kamikaze* tempScript = newEnemy->AddScript<Kamikaze>();
         tempScript->SetGrid(grid);
         tempScript->SetPlayer(player);

@@ -6,21 +6,20 @@
 #include "GameObject.h"
 #include "Chrono.h"
 #include "Projectile.hpp"
+
+
 using namespace gce;
 
-DECLARE_SCRIPT(Weapon, ScriptFlag::Awake | ScriptFlag::Update)
+struct WeaponController;
 
+DECLARE_SCRIPT(Weapon, ScriptFlag::Start | ScriptFlag::Update)
 
-float32 m_reloadCooldown = 0.f;
 float32 m_shotCooldown = 0.f;
+WeaponController* m_pWeaponController = nullptr;
 
-Chrono m_reloadTimer;
 Chrono m_shotTimer;
 
 bool m_isShooting = false;
-bool m_isReloading = false;
-
-D12PipelineObject* m_PSO = nullptr;
 
 float32 m_heat = 0.f;          
 float32 m_maxHeat = 100.f;     
@@ -31,11 +30,9 @@ bool m_isOverheated = false;
 
 Vector<Projectile*> m_pProjectiles;
 
-GameObject* m_Owner = nullptr;
-
-void Awake() override
+void Start() override
 {
-    m_Owner = m_pOwner;
+
 }
 
 void Update() override
@@ -62,14 +59,6 @@ void Update() override
         }
     }
 
-    // Fin de reload
-    if (m_isReloading && m_reloadTimer.GetElapsedTime() >= m_reloadCooldown)
-    {
-        m_isReloading = false;
-        m_heat = 0.f;
-        m_reloadTimer.Pause();
-        m_reloadTimer.Reset();
-    }
 
     // Cooldown tir
     if (m_isShooting && m_shotTimer.GetElapsedTime() >= m_shotCooldown && m_heat <= m_maxHeat && m_isOverheated == false)
@@ -86,6 +75,11 @@ void Update() override
 
 }
 
+float32 GetHeat()
+{
+    return m_heat;
+}
+
 virtual void BeginShot()
 {
       
@@ -94,7 +88,6 @@ virtual void BeginShot()
 virtual bool Shoot()
 {
     if (m_isShooting) return false;
-    if (m_isReloading) return false;
 
     m_isShooting = true;
 
@@ -120,17 +113,14 @@ virtual Projectile* GetFirstAvailableProjectile()
     return nullptr;
 }
 
-void Reload()
+void SetWeaponController(WeaponController* controller)
 {
-    if (m_isReloading == true) return;
-
-    m_isReloading = true;
-    m_reloadTimer.Start();
+    m_pWeaponController = controller;
 }
 
 GameObject* GetOwner()
 {
-    return m_Owner;
+    return m_pOwner;
 }
 
 END_SCRIPT

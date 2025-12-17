@@ -12,6 +12,8 @@ m_name( name ) {}
 
 bool GameObject::IsActive() const
 {
+    if (m_destroyed)
+        return false;
     return m_active && (HasParent() ? GetParent()->IsActive() : true);
 }
 
@@ -62,9 +64,13 @@ void GameObject::Destroy()
     if ( HasComponent<SphereCollider>() ) RemoveComponent<SphereCollider>();
     if ( HasComponent<BoxCollider>() ) RemoveComponent<BoxCollider>();
     if ( HasComponent<PhysicComponent>() ) RemoveComponent<PhysicComponent>();
+    if ( HasComponent<ImageUI>() ) RemoveComponent<ImageUI>();
 
     GameManager::GetLifespanSystem().m_toDelete.gameObjects.Push( this );
 
+    if (HasParent())
+        m_pParent->RemoveChild(*this);
+    
     for (GameObject* const pChild : m_children)
         pChild->Destroy();
 }
