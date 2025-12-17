@@ -9,7 +9,6 @@
 #include "Systems.h"
 #include "Components/Camera.h"
 
-
 namespace gce {
 
 struct WindowParam

@@ -38,7 +38,7 @@
 // ===== TOOL ===== //
 // SpriteSheet
 
-#define TEST Raycast
-#define SUBTEST RaycastGO
+#define TEST Slider
+#define SUBTEST 
 #include "Test.h"
 RUN_TEST

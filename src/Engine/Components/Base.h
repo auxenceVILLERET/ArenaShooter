@@ -25,6 +25,7 @@ struct Component
         BoxCollider,
         PhysicComponent,
         ImageUI,
+        SliderComponent,
         TextRenderer,
         UIButton,
         SkyBoxComponent,
@@ -50,6 +51,7 @@ struct Component
 
         PhysicComponentMask  = 1 << PhysicComponent,
         ImageUIMask          = 1 << ImageUI,
+        SliderComponentMask  = 1 << SliderComponent,
 		TextRendererMask     = 1 << TextRenderer,
         UIButtonMask         = 1 << UIButton,
     };
