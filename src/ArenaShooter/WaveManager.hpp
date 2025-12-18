@@ -49,7 +49,9 @@ Vector<Enemy*> vEnemy;
 void OnInit() 
 {
     Geometry* pKamikazeGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/Kamikaze.obj");
-    Texture* albedoKamikaze = new Texture(RES_PATH"res/ArenaShooter/Obj/Kamikaze_Color.png");
+    Texture* albedoKamikaze = new Texture(RES_PATH"res/ArenaShooter/Obj/Kamikaze_color.png");
+    Texture* roughKamikaze = new Texture(RES_PATH"res/ArenaShooter/Obj/Kamikaze_rough.png");
+    Texture* aoKamikaze = new Texture(RES_PATH"res/ArenaShooter/Obj/Kamikaze_ao.png");
 
     Geometry* pTankGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/tank.obj");
     Texture* albedoTank = new Texture(RES_PATH"res/ArenaShooter/Obj/tank_color.png");
@@ -65,6 +67,10 @@ void OnInit()
         mesh.pGeometry = pKamikazeGeo;
 		mesh.pMaterial->albedoTextureID = albedoKamikaze->GetTextureID();
 		mesh.pMaterial->useTextureAlbedo = 1;
+        mesh.pMaterial->roughnessTextureID = roughKamikaze->GetTextureID();
+        mesh.pMaterial->useTextureRoughness = 1;
+        mesh.pMaterial->ambientTextureID = aoKamikaze->GetTextureID();
+        mesh.pMaterial->useTextureAmbient = 1;
         newEnemy->transform.SetWorldScale({ 1.3f,1.3f,1.3f });
 
         newEnemy->SetName("Kamikaze");
@@ -205,9 +211,9 @@ void SpawnEnemy(Spawn selectedSpawn)
     
     Vector<EnemyCost> options;
 
-   // if (remainingWaveValue >= KAMIKAZE) options.PushBack(KAMIKAZE);
+    if (remainingWaveValue >= KAMIKAZE) options.PushBack(KAMIKAZE);
     //if (remainingWaveValue >= DRONE) options.PushBack(DRONE);
-    if (remainingWaveValue >= TANK) options.PushBack(TANK);
+    //if (remainingWaveValue >= TANK) options.PushBack(TANK);
 
     EnemyCost chosenEnemy = RandomFrom(options);
     
