@@ -27,10 +27,13 @@ float32 m_deltaTime = 0.0f;
 
 Vector<BulletDrone*> m_pProjectiles;
 
+Chrono m_playerCheckChrono;
+float32 m_playerCheckInterval = 1.f;
+
 void Awake() override
 {
 	Enemy::Awake();
-	m_speed = 3.50f;
+	m_speed = 4.50f;
 	m_pOwner->SetName("Drone");
 	m_Hp = new Health<float>(100.f);
 
@@ -160,6 +163,11 @@ bool IsBlocked()
 
 bool CheckPlayer()
 {
+	m_playerCheckChrono.Start();
+
+	if(m_playerCheckChrono.GetElapsedTime() < m_playerCheckInterval)
+		return false;
+
 	Vector3f32 direction = m_pPlayer->transform.GetWorldPosition() - m_pOwner->transform.GetWorldPosition();
 	direction.SelfNormalize();
 	Ray ray;
@@ -168,6 +176,8 @@ bool CheckPlayer()
 
 	RaycastHit hitInfo;
 	bool hit = PhysicSystem::IntersectRay(ray, hitInfo, 25.f);
+
+	m_playerCheckChrono.Reset();
 
 	return hit && hitInfo.pGameObject != nullptr && hitInfo.pGameObject->GetName() != "Player" && hitInfo.pGameObject->GetName() != "Drone bullet" && hitInfo.pGameObject->GetName() != "Rifle bullet" && hitInfo.pGameObject->GetName() != "Shotgun bullet" && hitInfo.pGameObject->GetName() != "Handgun bullet" && hitInfo.pGameObject != m_pOwner;
 }
