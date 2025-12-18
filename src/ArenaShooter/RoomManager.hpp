@@ -21,6 +21,9 @@ Chrono initChrono;
 
 ImageUI* uiLvlImage = nullptr;
 
+Chrono playerGravityChrono;
+float32 playerGravityDelay = 3.f;
+
 void Start() override
 {
     GameObject& lvl = pScene->AddObject();
@@ -62,6 +65,7 @@ void Update() override
     if (m_InitOffset == false && initChrono.GetElapsedTime() > 5.0f)
     {
         m_InitOffset = true;
+        
         pPlayer->transform.SetWorldPosition(m_pElevator->roomProperties.playerSpawn);
         return;
     }
@@ -122,6 +126,9 @@ void Update() override
 
 void LoadRoom()
 {
+    playerGravityChrono.Start();
+
+
     if (m_roomIndex >= m_vRoomPaths.Size())
         return;
     
@@ -133,6 +140,12 @@ void LoadRoom()
     m_pCurrRoom->hasLevelGrid = true;
     m_pCurrRoom->hasWaves = true;
     m_pCurrRoom->pWaveManager = pWaveManager;
+
+
+    pPlayer->GetComponent<PhysicComponent>()->SetGravityScale(0);
+
+    if (playerGravityChrono.GetElapsedTime() > playerGravityDelay)
+        pPlayer->GetComponent<PhysicComponent>()->SetGravityScale(1.0f);
 
     switch (m_roomIndex)
     {
@@ -160,16 +173,19 @@ void LoadRoom()
         break;
     }
     m_roomIndex++;
+
+    playerGravityChrono.Reset();
 }
 
 void ChangeRoom()
 {
     m_pCurrRoom->EmptyRoom();
     m_pCurrRoom = nullptr;
-
+    
     LoadRoom();
 
     isRoomInit = true;
+
 }
 
 private:
