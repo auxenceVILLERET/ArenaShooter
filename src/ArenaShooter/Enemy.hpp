@@ -46,7 +46,8 @@ CustomScene* m_pCustomScene = nullptr;
 
 float32 m_distanceFromPlayer = 0.0f;
 
-
+Chrono m_playerCheckChrono;
+float32 m_playerCheckInterval = 1.f;
 
 void Awake() override
 {

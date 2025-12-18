@@ -27,8 +27,6 @@ float32 m_deltaTime = 0.0f;
 
 Vector<BulletTank*> m_pProjectiles;
 
-Chrono m_playerCheckChrono;
-float32 m_playerCheckInterval = 1.f;
 void Awake() override
 {
 	Enemy::Awake();
@@ -183,6 +181,10 @@ void OnBeginIdle()
 }
 void OnUpdateIdle()
 {
+	m_playerCheckChrono.Start();
+
+	if (m_playerCheckChrono.GetElapsedTime() < m_playerCheckInterval)
+		return;
 	if (!m_pOwner || !m_pOwner->IsActive())
 		return;
 	if (m_target.isSet == true)
@@ -203,6 +205,8 @@ void OnUpdateIdle()
 	newPos += m_pOwner->transform.GetLocalForward() * z * 2.0f;
 
 	SetPath(newPos);
+	m_playerCheckChrono.Reset();
+
 }
 void OnEndIdle() {}
 

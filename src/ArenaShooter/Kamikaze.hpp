@@ -151,6 +151,11 @@ void OnBeginIdle()
 }
 void OnUpdateIdle()
 {
+	m_playerCheckChrono.Start();
+
+	if (m_playerCheckChrono.GetElapsedTime() < m_playerCheckInterval)
+		return;
+
 	if (m_pOwner == nullptr)
 		return;
 
@@ -172,6 +177,7 @@ void OnUpdateIdle()
 	newPos += m_pOwner->transform.GetLocalForward() * z * 2.0f;
 	
 	SetPath(newPos);
+	m_playerCheckChrono.Reset();
 }
 void OnEndIdle() {}
 
