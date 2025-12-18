@@ -194,9 +194,14 @@ void OnEndIdle() {}
 void OnBeginChase()
 {
 	isBlocked = false;
+	SetPath(m_pPlayer->transform.GetWorldPosition());
 }
 void OnUpdateChase()
 {
+	float32 targetDistance = (m_target.position - m_pOwner->transform.GetWorldPosition()).Norm();
+	if (targetDistance < 3.0f)
+		return;
+	
 	bool searchResult = SetPath(m_pPlayer->transform.GetWorldPosition());
 	if (searchResult == false)
 	{

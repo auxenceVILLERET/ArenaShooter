@@ -52,7 +52,7 @@ void Awake() override
 	m_pSm->AddTransition(closePlayerConditions, shooting, chase);
 	m_pSm->AddTransition(closePlayerConditions, idle, chase);
 
-	StateMachine::Condition veryClosePlayerCondition = { [this]() { return this->IsPlayerVeryClose() && this->CheckPlayer() == false; } };
+	StateMachine::Condition veryClosePlayerCondition = { [this]() { return this->IsPlayerVeryClose() && this->CheckPlayer();} };
 	Vector<StateMachine::Condition> veryClosePlayerConditions;
 	veryClosePlayerConditions.PushBack(veryClosePlayerCondition);
 	m_pSm->AddTransition(veryClosePlayerConditions, chase, shooting);
@@ -113,6 +113,7 @@ void Update() override
 	}
 
 	Enemy::Update();
+
 }
 
 
@@ -125,29 +126,17 @@ void Shoot() override
 
 bool IsPlayerClose()
 {
-	GameObject* player = m_pPlayer;
-	if (player == nullptr) return false;
-	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm();
-	return distance < 20.0f && distance >= 15.f; // Seuil de distance
+	return m_distanceFromPlayer < 20.0f && m_distanceFromPlayer >= 15.f; // Seuil de distance
 }
 
 bool IsPlayerVeryClose()
 {
-	GameObject* player = m_pPlayer;
-	if (player == nullptr) return false;
-	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm();
-	return distance < 15.0f; // Seuil de distance
+	return m_distanceFromPlayer < 15.0f; // Seuil de distance
 }
 
 bool IsPlayerFar()
 {
-	GameObject* player = m_pPlayer;
-	if (player == nullptr) return false;
-	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm();
-	return distance > 30.0f; // Seuil de distance
+	return m_distanceFromPlayer > 30.0f; // Seuil de distance
 }
 
 bool IsBlocked()
@@ -170,7 +159,10 @@ bool CheckPlayer()
 }
 
 
-void OnBeginIdle() {}
+void OnBeginIdle()
+{
+	Console::Log("Idle");
+}
 void OnUpdateIdle()
 {
 	if (m_target.isSet == true)
@@ -196,10 +188,16 @@ void OnEndIdle() {}
 
 void OnBeginChase()
 {
+	Console::Log("Chase");
 	isBlocked = false;
+	SetPath(m_pPlayer->transform.GetWorldPosition());
 }
 void OnUpdateChase()
 {
+	float32 targetDistance = (m_target.position - m_pOwner->transform.GetWorldPosition()).Norm();
+	if (targetDistance < 3.0f)
+		return;
+	
 	bool searchResult = SetPath(m_pPlayer->transform.GetWorldPosition());
 	if (searchResult == false)
 	{
@@ -220,6 +218,7 @@ void OnEndChase() {}
 void OnBeginShooting()
 {
 	m_deltaTime = 0.0f;
+	Console::Log("Shooting");
 	ResetPath();
 }
 void OnUpdateShooting()

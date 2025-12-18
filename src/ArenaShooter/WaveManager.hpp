@@ -92,15 +92,15 @@ void OnInit()
     {
         GameObject* newEnemy = &currScene->AddObject();
         MeshRenderer& mesh = *newEnemy->AddComponent<MeshRenderer>();
-        mesh.pGeometry = pTankGeo;
-        mesh.pMaterial->albedoTextureID = albedoTank->GetTextureID();
-        mesh.pMaterial->useTextureAlbedo = 1;
-		mesh.pMaterial->normalTextureID = normTank->GetTextureID();
-		mesh.pMaterial->useTextureNormal = 1;
-		mesh.pMaterial->roughnessTextureID = roughTank->GetTextureID();
-		mesh.pMaterial->useTextureRoughness = 1;
-		mesh.pMaterial->ambientTextureID = aoTank->GetTextureID();
-		mesh.pMaterial->useTextureAmbient = 1;
+        mesh.pGeometry = SHAPES.CUBE;
+  //       mesh.pMaterial->albedoTextureID = albedoTank->GetTextureID();
+  //       mesh.pMaterial->useTextureAlbedo = 1;
+		// mesh.pMaterial->normalTextureID = normTank->GetTextureID();
+		// mesh.pMaterial->useTextureNormal = 1;
+		// mesh.pMaterial->roughnessTextureID = roughTank->GetTextureID();
+		// mesh.pMaterial->useTextureRoughness = 1;
+		// mesh.pMaterial->ambientTextureID = aoTank->GetTextureID();
+		// mesh.pMaterial->useTextureAmbient = 1;
         newEnemy->transform.SetWorldScale({ 1.3f,1.3f,1.3f });
 
         newEnemy->SetName("Tank");
@@ -119,29 +119,29 @@ void OnInit()
     }
 
 
-    for (int i = 0; i < 20; i++)
-    {
-        GameObject* newEnemy = &currScene->AddObject();
-        MeshRenderer& mesh = *newEnemy->AddComponent<MeshRenderer>();
-        mesh.pGeometry = pKamikazeGeo;
-        mesh.pMaterial->albedoTextureID = albedoKamikaze->GetTextureID();
-        mesh.pMaterial->useTextureAlbedo = 1;
-        newEnemy->transform.SetWorldScale({ 1.3f,1.3f,1.3f });
-
-        newEnemy->SetName("Kamikaze");
-        Kamikaze* tempScript = newEnemy->AddScript<Kamikaze>();
-        tempScript->SetGrid(grid);
-        tempScript->SetPlayer(player);
-        tempScript->m_pCustomScene = currScene;
-        newEnemy->AddComponent<BoxCollider>();
-        PhysicComponent* newEnemyPC = newEnemy->AddComponent<PhysicComponent>();
-        newEnemyPC->SetGravityScale(0.0f);
-        newEnemyPC->SetIsTrigger(true);
-        newEnemy->SetActive(false);
-
-        Enemy* enemyScript = dynamic_cast<Enemy*>(tempScript);
-        vEnemy.PushBack(enemyScript);
-    }
+    // for (int i = 0; i < 20; i++)
+    // {
+    //     GameObject* newEnemy = &currScene->AddObject();
+    //     MeshRenderer& mesh = *newEnemy->AddComponent<MeshRenderer>();
+    //     mesh.pGeometry = pKamikazeGeo;
+    //     mesh.pMaterial->albedoTextureID = albedoKamikaze->GetTextureID();
+    //     mesh.pMaterial->useTextureAlbedo = 1;
+    //     newEnemy->transform.SetWorldScale({ 1.3f,1.3f,1.3f });
+    //
+    //     newEnemy->SetName("Kamikaze");
+    //     Kamikaze* tempScript = newEnemy->AddScript<Kamikaze>();
+    //     tempScript->SetGrid(grid);
+    //     tempScript->SetPlayer(player);
+    //     tempScript->m_pCustomScene = currScene;
+    //     newEnemy->AddComponent<BoxCollider>();
+    //     PhysicComponent* newEnemyPC = newEnemy->AddComponent<PhysicComponent>();
+    //     newEnemyPC->SetGravityScale(0.0f);
+    //     newEnemyPC->SetIsTrigger(true);
+    //     newEnemy->SetActive(false);
+    //
+    //     Enemy* enemyScript = dynamic_cast<Enemy*>(tempScript);
+    //     vEnemy.PushBack(enemyScript);
+    // }
 
  
 

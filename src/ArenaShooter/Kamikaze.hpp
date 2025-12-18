@@ -122,29 +122,17 @@ void CollisionEnter(GameObject* other) override
 
 bool IsPlayerClose()
 {
-	GameObject* player = m_pPlayer;
-	if (player == nullptr) return false;
-	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm();
-	return distance < 20.0f; // Seuil de distance
+	return m_distanceFromPlayer < 20.0f; // Seuil de distance
 }
 
 bool IsPlayerVeryClose()
 {
-	GameObject* player = m_pPlayer;
-	if (player == nullptr) return false;
-	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm();
-	return distance < 10.0f; // Seuil de distance
+	return m_distanceFromPlayer < 10.0f; // Seuil de distance
 }
 
 bool IsPlayerFar()
 {
-	GameObject* player = m_pPlayer;
-	if (player == nullptr) return false;
-	Vector3f32 DistVect = player->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
-	float distance = DistVect.Norm();
-	return distance > 25.0f; // Seuil de distance
+	return m_distanceFromPlayer > 25.0f; // Seuil de distance
 }
 
 bool IsBlocked()
@@ -188,9 +176,14 @@ void OnBeginChase()
 {
 	isBlocked = false;
 	// Console::Log("Chase");
+	SetPath(m_pPlayer->transform.GetWorldPosition());
 }
 void OnUpdateChase()
 {
+	float32 targetDistance = (m_target.position - m_pOwner->transform.GetWorldPosition()).Norm();
+	if (targetDistance < 3.0f)
+		return;
+	
 	bool searchResult = SetPath(m_pPlayer->transform.GetWorldPosition());
 	if (searchResult == false)
 	{

@@ -44,6 +44,8 @@ LevelGrid* m_pLevelGrid = nullptr;
 
 CustomScene* m_pCustomScene = nullptr;
 
+float32 m_distanceFromPlayer = 0.0f;
+
 void Awake() override
 {
 }
@@ -70,13 +72,18 @@ void Update() override
 		}
 	}
 
+	if (m_pPlayer != nullptr)
+	{
+		Vector3f32 DistVect = m_pPlayer->transform.GetLocalPosition() - m_pOwner->transform.GetLocalPosition();
+		m_distanceFromPlayer = DistVect.Norm();	
+	}
+	
 	if (m_pLevelGrid == nullptr)
 		return;
 
 	if (m_vPaths.Empty()) return;
 	if (m_target.isSet == false)
 		SetTarget();
-	
 }
 
 void SetPlayer(GameObject* player)
@@ -214,9 +221,9 @@ bool SetPath(Vector3f32 target)
 	//
 	Vector<Vector2f32> dirs;
 	dirs.PushBack(Vector2f32(0.0f, 0.0f));
-	dirs.PushBack(Vector2f32(0.0f, 1.0f));
-	dirs.PushBack(Vector2f32(-1.0f, -1.0f));
-	dirs.PushBack(Vector2f32(1.0f, -1.0f));
+	// dirs.PushBack(Vector2f32(0.0f, 1.0f));
+	// dirs.PushBack(Vector2f32(-1.0f, -1.0f));
+	// dirs.PushBack(Vector2f32(1.0f, -1.0f));
 	
 	Ray ray;
 	bool blocked = false;
@@ -239,13 +246,20 @@ bool SetPath(Vector3f32 target)
 			Console::Log("Blocked");
 			break;
 		}
+		Console::Log("Not Blocked");
 	}
 	
-	if (blocked == false && m_vPaths.Empty())
+	if (blocked == false)
 	{
 		ResetPath();
 		GoToPosition(target, m_speed);
 		return true;
+	}
+	
+	if (m_vPaths.Empty() == false)
+	{
+		if (nEnd->data->gridPosition == m_vPaths.Front().vPositions.Back())
+			return true;
 	}
 	
 	Node* nResult = grid->AStar(nSelf, nEnd, this);
@@ -258,13 +272,7 @@ bool SetPath(Vector3f32 target)
 		path.vPositions.Insert(path.vPositions.begin(), p);
 		nResult = nResult->pCameFrom;
 	}
-
 	path.vPositions.Erase(path.vPositions.begin());
-	if (m_vPaths.Empty() == false)
-	{
-		if (path.vPositions.Back() == m_vPaths.Front().vPositions.Back())
-			return true;
-	}
 
 	grid->Reset();
 
