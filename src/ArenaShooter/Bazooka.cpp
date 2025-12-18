@@ -84,6 +84,9 @@ bool Bazooka::Shoot()
 	
 	Projectile* proj = GetFirstAvailableProjectile();
 	BulletBazooka* bulletBazooka = dynamic_cast<BulletBazooka*>(proj); 
+	if (proj == nullptr)
+		return;
+
 	if (bulletBazooka == nullptr)
 		bulletBazooka->m_target = nullptr;
 
