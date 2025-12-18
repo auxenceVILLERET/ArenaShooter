@@ -16,7 +16,7 @@ BulletHandgun* m_chargingBullet = nullptr;
 float32 m_chargeValue = 0.f;
 float32 m_maxCharge = 3.f; 
 float32 m_speed = 20.f;
-float32 maxSpeed = 20.f;
+float32 maxSpeed = 40.f;
 float32 minSpeed = 8.f;
 float32 m_scale;
 
@@ -32,7 +32,7 @@ void Start() override
 
     for (int i = 0; i < 10; i++)
     {
-        GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
+        GameObject& bullet = m_pCustomScene->AddObject();
 
         MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
         meshProjectile.pGeometry = pGeo;
@@ -107,8 +107,9 @@ void EndShot() override
     m_chargingBullet->SetDmgBullet(5.f);
     float32 power = m_chargeValue / m_maxCharge;
     float32 dmg = m_chargingBullet->GetDmgBullet();
-    float32 tempDmg = dmg + power * 40.f;
+    float32 tempDmg = dmg + power * 80.f;
     m_chargingBullet->SetDmgBullet(tempDmg);
+	Console::Log(tempDmg);
 
     m_speed = maxSpeed - power * (maxSpeed - minSpeed);
     m_chargingBullet->SetSpeedBullet(m_speed);

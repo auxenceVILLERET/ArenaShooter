@@ -19,8 +19,18 @@ bool isPlayerLocked = false;
 
 Chrono initChrono;
 
+ImageUI* uiLvlImage = nullptr;
+
 void Start() override
 {
+    GameObject& lvl = pScene->AddObject();
+    uiLvlImage = lvl.AddComponent<ImageUI>();
+    Vector2f32 size2 = { 605, 244 };
+    uiLvlImage->InitializeImage({ 20, 50 }, size2, 1.f);
+    uiLvlImage->btmBrush = new BitMapBrush("res/ArenaShooter/RDC.png");
+    uiLvlImage->btmBrush->SetTransformMatrix({ 20, 50, 0 }, { 0.5f , 0.5f , 0.5f }, 0);
+
+
     m_roomIndex = 0;
     isRoomInit = false;
     initChrono.Start();
@@ -127,6 +137,33 @@ void LoadRoom()
     {
         m_pCurrRoom->hasWaves = true;
         m_pCurrRoom->pWaveManager = pWaveManager;
+    m_pCurrRoom->hasWaves = true;
+    m_pCurrRoom->pWaveManager = pWaveManager;
+
+    switch (m_roomIndex)
+    {
+    case 1:
+		delete uiLvlImage->btmBrush;
+		uiLvlImage->btmBrush = new BitMapBrush("res/ArenaShooter/1er.png");
+        uiLvlImage->btmBrush->SetTransformMatrix({ 20, 50, 0 }, { 0.5f , 0.5f , 0.5f }, 0);
+        break;
+	case 2:
+		delete uiLvlImage->btmBrush;
+        uiLvlImage->btmBrush = new BitMapBrush("res/ArenaShooter/2eme.png");
+		uiLvlImage->btmBrush->SetTransformMatrix({ 20, 50, 0 }, { 0.5f , 0.5f , 0.5f }, 0);
+        break;
+	case 3:
+        delete uiLvlImage->btmBrush;
+		uiLvlImage->btmBrush = new BitMapBrush("res/ArenaShooter/3eme.png");
+        uiLvlImage->btmBrush->SetTransformMatrix({ 20, 50, 0 }, { 0.5f , 0.5f , 0.5f }, 0);
+		break;
+	case 4:
+		delete uiLvlImage->btmBrush;
+        uiLvlImage->btmBrush = new BitMapBrush("res/ArenaShooter/4eme.png");
+        uiLvlImage->btmBrush->SetTransformMatrix({ 20, 50, 0 }, { 0.5f , 0.5f , 0.5f }, 0);
+		break;
+    default:
+        break;
     }
     m_roomIndex++;
 }

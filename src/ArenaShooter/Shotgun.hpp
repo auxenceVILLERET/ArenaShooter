@@ -20,13 +20,13 @@ void Start() override
 {
     Weapon::Start();
     m_shotCooldown = 1.0f;     
-
+    m_heatPerShot = 20.f;
     Geometry* pGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/laser.obj");
     Texture* albedo = new Texture(RES_PATH"res/ArenaShooter/Obj/LaserTxtBlue.png");
 
     for (int i = 0; i < 50; i++)
     {
-        GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
+        GameObject& bullet = m_pCustomScene->AddObject();
 
         MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
         meshProjectile.pGeometry = pGeo;
@@ -70,7 +70,7 @@ bool Shoot() override
         BulletShotgun* bulletShotgun = dynamic_cast<BulletShotgun*>(proj);
 
         if (bulletShotgun)
-            bulletShotgun->Init(worldDirection,m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 0.6f, 20.f);
+            bulletShotgun->Init(worldDirection,m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 0.6f, 40.f);
     }
 }
 

@@ -24,7 +24,7 @@ void Start() override
 
     for (int i = 0; i < 50; i++)
     {
-        GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
+        GameObject& bullet = m_pCustomScene->AddObject();
         MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
         meshProjectile.pGeometry = pGeo;
         meshProjectile.pMaterial->albedoTextureID = albedo->GetTextureID();
@@ -47,7 +47,7 @@ bool Shoot() override
     BulletRifle* bulletRifle = dynamic_cast<BulletRifle*>(proj);
 
     if (bulletRifle)
-        bulletRifle->Init(m_pOwner->transform.GetWorldForward(), m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.2f, 20.f);
+        bulletRifle->Init(m_pOwner->transform.GetWorldForward(), m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.2f, 40.f);
 
 }
 

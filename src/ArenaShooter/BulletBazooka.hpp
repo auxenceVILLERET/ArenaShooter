@@ -14,7 +14,7 @@ GameObject* m_target = nullptr;
 void Start() override
 {
 	m_MaxDistance = 100.f;
-	m_dmgBullet = 50.f;
+	m_dmgBullet = 150.f;
 	m_pOwner->SetActive(false);
 }
 

@@ -15,7 +15,7 @@ DECLARE_CHILD_SCRIPT(BulletShotgun, Projectile, ScriptFlag::Start | ScriptFlag::
 void Start()
 {
     m_MaxDistance = 15.f;
-    m_dmgBullet = 10.f;
+    m_dmgBullet = 6.f;
 
     m_pOwner->SetActive(false);
 }

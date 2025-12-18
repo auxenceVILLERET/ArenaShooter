@@ -34,13 +34,15 @@ void Update()
 
 void CollisionEnter(GameObject* other)
 {
-    if (m_pOwner->GetName() == other->GetName())
+	String otherName = other->GetName();
+	String thisName = m_pOwner->GetName();
+    if (thisName == otherName)
         return;
     
-	if (other->GetName() == "Rifle bullet" || other->GetName() == "Handgun bullet" || other->GetName() == "Shotgun bullet" || other->GetName() == "Bazooka bullet" || other->GetName() == "Drone bullet" || other->GetName() == "Tank bullet")
+	if (otherName == "Rifle bullet" || otherName == "Handgun bullet" || otherName == "Shotgun bullet" || otherName == "Bazooka bullet" || otherName == "Drone bullet" || otherName == "Tank bullet")
 	    return;
 
-    if(m_pOwner->GetName() == "Rifle bullet" && other->GetName() == "Bazooka bullet")
+    if(thisName == "Rifle bullet" && otherName == "Bazooka bullet")
 		return;
 
     return m_pOwner->SetActive(false);

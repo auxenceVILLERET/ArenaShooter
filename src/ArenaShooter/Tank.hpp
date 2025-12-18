@@ -22,18 +22,19 @@ float32 blockedToggleTime = 3.00f;
 
 Vector3f32 finalDir;
 
-float32 m_shootingInterval = 5.0f;
+float32 m_shootingInterval = 3.0f;
 float32 m_deltaTime = 0.0f;
 
 Vector<BulletTank*> m_pProjectiles;
 
-
+Chrono m_playerCheckChrono;
+float32 m_playerCheckInterval = 1.f;
 void Awake() override
 {
 	Enemy::Awake();
-	m_speed = 2.50f;
+	m_speed = 4.50f;
 	m_pOwner->SetName("Tank");
-	m_Hp = new Health<float>(100.f);
+	m_Hp = new Health<float>(150.f);
 
 	m_pSm = GameManager::GetStateSystem().CreateStateMachine(m_pOwner);
 	String idle = "Idle";
@@ -52,7 +53,7 @@ void Awake() override
 	m_pSm->AddTransition(closePlayerConditions, shooting, chase);
 	m_pSm->AddTransition(closePlayerConditions, idle, chase);
 
-	StateMachine::Condition veryClosePlayerCondition = { [this]() { return this->IsPlayerVeryClose() && this->CheckPlayer();} };
+	StateMachine::Condition veryClosePlayerCondition = { [this]() { return this->IsPlayerVeryClose() && !this->CheckPlayer();} };
 	Vector<StateMachine::Condition> veryClosePlayerConditions;
 	veryClosePlayerConditions.PushBack(veryClosePlayerCondition);
 	m_pSm->AddTransition(veryClosePlayerConditions, chase, shooting);
@@ -80,13 +81,19 @@ void Destroy() override
 
 void Start() override
 {
+	Geometry* pGeo = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/laser.obj");
+	Texture* albedo = new Texture(RES_PATH"res/ArenaShooter/Obj/LaserTxtRed.png");
+
 	for (int i = 0; i < 10; i++)
 	{
 		GameObject& bullet = m_pCustomScene->AddObject();
 		MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
-		meshProjectile.pGeometry = SHAPES.CYLINDER;
+		meshProjectile.pGeometry = pGeo;
+		meshProjectile.pMaterial->albedoTextureID = albedo->GetTextureID();
+		meshProjectile.pMaterial->useTextureAlbedo = 1;
+
 		bullet.transform.SetWorldPosition({ 10.0f, 0.0f, 0.0f });
-		bullet.transform.SetWorldScale({ 0.3f,0.3f,0.3f });
+		bullet.transform.SetWorldScale({ 1.3f,1.3f,1.3f });
 		bullet.SetName("Tank bullet");
 
 		bullet.AddComponent<SphereCollider>();
@@ -131,17 +138,17 @@ void Shoot() override
 
 bool IsPlayerClose()
 {
-	return m_distanceFromPlayer < 20.0f && m_distanceFromPlayer >= 15.f; // Seuil de distance
+	return m_distanceFromPlayer < 30.0f && m_distanceFromPlayer >= 25.f; // Seuil de distance
 }
 
 bool IsPlayerVeryClose()
 {
-	return m_distanceFromPlayer < 15.0f; // Seuil de distance
+	return m_distanceFromPlayer < 25.0f; // Seuil de distance
 }
 
 bool IsPlayerFar()
 {
-	return m_distanceFromPlayer > 30.0f; // Seuil de distance
+	return m_distanceFromPlayer > 40.0f; // Seuil de distance
 }
 
 bool IsBlocked()
@@ -151,6 +158,11 @@ bool IsBlocked()
 
 bool CheckPlayer()
 {
+	m_playerCheckChrono.Start();
+
+	if (m_playerCheckChrono.GetElapsedTime() < m_playerCheckInterval)
+		return false;
+
 	Vector3f32 direction = m_pPlayer->transform.GetWorldPosition() - m_pOwner->transform.GetWorldPosition();
 	direction.SelfNormalize();
 	Ray ray;
@@ -160,13 +172,14 @@ bool CheckPlayer()
 	RaycastHit hitInfo;
 	bool hit = PhysicSystem::IntersectRay(ray, hitInfo, 25.f);
 
+	m_playerCheckChrono.Reset();
+
 	return hit && hitInfo.pGameObject != nullptr && hitInfo.pGameObject->GetName() != "Player" && hitInfo.pGameObject->GetName() != "Tank bullet" && hitInfo.pGameObject->GetName() != "Rifle bullet" && hitInfo.pGameObject->GetName() != "Shotgun bullet" && hitInfo.pGameObject->GetName() != "Handgun bullet" && hitInfo.pGameObject != m_pOwner;
 }
 
 
 void OnBeginIdle()
 {
-	Console::Log("Idle");
 }
 void OnUpdateIdle()
 {
@@ -195,7 +208,6 @@ void OnEndIdle() {}
 
 void OnBeginChase()
 {
-	Console::Log("Chase");
 	isBlocked = false;
 	SetPath(m_pPlayer->transform.GetWorldPosition());
 }
@@ -225,7 +237,6 @@ void OnEndChase() {}
 void OnBeginShooting()
 {
 	m_deltaTime = 0.0f;
-	Console::Log("Shooting");
 	ResetPath();
 }
 void OnUpdateShooting()
@@ -237,9 +248,16 @@ void OnUpdateShooting()
 	{
 		OrientFace(m_pPlayer->transform.GetWorldPosition());
 		BulletTank* first = m_pProjectiles[0];
+		BulletTank* second = m_pProjectiles[1];
 		if (!first->IsActive())
 		{
-			first->Init(direction, m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.f, 20.f);
+			first->Init(direction, m_pOwner->transform.GetWorldPosition() + (m_pOwner->transform.GetWorldForward() * 1.f) + m_pOwner->transform.GetWorldRight() * 0.2f - m_pOwner->transform.GetWorldUp() * 0.4f, 20.f);
+			m_deltaTime = 0.0f;
+		}
+
+		if (!second->IsActive())
+		{
+			second->Init(direction, m_pOwner->transform.GetWorldPosition() + (m_pOwner->transform.GetWorldForward() * 1.f) - m_pOwner->transform.GetWorldRight()* 0.2f - m_pOwner->transform.GetWorldUp() * 0.4f, 20.f);
 			m_deltaTime = 0.0f;
 		}
 	}
