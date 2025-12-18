@@ -11,7 +11,7 @@ using namespace gce;
 
 DECLARE_SCRIPT(EnergyOrb, ScriptFlag::CollisionEnter | ScriptFlag::Update)
 
-float32 scale = 0.5f;
+float32 scale = 1.f;
 
 void Update() override;
 void CollisionEnter(GameObject* other) override;

@@ -46,8 +46,11 @@ CustomScene* m_pCustomScene = nullptr;
 
 float32 m_distanceFromPlayer = 0.0f;
 
+
+
 void Awake() override
 {
+
 }
 
 void Update() override
@@ -98,10 +101,22 @@ virtual void Shoot()
 
 void SpawnOrb()
 {
+	Geometry* pGeoEnergyOrb = GeometryFactory::LoadGeometry(RES_PATH"res/ArenaShooter/Obj/bullet.obj");
+	Texture* albedoEnergyOrb = new Texture(RES_PATH"res/ArenaShooter/Obj/bullet_color.png");
+	Texture* rough = new Texture(RES_PATH"res/ArenaShooter/Obj/bullet_rough.png");
+	Texture* ao = new Texture(RES_PATH"res/ArenaShooter/Obj/bullet_ao.png");
+
 	GameObject& energyOrb = m_pCustomScene->AddObject();
 	MeshRenderer& meshEnergyOrb = *energyOrb.AddComponent<MeshRenderer>();
-	meshEnergyOrb.pGeometry = SHAPES.SPHERE;
-	energyOrb.transform.SetWorldScale({ 0.5f,0.5f,0.5f });
+	meshEnergyOrb.pGeometry = pGeoEnergyOrb;
+	meshEnergyOrb.pMaterial->albedoTextureID = albedoEnergyOrb->GetTextureID();
+	meshEnergyOrb.pMaterial->useTextureAlbedo = 1.f;
+	meshEnergyOrb.pMaterial->roughnessTextureID = rough->GetTextureID();
+	meshEnergyOrb.pMaterial->useTextureRoughness = 1.f;
+	meshEnergyOrb.pMaterial->ambientTextureID = ao->GetTextureID();
+	meshEnergyOrb.pMaterial->useTextureAmbient = 1.f;
+
+	energyOrb.transform.SetWorldScale({ 1.f,1.f,1.f });
 	energyOrb.transform.SetWorldPosition(m_pOwner->transform.GetWorldPosition());
 	energyOrb.AddScript<EnergyOrb>();
 	energyOrb.AddComponent<BoxCollider>();
