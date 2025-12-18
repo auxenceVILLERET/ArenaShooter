@@ -41,7 +41,7 @@ void Start() override
     pWaveManager->OnInit();
 
     m_vRoomPaths.PushBack(RES_PATH"res/Maps/Room1.json");
-    m_vRoomPaths.PushBack(RES_PATH"res/Maps/Room1.json");
+    m_vRoomPaths.PushBack(RES_PATH"res/Maps/Room2.json");
     m_vRoomPaths.PushBack(RES_PATH"res/Maps/Room1.json");
     m_vRoomPaths.PushBack(RES_PATH"res/Maps/Room1.json");
 }
