@@ -23,7 +23,7 @@ float32 blockedToggleTime = 3.00f;
 
 Vector3f32 finalDir;
 
-float32 m_shootingInterval = 7.0f;
+float32 m_shootingInterval = 3.0f;
 float32 m_punchingInterval = 1.5f;
 float32 m_deltaTime = 0.0f;
 
@@ -38,7 +38,7 @@ void Awake() override
 	Enemy::Awake();
 	m_speed = 2.f;
 	m_pOwner->SetName("Boss");
-	m_Hp = new Health<float>(200.f);
+	m_Hp = new Health<float>(300.f);
 
 	m_pSm = GameManager::GetStateSystem().CreateStateMachine(m_pOwner);
 	String idle = "Idle";
@@ -63,16 +63,16 @@ void Awake() override
 	m_pSm->AddTransition(rayConditions, shooting, idle);*/
 
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		GameObject& bullet = GameObject::Create(m_pOwner->GetScene());
 		MeshRenderer& meshProjectile = *bullet.AddComponent<MeshRenderer>();
 		meshProjectile.pGeometry = SHAPES.CYLINDER;
 		bullet.transform.SetWorldPosition({ 10.0f, 0.0f, 0.0f });
-		bullet.transform.SetWorldScale({ 2.5f,5.f,1.f });
+		bullet.transform.SetWorldScale({ 1.f,5.f,1.f });
 		bullet.SetName("Boss bullet");
 
-		bullet.AddComponent<SphereCollider>();
+		bullet.AddComponent<BoxCollider>();
 		bullet.AddComponent<PhysicComponent>()->SetGravityScale(0.0f);
 		m_pProjectiles.PushBack(bullet.AddScript<BulletBoss>());
 	}
@@ -137,6 +137,88 @@ bool CheckPlayer()
 	return hit && hitInfo.pGameObject != nullptr && hitInfo.pGameObject->GetName() != "Player" && hitInfo.pGameObject->GetName() != "Boss bullet" && hitInfo.pGameObject->GetName() != "Rifle bullet" && hitInfo.pGameObject->GetName() != "Shotgun bullet" && hitInfo.pGameObject->GetName() != "Handgun bullet" && hitInfo.pGameObject != m_pOwner;
 }
 
+void ShootPattern1(float32 sideOffset)
+{
+	Vector3f32 shootFromOffset = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.f;
+	shootFromOffset.y += 2;
+	
+	Vector3f32 shotDirOffset = { m_pPlayer->transform.GetWorldPosition() - m_pOwner->transform.GetWorldPosition() };
+	shotDirOffset.y = 0.f;
+	shotDirOffset.SelfNormalize();
+	
+	Vector3f32 right = { -shotDirOffset.z, 0.f, shotDirOffset.x };
+	float playerSideOffset = sideOffset;
+	float playerSideOffset2 = playerSideOffset * 2.f;
+	
+	// Cibles décalées
+	Vector3f32 targetLeft = m_pPlayer->transform.GetWorldPosition() - right * playerSideOffset;
+	Vector3f32 targetRight = m_pPlayer->transform.GetWorldPosition() + right * playerSideOffset;
+	Vector3f32 targetLeft2 = m_pPlayer->transform.GetWorldPosition() - right * playerSideOffset2;
+	Vector3f32 targetRight2 = m_pPlayer->transform.GetWorldPosition() + right * playerSideOffset2;
+
+	// Directions finales
+	Vector3f32 shotDirLeft = (targetLeft - shootFromOffset).SelfNormalize();
+	shotDirLeft.y = 0.f;
+	Vector3f32 shotDirRight = (targetRight - shootFromOffset).SelfNormalize();
+	shotDirRight.y = 0.f;
+	Vector3f32 shotDirLeft2 = (targetLeft2 - shootFromOffset).SelfNormalize();
+	shotDirLeft2.y = 0.f;
+	Vector3f32 shotDirRight2 = (targetRight2 - shootFromOffset).SelfNormalize();
+	shotDirRight2.y = 0.f;
+
+	for (BulletBoss* first : m_pProjectiles)
+	{
+		if (!first->IsActive())
+		{
+			Vector3f32 shootFrom = shootFromOffset;
+			Vector3f32 shotDir = shotDirOffset;
+			first->Init(shotDir, shootFrom, 15.f);
+			Console::Log("Boss Shot");
+			break;
+		}
+	}
+
+	for (BulletBoss* second : m_pProjectiles)
+	{
+		if (!second->IsActive())
+		{
+			Vector3f32 shootFrom = shootFromOffset;
+			second->Init(shotDirLeft, shootFrom, 15.f);
+			Console::Log("Boss Shot");
+			break;
+		}
+	}
+	for (BulletBoss* third : m_pProjectiles)
+	{
+		if (!third->IsActive())
+		{
+			Vector3f32 shootFrom = shootFromOffset;
+			third->Init(shotDirRight, shootFrom, 15.f);
+			Console::Log("Boss Shot");
+			break;
+		}
+	}
+	for (BulletBoss* fourth : m_pProjectiles)
+	{
+		if (!fourth->IsActive())
+		{
+			Vector3f32 shootFrom = shootFromOffset;
+			fourth->Init(shotDirLeft2, shootFrom, 15.f);
+			Console::Log("Boss Shot");
+			break;
+		}
+	}
+	for (BulletBoss* fifth : m_pProjectiles)
+	{
+		if (!fifth->IsActive())
+		{
+			Vector3f32 shootFrom = shootFromOffset;
+			fifth->Init(shotDirRight2, shootFrom, 15.f);
+			Console::Log("Boss Shot");
+			break;
+		}
+	}
+}
 
 void OnBeginIdle() 
 {
@@ -146,49 +228,13 @@ void OnBeginIdle()
 }
 void OnUpdateIdle()
 {
-	Vector3f32 direction = m_pPlayer->transform.GetWorldPosition() - m_pOwner->transform.GetWorldPosition();
-	direction.SelfNormalize();
 	m_deltaTime += GameManager::DeltaTime();
 	if (m_deltaTime >= m_shootingInterval)
 	{
-		BulletBoss* first = m_pProjectiles[0];
-		if (!first->IsActive())
-		{
-			Vector3f32 shootFrom = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.f;
-			shootFrom.x += 2.f;
-			shootFrom.y += 2.f;
-			Vector3f32 shotDir = m_pOwner->transform.GetWorldForward();
-			first->Init(shotDir, shootFrom, 10.f);
-			m_deltaTime = 0.0f;
-			Console::Log("Boss Shot");
-		}
-		BulletBoss* second = m_pProjectiles[1];
-		if (!second->IsActive())
-		{
-			Vector3f32 shootFrom = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.f;
-			shootFrom.x += 2.f;
-			shootFrom.y += 2.f; 
-			shootFrom.z += 5.f;
-			Vector3f32 shotDir = m_pOwner->transform.GetWorldForward();
-			//shotDir.y += 15.f;
-			second->Init(shotDir, shootFrom, 10.f);
-			m_deltaTime = 0.0f;
-			Console::Log("Boss Shot");
-		}
-		BulletBoss* third = m_pProjectiles[2];
-		if (!third->IsActive())
-		{
-			Vector3f32 shootFrom = m_pOwner->transform.GetWorldPosition() + m_pOwner->transform.GetWorldForward() * 1.f;
-			shootFrom.x += 2.f;
-			shootFrom.y += 2.f;
-			shootFrom.z -= 5.f;
-			Vector3f32 shotDir = m_pOwner->transform.GetWorldForward();
-			//shotDir.y -= 15.f;
-			third->Init(shotDir, shootFrom, 10.f);
-			m_deltaTime = 0.0f;
-			Console::Log("Boss Shot");
-		}
+		ShootPattern1(10.f);
+		m_deltaTime = 0.0f;
 	}
+	Console::Log(m_Hp->GetHealth());
 }
 void OnEndIdle() {}
 

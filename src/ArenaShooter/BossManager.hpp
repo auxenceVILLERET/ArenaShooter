@@ -27,14 +27,19 @@ bool isFightingBoss = false;
 int8 currentWave = 0;
 bool isSpawningWave = false;
 bool isFightingWave = false;
+
+bool kamikazeFirstPhaseStarted = false;
+bool kamikazeSecondPhaseStarted = false;
+
 Vector<Spawn> spawns;
+
 Spawn BossSpawn = { { 35.f,4.f,0.f }, { 25.f,4.f,0.f } };
+Spawn KamikazeSpawn1 = { { 25.f,4.f,0.f }, { 25.f,8.f,-4.f } };
+Spawn KamikazeSpawn2 = { { 25.f,4.f,0.f }, { 25.f,8.f,4.f } };
+
 
 Chrono waveSpawnChrono;
-float32 waveSpawnDelay = 0.5f;
-
-Chrono waveIntervalChrono;
-float32 waveInterval = 1.5f;
+float32 waveSpawnDelay = 10.f;
 
 Event<BossManager*> onEnemyDeathEvent;
 
@@ -63,6 +68,27 @@ void OnInit()
     newEnemy->SetActive(false);
 
     boss = dynamic_cast<Enemy*>(tempScript);
+
+    for (int i = 0; i < 20; i++)
+    {
+        GameObject* newEnemy = &currScene->AddObject();
+        MeshRenderer& mesh = *newEnemy->AddComponent<MeshRenderer>();
+        mesh.pGeometry = SHAPES.CUBE;
+        newEnemy->transform.SetWorldScale({ 1.f,1.f,1.f });
+
+        Kamikaze* tempScript = newEnemy->AddScript<Kamikaze>();
+        tempScript->SetGrid(grid);
+        tempScript->SetPlayer(player);
+
+        newEnemy->AddComponent<BoxCollider>();
+        PhysicComponent* newEnemyPC = newEnemy->AddComponent<PhysicComponent>();
+        newEnemyPC->SetGravityScale(0.0f);
+        newEnemyPC->SetIsTrigger(true);
+        newEnemy->SetActive(false);
+
+        Enemy* enemyScript = dynamic_cast<Enemy*>(tempScript);
+        vEnemy.PushBack(enemyScript);
+    }
 }
 
 void OnStart()
@@ -70,7 +96,7 @@ void OnStart()
     boss->m_pOwner->SetActive(false);
 }
 
-/*int8 GetEnemyCount()
+int8 GetEnemyCount()
 {
     int8 count = 0;
     for (Enemy* pEnemy : vEnemy)
@@ -79,9 +105,9 @@ void OnStart()
             count++;
     }
     return count;
-}*/
+}
 
-/*template <typename T>
+template <typename T>
 T* GetFirstAvailableEnemy()
 {
     for (Enemy* pEnemy : vEnemy)
@@ -94,7 +120,7 @@ T* GetFirstAvailableEnemy()
     }
 
     return nullptr;
-}*/
+}
 
 void BossSpawned()
 {
@@ -123,6 +149,39 @@ void SpawnBoss(Spawn selectedSpawn)
     
 }
 
+void StartWave()
+{
+    isSpawningWave = true;
+}
+
+void SpawnEnemy(Spawn selectedSpawn)
+{
+    if (currScene == nullptr)
+    {
+        std::cerr << "Unvalid Parameters : Unset scene for wave creation" << std::endl;
+        return;
+    }
+
+    Kamikaze* tempScript = GetFirstAvailableEnemy<Kamikaze>();
+    if (tempScript == nullptr) return;
+    tempScript->m_pOwner->transform.SetWorldPosition(selectedSpawn.startPos);
+    tempScript->GoToPosition(selectedSpawn.endPos, tempScript->m_speed);
+    tempScript->m_pOwner->SetActive(true);
+    Console::Log("Spawned Kamikaze");
+
+}
+
+void SpawnSubWave()
+{
+    if (waveSpawnChrono.GetElapsedTime() < waveSpawnDelay)
+        return;
+
+    waveSpawnChrono.Reset();
+
+    SpawnEnemy(KamikazeSpawn1);
+    SpawnEnemy(KamikazeSpawn2);
+}
+
 void Update() override
 {
     if (bossAlreadySpawned == false && isSpawningBoss == true)
@@ -139,6 +198,23 @@ void Update() override
         {
             isFightingBoss = false;
         }
+    }
+
+    if (boss->m_Hp->GetHealth() <= 200 && !kamikazeFirstPhaseStarted)
+    {
+        kamikazeFirstPhaseStarted = true;
+    }
+    if (boss->m_Hp->GetHealth() <= 100 && !kamikazeSecondPhaseStarted)
+    {
+        kamikazeSecondPhaseStarted = true;
+        waveSpawnChrono.Reset();
+    }
+
+
+
+    if (kamikazeFirstPhaseStarted)
+    {
+        SpawnSubWave();
     }
 
     if (isFightingBoss == false && isSpawningBoss == false)

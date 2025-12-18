@@ -118,6 +118,8 @@ void Shoot() override
 
 void CollisionEnter(GameObject* other) override
 {
+	if (other->GetName() == "Boss Bullet" || other->GetName() == "Boss")
+		return;
 	Enemy::CollisionEnter(other);
 	if (m_pSm->actualAction == "Dash")
 	{

@@ -32,7 +32,7 @@ void Init(Vector3f32 dir, Vector3f32 pos, float32 speed) override
 
 void CollisionEnter(GameObject* other) override
 {
-    if (other->GetName() == "Boss")
+    if (other->GetName() == "Boss" || other->GetName() == "Boss bullet" || other->GetName() == "Riffle bullet" || other->GetName() == "Shotgun bullet" || other->GetName() == "Handgun bullet" || other->GetName() == "Kamikaze" || other->GetName() == "Energy Orb")
         return;
 
     m_pOwner->SetActive(false);
